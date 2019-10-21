@@ -1,7 +1,8 @@
 ﻿using System;
+using AutoFixture.AutoEFCore.Common;
 using Microsoft.EntityFrameworkCore;
 
-namespace AutoFixture.AutoEFCore
+namespace AutoFixture.AutoEFCore.InMemory
 {
     public class InMemoryOptionsBuilder : OptionsBuilder
     {
@@ -17,7 +18,7 @@ namespace AutoFixture.AutoEFCore
 
         public string DatabaseName { get; }
 
-        public override DbContextOptions<TContext> Build<TContext>() => new DbContextOptionsBuilder<TContext>()
+        protected override DbContextOptions<TContext> Build<TContext>() => new DbContextOptionsBuilder<TContext>()
             .UseInMemoryDatabase(DatabaseName)
             .Options;
     }

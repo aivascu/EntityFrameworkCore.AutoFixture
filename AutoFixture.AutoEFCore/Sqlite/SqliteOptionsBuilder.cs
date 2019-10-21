@@ -1,7 +1,8 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using AutoFixture.AutoEFCore.Common;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
-namespace AutoFixture.AutoEFCore
+namespace AutoFixture.AutoEFCore.Sqlite
 {
     public class SqliteOptionsBuilder : OptionsBuilder
     {
@@ -12,7 +13,7 @@ namespace AutoFixture.AutoEFCore
 
         public SqliteConnection Connection { get; }
 
-        public override DbContextOptions<TContext> Build<TContext>() => new DbContextOptionsBuilder<TContext>()
+        protected override DbContextOptions<TContext> Build<TContext>() => new DbContextOptionsBuilder<TContext>()
             .UseSqlite(Connection)
             .Options;
     }

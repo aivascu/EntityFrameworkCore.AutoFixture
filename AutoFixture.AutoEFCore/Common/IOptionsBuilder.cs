@@ -1,12 +1,15 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 
-namespace AutoFixture.AutoEFCore
+namespace AutoFixture.AutoEFCore.Common
 {
     public interface IOptionsBuilder
     {
         object Build(Type type);
+    }
 
-        DbContextOptions<TContext> Build<TContext>() where TContext : DbContext;
+    public interface IOptionsBuilder<TContext> where TContext : DbContext
+    {
+        DbContextOptions<TContext> Build();
     }
 }

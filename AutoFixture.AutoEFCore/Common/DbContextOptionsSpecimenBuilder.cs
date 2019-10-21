@@ -49,6 +49,7 @@ namespace AutoFixture.AutoEFCore.Common
             {
                 return request is Type type
                     && !type.IsAbstract
+                    && type.IsGenericType
                     && typeof(DbContextOptions<>) == type.GetGenericTypeDefinition();
             }
         }

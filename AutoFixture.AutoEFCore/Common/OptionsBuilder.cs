@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 
-namespace AutoFixture.AutoEFCore
+namespace AutoFixture.AutoEFCore.Common
 {
     public abstract class OptionsBuilder : IOptionsBuilder
     {
-        public abstract DbContextOptions<TContext> Build<TContext>() where TContext : DbContext;
+        protected abstract DbContextOptions<TContext> Build<TContext>() where TContext : DbContext;
 
         public virtual object Build(Type type)
         {
@@ -15,9 +17,12 @@ namespace AutoFixture.AutoEFCore
             if (!typeof(DbContext).IsAssignableFrom(type) || type.IsAbstract)
                 throw new ArgumentException($"The context type should be a non-abstract class inherited from {nameof(DbContext)}");
 
-            var genericConfigureMethod = GetType().GetMethod(nameof(Build)).MakeGenericMethod(type);
+            var genericConfigureMethod = GetType()
+                .GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
+                .FirstOrDefault(m => m.Name == nameof(Build) && m.IsGenericMethodDefinition)
+                ?.MakeGenericMethod(type);
 
-            return genericConfigureMethod.Invoke(this, Array.Empty<object>());
+            return genericConfigureMethod?.Invoke(this, Array.Empty<object>());
         }
     }
 }

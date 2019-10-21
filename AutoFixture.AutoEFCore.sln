@@ -3,11 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29409.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoFixture.AutoEFCore", "AutoFixture.AutoEFCore\AutoFixture.AutoEFCore.csproj", "{B7524D2F-1AB2-4ADC-B79C-5E763DA03E8C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoFixture.AutoEFCore", "AutoFixture.AutoEFCore\AutoFixture.AutoEFCore.csproj", "{B7524D2F-1AB2-4ADC-B79C-5E763DA03E8C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoFixture.AutoEFCore.Tests", "tests\AutoFixture.AutoEFCore.Tests\AutoFixture.AutoEFCore.Tests.csproj", "{99CA4E8E-07D8-4419-A896-74FF097C339E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoFixture.AutoEFCore.Tests", "tests\AutoFixture.AutoEFCore.Tests\AutoFixture.AutoEFCore.Tests.csproj", "{99CA4E8E-07D8-4419-A896-74FF097C339E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{E7FFEA53-E31A-43F7-A0CA-AEF7A7AE59DE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".sln", ".sln", "{41F502FD-F586-4510-9E54-96A81EE0EBBE}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
