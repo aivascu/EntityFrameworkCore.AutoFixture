@@ -63,7 +63,8 @@ Otherwise the connection might close, which might in its turn fail your tests.
 ```csharp
 [Theory]
 [AutoDomainDataWithSqliteContext]
-public void Customize_ShouldProvideSqliteContext([Frozen] SqliteConnection connection, TestDbContext context, Item item, Customer customer)
+public void Customize_ShouldProvideSqliteContext([Frozen] SqliteConnection connection,
+  TestDbContext context, Item item, Customer customer)
 {
     using (connection)
     using (context)
