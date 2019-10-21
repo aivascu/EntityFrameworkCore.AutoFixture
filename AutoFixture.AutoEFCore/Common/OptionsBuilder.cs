@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AutoFixture.AutoEFCore
 {
-    public abstract class AbstractOptionsBuilder : IOptionsBuilder
+    public abstract class OptionsBuilder : IOptionsBuilder
     {
         public abstract DbContextOptions<TContext> Build<TContext>() where TContext : DbContext;
 

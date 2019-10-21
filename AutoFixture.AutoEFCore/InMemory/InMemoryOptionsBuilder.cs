@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AutoFixture.AutoEFCore
 {
-    public class InMemoryOptionsBuilder : AbstractOptionsBuilder
+    public class InMemoryOptionsBuilder : OptionsBuilder
     {
         public InMemoryOptionsBuilder(string databaseName)
         {

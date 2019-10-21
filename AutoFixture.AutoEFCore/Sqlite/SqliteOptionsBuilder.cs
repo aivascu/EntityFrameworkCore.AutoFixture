@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AutoFixture.AutoEFCore
 {
-    public class SqliteOptionsBuilder : AbstractOptionsBuilder
+    public class SqliteOptionsBuilder : OptionsBuilder
     {
         public SqliteOptionsBuilder(SqliteConnection connection)
         {
