@@ -1,7 +1,6 @@
 ﻿using System;
 using AutoFixture.Kernel;
 using EntityFrameworkCore.AutoFixture.Common;
-using EntityFrameworkCore.AutoFixture.InMemory;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Attributes;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
 using FluentAssertions;
@@ -24,7 +23,9 @@ namespace EntityFrameworkCore.AutoFixture.Tests
 
         [Theory]
         [AutoDomainData]
-        public void Create_ShouldReturnNoSpecimen_WhenRequestTypeNotDbContextOptions(DbContextOptionsSpecimenBuilder builder, Mock<ISpecimenContext> contextMock)
+        public void Create_ShouldReturnNoSpecimen_WhenRequestTypeNotDbContextOptions(
+            DbContextOptionsSpecimenBuilder builder,
+            Mock<ISpecimenContext> contextMock)
         {
             var actual = builder.Create(typeof(string), contextMock.Object);
 

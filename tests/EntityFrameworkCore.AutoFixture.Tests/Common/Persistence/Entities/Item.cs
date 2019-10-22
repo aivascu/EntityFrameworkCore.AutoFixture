@@ -8,8 +8,14 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities
         public Item(string name, decimal price)
         {
             if (string.IsNullOrWhiteSpace(name))
+            {
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(name));
-            if (price <= 0) throw new ArgumentOutOfRangeException(nameof(price));
+            }
+
+            if (price <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(price));
+            }
 
             Name = name;
             Price = price;

@@ -22,18 +22,26 @@ namespace EntityFrameworkCore.AutoFixture.Common
         public object Create(object request, ISpecimenContext context)
         {
             if (context == null)
+            {
                 throw new ArgumentNullException(nameof(context));
+            }
 
             if (!OptionsSpecification.IsSatisfiedBy(request))
+            {
                 return new NoSpecimen();
+            }
 
             if (!(request is Type type))
+            {
                 return new NoSpecimen();
+            }
 
             var contextType = type.GetGenericArguments().SingleOrDefault();
 
             if (contextType is null)
+            {
                 return new NoSpecimen();
+            }
 
             var optionsBuilderObj = context.Resolve(typeof(IOptionsBuilder));
 
@@ -45,7 +53,9 @@ namespace EntityFrameworkCore.AutoFixture.Common
             }
 
             if (!(optionsBuilderObj is IOptionsBuilder optionsBuilder))
+            {
                 return new NoSpecimen();
+            }
 
             return optionsBuilder.Build(contextType);
         }

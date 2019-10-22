@@ -20,10 +20,15 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
 
         public object Create(object request, ISpecimenContext context)
         {
-            if (context == null) throw new ArgumentNullException(nameof(context));
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
 
             if (!ConnectionSpecification.IsSatisfiedBy(request))
+            {
                 return new NoSpecimen();
+            }
 
             return new SqliteConnection("DataSource=:memory:");
         }

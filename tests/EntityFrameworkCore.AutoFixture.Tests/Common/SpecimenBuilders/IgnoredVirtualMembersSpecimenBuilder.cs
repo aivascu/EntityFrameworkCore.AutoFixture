@@ -21,10 +21,14 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Common.SpecimenBuilders
         public object Create(object request, ISpecimenContext context)
         {
             if (context == null)
+            {
                 throw new ArgumentNullException(nameof(context));
+            }
 
             if (!VirtualMemberSpecification.IsSatisfiedBy(request))
+            {
                 return new NoSpecimen();
+            }
 
             return new OmitSpecimen();
         }

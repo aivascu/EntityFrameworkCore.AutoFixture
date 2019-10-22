@@ -20,10 +20,15 @@ namespace EntityFrameworkCore.AutoFixture.InMemory
 
         public object Create(object request, ISpecimenContext context)
         {
-            if (context == null) throw new ArgumentNullException(nameof(context));
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
 
             if (!OptionsSpecification.IsSatisfiedBy(request))
+            {
                 return new NoSpecimen();
+            }
 
             return new InMemoryOptionsBuilder();
         }

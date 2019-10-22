@@ -6,7 +6,11 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities
     {
         public Order(Item item, int count, Customer customer)
         {
-            if (count <= 0) throw new ArgumentOutOfRangeException(nameof(count));
+            if (count <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(count));
+            }
+
             Count = count;
 
             Item = item ?? throw new ArgumentNullException(nameof(item));

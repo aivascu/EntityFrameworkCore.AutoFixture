@@ -21,18 +21,27 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
 
         public object Create(object request, ISpecimenContext context)
         {
-            if (context == null) throw new ArgumentNullException(nameof(context));
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
 
             if (!OptionsBuilderSpecification.IsSatisfiedBy(request))
+            {
                 return new NoSpecimen();
+            }
 
             var sqliteConnectionObj = context.Resolve(typeof(SqliteConnection));
 
             if (sqliteConnectionObj is NoSpecimen || sqliteConnectionObj is OmitSpecimen || sqliteConnectionObj is null)
+            {
                 return sqliteConnectionObj;
+            }
 
             if (!(sqliteConnectionObj is SqliteConnection sqliteConnection))
+            {
                 return new NoSpecimen();
+            }
 
             return new SqliteOptionsBuilder(sqliteConnection);
         }

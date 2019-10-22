@@ -21,18 +21,26 @@ namespace EntityFrameworkCore.AutoFixture.Common
         public object Create(object request, ISpecimenContext context)
         {
             if (context == null)
+            {
                 throw new ArgumentNullException(nameof(context));
+            }
 
             if (!ContextSpecification.IsSatisfiedBy(request))
+            {
                 return new NoSpecimen();
+            }
 
             if (!(request is Type type))
+            {
                 return new NoSpecimen();
+            }
 
             var options = context.Resolve(typeof(DbContextOptions<>).MakeGenericType(type));
 
             if (options is NoSpecimen || options is OmitSpecimen || options is null)
+            {
                 return options;
+            }
 
             return Activator.CreateInstance(type, options);
         }
