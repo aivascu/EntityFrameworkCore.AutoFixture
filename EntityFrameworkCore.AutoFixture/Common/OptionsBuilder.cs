@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,10 +16,11 @@ namespace EntityFrameworkCore.AutoFixture.Common
             if (!typeof(DbContext).IsAssignableFrom(type) || type.IsAbstract)
                 throw new ArgumentException($"The context type should be a non-abstract class inherited from {nameof(DbContext)}");
 
-            var genericConfigureMethod = GetType()
-                .GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
-                .FirstOrDefault(m => m.Name == nameof(Build) && m.IsGenericMethodDefinition)
-                ?.MakeGenericMethod(type);
+            var methods = GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
+
+            var genericConfigureMethod = Array
+                .Find(methods, m => m.Name == nameof(Build) && m.IsGenericMethodDefinition)?
+                .MakeGenericMethod(type);
 
             return genericConfigureMethod?.Invoke(this, Array.Empty<object>());
         }

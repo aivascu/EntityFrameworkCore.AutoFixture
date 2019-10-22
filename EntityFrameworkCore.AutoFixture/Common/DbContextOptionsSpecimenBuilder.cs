@@ -37,6 +37,13 @@ namespace EntityFrameworkCore.AutoFixture.Common
 
             var optionsBuilderObj = context.Resolve(typeof(IOptionsBuilder));
 
+            if (optionsBuilderObj is NoSpecimen
+                || optionsBuilderObj is OmitSpecimen
+                || optionsBuilderObj is null)
+            {
+                return optionsBuilderObj;
+            }
+
             if (!(optionsBuilderObj is IOptionsBuilder optionsBuilder))
                 return new NoSpecimen();
 
