@@ -1,5 +1,7 @@
 # EntityFrameworkCore.AutoFixture
 
+![Nuget](https://img.shields.io/nuget/dt/EntityFrameworkCore.AutoFixture?color=blue&label=nuget&logo=nuget)
+
 EntityFrameworkCore.AutoFixture is the logical product of the new [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/) in-memory [providers](https://docs.microsoft.com/en-us/ef/core/miscellaneous/testing/) and the [AutoFixture](https://github.com/AutoFixture/AutoFixture) library. 
 
 The goal of this project is to minimize the boilerplate work, necessary to test the code that uses Entity Framework Core.
