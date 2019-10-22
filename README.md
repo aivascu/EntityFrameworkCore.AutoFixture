@@ -1,7 +1,7 @@
 # EntityFrameworkCore.AutoFixture
 
 [![Nuget](https://img.shields.io/nuget/dt/EntityFrameworkCore.AutoFixture?color=blue&label=nuget&logo=nuget)](https://www.nuget.org/packages/EntityFrameworkCore.AutoFixture/)
-[![GitHub](https://img.shields.io/github/license/aivascu/EntityFrameworkCore.AutoFixture)](https://licenses.nuget.org/MIT)
+[![GitHub](https://img.shields.io/github/license/aivascu/EntityFrameworkCore.AutoFixture?logo=MIT)](https://licenses.nuget.org/MIT)
 
 EntityFrameworkCore.AutoFixture is the logical product of the new [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/) in-memory [providers](https://docs.microsoft.com/en-us/ef/core/miscellaneous/testing/) and the [AutoFixture](https://github.com/AutoFixture/AutoFixture) library. 
 
