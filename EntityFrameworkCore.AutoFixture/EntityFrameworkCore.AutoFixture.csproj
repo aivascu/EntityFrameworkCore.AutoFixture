@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Copyright>Andrei Ivascu</Copyright>
+    <Authors>Andrei Ivascu</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageId>EntityFrameworkCore.AutoFixture</PackageId>
+    <Product>EntityFrameworkCore.AutoFixture</Product>
+    <Version>0.1.0</Version>
+    <Description>A library aimed to minimize the setup of Entity Framework Core unit-testing database providers in conjunction with AutoFixture.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoFixture" Version="4.11.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="3.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.0.0" />
+  </ItemGroup>
+
+</Project>
