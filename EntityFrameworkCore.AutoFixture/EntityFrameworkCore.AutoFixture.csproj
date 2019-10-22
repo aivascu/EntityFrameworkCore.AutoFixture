@@ -10,6 +10,8 @@
     <Product>EntityFrameworkCore.AutoFixture</Product>
     <Version>0.1.0</Version>
     <Description>A library aimed to minimize the setup of Entity Framework Core unit-testing database providers in conjunction with AutoFixture.`</Description>
+    <PackageProjectUrl>https://github.com/aivascu/EntityFrameworkCore.AutoFixture</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/aivascu/EntityFrameworkCore.AutoFixture</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
