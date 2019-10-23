@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Copyright>Andrei Ivascu</Copyright>
     <Authors>Andrei Ivascu</Authors>
@@ -13,14 +13,15 @@
     <PackageProjectUrl>https://github.com/aivascu/EntityFrameworkCore.AutoFixture</PackageProjectUrl>
     <RepositoryUrl>https://github.com/aivascu/EntityFrameworkCore.AutoFixture</RepositoryUrl>
     <PackageTags>EntityFramework, EntityFrameworkCore, EFCore, EF, AutoFixture,UnitTest, SQLite, In-Memory, Database Provider</PackageTags>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoFixture" Version="4.11.0" />
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="3.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.0.0" />
+    <PackageReference Include="AutoFixture" Version="[4.4.0, 5.0.0)" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="[2.0.0, 4.0.0)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[2.0.0, 4.0.0)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="[2.0.0, 4.0.0)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="[2.0.0, 4.0.0)" />
   </ItemGroup>
 
 </Project>

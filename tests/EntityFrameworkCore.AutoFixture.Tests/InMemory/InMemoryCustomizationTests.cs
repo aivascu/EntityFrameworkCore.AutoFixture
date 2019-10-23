@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoFixture;
 using EntityFrameworkCore.AutoFixture.InMemory;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Attributes;
@@ -30,7 +30,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
         [AutoDomainDataWithInMemoryContext]
         public async Task SaveChangesAsync_ShouldCreateCustomerRecord(TestDbContext context)
         {
-            await using (context)
+            using (context)
             {
                 await context.Database.EnsureCreatedAsync();
 
