@@ -13,9 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".sln", ".sln", "{41F502FD-F
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore.AutoFixture", "EntityFrameworkCore.AutoFixture\EntityFrameworkCore.AutoFixture.csproj", "{34A29C69-9C15-4C1E-833D-6F9792EAED7C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore.AutoFixture", "src\EntityFrameworkCore.AutoFixture\EntityFrameworkCore.AutoFixture.csproj", "{34A29C69-9C15-4C1E-833D-6F9792EAED7C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore.AutoFixture.Tests", "tests\EntityFrameworkCore.AutoFixture.Tests\EntityFrameworkCore.AutoFixture.Tests.csproj", "{66633F47-A17D-4F10-8D34-5089E4E2354F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore.AutoFixture.Tests", "src\EntityFrameworkCore.AutoFixture.Tests\EntityFrameworkCore.AutoFixture.Tests.csproj", "{66633F47-A17D-4F10-8D34-5089E4E2354F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

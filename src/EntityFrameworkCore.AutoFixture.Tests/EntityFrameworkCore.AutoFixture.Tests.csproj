@@ -44,6 +44,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\EntityFrameworkCore.AutoFixture\EntityFrameworkCore.AutoFixture.csproj" />
+    <ProjectReference Include="..\EntityFrameworkCore.AutoFixture\EntityFrameworkCore.AutoFixture.csproj" />
   </ItemGroup>
 </Project>
