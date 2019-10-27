@@ -39,6 +39,10 @@ Generated\ Files/
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 
+# Coverlet test results
+[Cc]overage/
+**/[Cc]overage.*
+
 # NUNIT
 *.VisualState.xml
 TestResult.xml
@@ -55,6 +59,9 @@ BenchmarkDotNet.Artifacts/
 project.lock.json
 project.fragment.lock.json
 artifacts/
+
+# Cake build tools
+[Tt]ools/
 
 # StyleCop
 StyleCopReport.xml
