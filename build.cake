@@ -36,6 +36,13 @@ Setup(context => {
       DeleteDirectories(objDirs, cleanupSettings);
       Verbose("Removed {0} \"obj\" directories", objDirs.Count);
    }
+
+   var testResultsDirs = GetDirectories(Paths.TestResultsPattern);
+   if(testResultsDirs.Count > 0)
+   {
+      DeleteDirectories(testResultsDirs, cleanupSettings);
+      Verbose("Removed {0} \"obj\" directories", testResultsDirs.Count);
+   }
 });
 
 // TASKS
@@ -64,12 +71,14 @@ Task("Test")
    .Does(() => {
       EnsureDirectoryExists(Paths.CoverageDir);
       var testSettings = new DotNetCoreTestSettings {
+         ResultsDirectory = Directory("TestResults"),
+         ArgumentCustomization = args => args.Append($"--logger trx")
       };
       var coverletSettings = new CoverletSettings {
          CollectCoverage = true,
          CoverletOutputDirectory = Paths.CoverageDir,
-         CoverletOutputFormat = CoverletOutputFormat.opencover,
-         CoverletOutputName = $"results.xml"
+         CoverletOutputFormat = CoverletOutputFormat.cobertura,
+         CoverletOutputName = $"{Guid.NewGuid().ToString("D")}.cobertura.xml"
       };
       DotNetCoreTest(Paths.TestProjectDirectory, testSettings, coverletSettings);
    });
