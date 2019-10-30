@@ -1,3 +1,5 @@
+name: 'CI Pipeline'
+
 trigger:
 - master
 
