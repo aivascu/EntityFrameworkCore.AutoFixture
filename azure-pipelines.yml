@@ -1,0 +1,14 @@
+
+
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: 'EntityFrameworkCore.AutoFixture.sln'
