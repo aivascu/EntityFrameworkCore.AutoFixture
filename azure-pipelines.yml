@@ -8,7 +8,8 @@ pool:
 
 steps:
 
-- task: DotNetCoreCLI@2
+- task: PowerShell@2
   inputs:
-    command: 'build'
-    projects: 'EntityFrameworkCore.AutoFixture.sln'
+    filePath: 'build.ps1'
+    arguments: '-t Build -c Release'
+
