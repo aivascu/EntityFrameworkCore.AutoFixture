@@ -1,9 +1,12 @@
 # EntityFrameworkCore.AutoFixture
 
-[!![Nuget](https://img.shields.io/nuget/v/EntityFrameworkCore.AutoFixture?logo=nuget)](https://www.nuget.org/packages/EntityFrameworkCore.AutoFixture/)
+[![Build Status](https://dev.azure.com/aivascu/EntityFramework.AutoFixture/_apis/build/status/aivascu.EntityFrameworkCore.AutoFixture?branchName=master)](https://dev.azure.com/aivascu/EntityFramework.AutoFixture/_build/latest?definitionId=4&branchName=master)
+[![Azure DevOps tests](https://img.shields.io/azure-devops/tests/aivascu/EntityFramework.AutoFixture/4)](https://dev.azure.com/aivascu/EntityFramework.AutoFixture/_build/latest?definitionId=4&branchName=master)
+[![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/aivascu/EntityFramework.AutoFixture/4)](https://dev.azure.com/aivascu/EntityFramework.AutoFixture/_build)
+[![Nuget](https://img.shields.io/nuget/v/EntityFrameworkCore.AutoFixture?logo=nuget)](https://www.nuget.org/packages/EntityFrameworkCore.AutoFixture/)
 [![GitHub](https://img.shields.io/github/license/aivascu/EntityFrameworkCore.AutoFixture?logo=MIT)](https://licenses.nuget.org/MIT)
 
-EntityFrameworkCore.AutoFixture is the logical product of the new [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/) in-memory [providers](https://docs.microsoft.com/en-us/ef/core/miscellaneous/testing/) and the [AutoFixture](https://github.com/AutoFixture/AutoFixture) library. 
+EntityFrameworkCore.AutoFixture is the logical product of the new [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/) in-memory [providers](https://docs.microsoft.com/en-us/ef/core/miscellaneous/testing/) and the [AutoFixture](https://github.com/AutoFixture/AutoFixture) library.
 
 The goal of this project is to minimize the boilerplate work, necessary to test the code that uses Entity Framework Core.
 
