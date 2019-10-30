@@ -1,5 +1,3 @@
-
-
 trigger:
 - master
 
@@ -9,7 +7,27 @@ pool:
 steps:
 
 - task: PowerShell@2
+  displayName: 'Build project'
   inputs:
     filePath: 'build.ps1'
     arguments: '-t Build -c Release'
 
+- task: Cake@0
+  displayName: 'Generate coverage report'
+  inputs:
+    script: 'build.cake'
+    target: 'Report'
+    verbosity: 'Normal'
+
+- task: PublishTestResults@2
+  displayName: 'Publish test results'
+  inputs:
+    testResultsFormat: 'VSTest'
+    testResultsFiles: '**/*.trx'
+
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish coverage results'
+  inputs:
+    codeCoverageTool: 'Cobertura'
+    summaryFileLocation: '**/coverage/*.xml'
+    reportDirectory: 'coverage'
