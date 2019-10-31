@@ -108,19 +108,8 @@ Task("Version")
       var version = GitVersion();
       Information($"Calculated semantic version: {version.SemVer}");
 
-      packageVersion = version.NuGetVersion;
+      packageVersion = version.NuGetVersionV2;
       Information($"Corresponding package version: {packageVersion}");
-
-      if(BuildSystem.IsLocalBuild)
-      {
-         return;
-      }
-
-      packageVersion = GitVersion(new GitVersionSettings {
-         OutputType = GitVersionOutput.BuildServer,
-         UpdateAssemblyInfo = false
-      }).NuGetVersionV2.Replace("unstable", "preview");
-      Information($"Determined build server version: {packageVersion}");
    });
 
 Task("Package")
