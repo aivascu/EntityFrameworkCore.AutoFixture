@@ -13,7 +13,7 @@ steps:
   displayName: 'Build project'
   inputs:
     filePath: 'build.ps1'
-    arguments: '-t Build -c Release'
+    arguments: '-t Build -c Release -Verbose'
 
 - task: Cake@0
   displayName: 'Generate coverage report'

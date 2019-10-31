@@ -61,11 +61,11 @@ Task("Clean")
    });
 
 Task("Restore")
-   .IsDependentOn("Version")
    .Does(() => DotNetCoreRestore());
 
 Task("Build")
    .IsDependentOn("Restore")
+   .IsDependentOn("Version")
    .Does(() => {
       DotNetCoreBuild(
          Paths.SolutionFile.ToString(),
