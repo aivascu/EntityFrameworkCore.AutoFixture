@@ -8,7 +8,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageId>EntityFrameworkCore.AutoFixture</PackageId>
     <Product>EntityFrameworkCore.AutoFixture</Product>
-    <Version>0.2.0</Version>
+    <Version>0.0.0</Version>
     <Description>A library aimed to minimize the setup of Entity Framework Core unit-testing database providers in conjunction with AutoFixture.</Description>
     <PackageProjectUrl>https://github.com/aivascu/EntityFrameworkCore.AutoFixture</PackageProjectUrl>
     <RepositoryUrl>https://github.com/aivascu/EntityFrameworkCore.AutoFixture</RepositoryUrl>
