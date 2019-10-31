@@ -88,7 +88,7 @@ Task("Test")
          CollectCoverage = true,
          CoverletOutputDirectory = Paths.CoverageDir,
          CoverletOutputFormat = CoverletOutputFormat.cobertura,
-         CoverletOutputName = $"{Guid.NewGuid().ToString("D")}.cobertura.xml"
+         CoverletOutputName = $"{Guid.NewGuid().ToString("N")}.cobertura.xml"
       };
       DotNetCoreTest(Paths.TestProjectDirectory, testSettings, coverletSettings);
    });
@@ -116,6 +116,7 @@ Task("Package")
    .IsDependentOn("Build")
    .Does(() => {
       EnsureDirectoryExists("./artifacts");
+
       var projects = ParseSolution(solutionPath).Projects
       .Where(p => p.GetType() != typeof(SolutionFolder) && !p.Name.EndsWith("Tests"));
 
@@ -125,8 +126,23 @@ Task("Package")
          DotNetCorePack(project.Path.ToString(), new DotNetCorePackSettings {
             Configuration = configuration,
             OutputDirectory = Directory("./artifacts/"),
-            ArgumentCustomization = args => args.Append($"/p:Version={packageVersion}")
+            IncludeSymbols = true,
+            ArgumentCustomization = args => args.Append($"/p:Version={packageVersion} /p:SymbolPackageFormat=snupkg")
          });
+      }
+   });
+
+Task("Publish")
+   .IsDependentOn("Package")
+   .Does(() => {
+      var settings = new NuGetPushSettings {
+         ApiKey = EnvironmentVariable("NuGetApiKey"),
+         SkipDuplicate = true
+      };
+
+      foreach(var file in GetFiles("./artifacts/*.nupkg"))
+      {
+         NuGetPush(file, settings);
       }
    });
 
