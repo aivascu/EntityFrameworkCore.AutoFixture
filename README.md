@@ -32,17 +32,19 @@ Mainly there are three available customizations at the moment:
 public void SaveChanges_ShouldCreateCustomerRecord()
 {
     var fixture = new Fixture().Customize(new InMemoryContextCustomization());
-    using var context = fixture.Create<TestDbContext>();
-    context.Database.EnsureCreated();
+    using (var context = fixture.Create<TestDbContext>())
+    {
+        context.Database.EnsureCreated();
 
-    context.Customers.Add(new Customer("John Doe"));
-    context.SaveChanges();
+        context.Customers.Add(new Customer("John Doe"));
+        context.SaveChanges();
 
-    context.Customers.Should().Contain(x => x.Name == "John Doe");
-
-    context.Database.EnsureDeleted();
+        context.Customers.Should().Contain(x => x.Name == "John Doe");
+    }
 }
+```
 
+```csharp
 [Theory]
 [AutoDomainDataWithInMemoryContext]
 public async Task SaveChangesAsync_ShouldCreateCustomerRecord(TestDbContext context)
@@ -55,8 +57,6 @@ public async Task SaveChangesAsync_ShouldCreateCustomerRecord(TestDbContext cont
         await context.SaveChangesAsync();
 
         context.Customers.Should().Contain(x => x.Name == "Jane Smith");
-
-        await context.Database.EnsureDeletedAsync();
     }
 }
 ```
@@ -86,8 +86,6 @@ public void Customize_ShouldProvideSqliteContext([Frozen] SqliteConnection conne
         context.SaveChanges();
 
         context.Orders.Should().Contain(x => x.CustomerId == customer.Id && x.ItemId == item.Id);
-
-        context.Database.EnsureDeleted();
     }
 }
 ```
