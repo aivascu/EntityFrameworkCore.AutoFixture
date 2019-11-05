@@ -1,5 +1,8 @@
 ﻿using System;
+using AutoFixture;
+using AutoFixture.Idioms;
 using AutoFixture.Kernel;
+using AutoFixture.Xunit2;
 using EntityFrameworkCore.AutoFixture.Common;
 using EntityFrameworkCore.AutoFixture.Sqlite;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Attributes;
@@ -106,6 +109,16 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
             var obj = builder.Create(typeof(IOptionsBuilder), contextMock.Object);
 
             obj.As<SqliteOptionsBuilder>().Connection.ConnectionString.Should().Be("DataSource=:memory:");
+        }
+
+        [Theory]
+        [AutoData]
+        public void Ctors_ShouldReceiveInitializedParameters(Fixture fixture)
+        {
+            var assertion = new ConstructorInitializedMemberAssertion(fixture);
+            var members = typeof(SqliteOptionsSpecimenBuilder).GetConstructors();
+
+            assertion.Verify(members);
         }
     }
 }

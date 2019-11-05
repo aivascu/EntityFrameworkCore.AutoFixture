@@ -9,7 +9,8 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
     {
         public SqliteOptionsSpecimenBuilder(IRequestSpecification optionsBuilderSpecification)
         {
-            OptionsBuilderSpecification = optionsBuilderSpecification;
+            OptionsBuilderSpecification = optionsBuilderSpecification
+                ?? throw new ArgumentNullException(nameof(optionsBuilderSpecification));
         }
 
         public SqliteOptionsSpecimenBuilder()

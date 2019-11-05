@@ -8,7 +8,8 @@ namespace EntityFrameworkCore.AutoFixture.InMemory
     {
         public InMemoryOptionsBuilder(string databaseName)
         {
-            DatabaseName = databaseName;
+            DatabaseName = databaseName
+                ?? throw new ArgumentNullException(nameof(databaseName));
         }
 
         public InMemoryOptionsBuilder()

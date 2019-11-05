@@ -14,7 +14,8 @@ namespace EntityFrameworkCore.AutoFixture.Common
 
         public DbContextOptionsSpecimenBuilder(IRequestSpecification optionsSpecification)
         {
-            OptionsSpecification = optionsSpecification;
+            OptionsSpecification = optionsSpecification
+                ?? throw new ArgumentNullException(nameof(optionsSpecification));
         }
 
         public IRequestSpecification OptionsSpecification { get; }
@@ -31,10 +32,7 @@ namespace EntityFrameworkCore.AutoFixture.Common
                 return new NoSpecimen();
             }
 
-            if (!(request is Type type))
-            {
-                return new NoSpecimen();
-            }
+            var type = (Type)request;
 
             var contextType = type.GetGenericArguments().SingleOrDefault();
 

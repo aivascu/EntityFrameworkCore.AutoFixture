@@ -1,5 +1,8 @@
 ﻿using System;
+using AutoFixture;
+using AutoFixture.Idioms;
 using AutoFixture.Kernel;
+using AutoFixture.Xunit2;
 using EntityFrameworkCore.AutoFixture.Common;
 using EntityFrameworkCore.AutoFixture.InMemory;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Attributes;
@@ -40,6 +43,16 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
             var obj = builder.Create(typeof(string), context.Object);
 
             obj.Should().BeOfType<NoSpecimen>();
+        }
+
+        [Theory]
+        [AutoData]
+        public void Ctors_ShouldReceiveInitializedParameters(Fixture fixture)
+        {
+            var assertion = new ConstructorInitializedMemberAssertion(fixture);
+            var members = typeof(InMemoryOptionsSpecimenBuilder).GetConstructors();
+
+            assertion.Verify(members);
         }
     }
 }

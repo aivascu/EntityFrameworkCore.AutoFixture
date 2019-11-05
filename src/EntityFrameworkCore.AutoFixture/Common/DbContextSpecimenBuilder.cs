@@ -13,7 +13,8 @@ namespace EntityFrameworkCore.AutoFixture.Common
 
         public DbContextSpecimenBuilder(IRequestSpecification contextSpecification)
         {
-            ContextSpecification = contextSpecification;
+            ContextSpecification = contextSpecification
+                ?? throw new ArgumentNullException(nameof(contextSpecification));
         }
 
         public IRequestSpecification ContextSpecification { get; }
