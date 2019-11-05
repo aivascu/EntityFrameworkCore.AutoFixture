@@ -28,8 +28,6 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
                 context.SaveChanges();
 
                 context.Orders.Should().Contain(x => x.CustomerId == customer.Id && x.ItemId == item.Id);
-
-                context.Database.EnsureDeleted();
             }
         }
     }
