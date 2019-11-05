@@ -22,8 +22,6 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
             context.SaveChanges();
 
             context.Customers.Should().Contain(x => x.Name == "John Doe");
-
-            context.Database.EnsureDeleted();
         }
 
         [Theory]
@@ -38,8 +36,6 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
                 await context.SaveChangesAsync();
 
                 context.Customers.Should().Contain(x => x.Name == "Jane Smith");
-
-                await context.Database.EnsureDeletedAsync();
             }
         }
     }
