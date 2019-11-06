@@ -1,4 +1,6 @@
 ﻿using System;
+using AutoFixture;
+using AutoFixture.Idioms;
 using AutoFixture.Xunit2;
 using EntityFrameworkCore.AutoFixture.InMemory;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
@@ -44,6 +46,16 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
             Action action = () => builder.Build(typeof(AbstractDbContext));
 
             action.Should().Throw<ArgumentException>();
+        }
+
+        [Theory]
+        [AutoData]
+        public void Ctors_ShouldReceiveInitializedParameters(Fixture fixture)
+        {
+            var assertion = new GuardClauseAssertion(fixture);
+            var members = typeof(InMemoryOptionsBuilder).GetConstructors();
+
+            assertion.Verify(members);
         }
 
         private abstract class AbstractDbContext : DbContext { }

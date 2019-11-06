@@ -1,4 +1,5 @@
-﻿using EntityFrameworkCore.AutoFixture.Common;
+﻿using System;
+using EntityFrameworkCore.AutoFixture.Common;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +9,8 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
     {
         public SqliteOptionsBuilder(SqliteConnection connection)
         {
-            Connection = connection;
+            Connection = connection
+                ?? throw new ArgumentNullException(nameof(connection));
         }
 
         public SqliteConnection Connection { get; }

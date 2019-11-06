@@ -23,10 +23,10 @@ namespace EntityFrameworkCore.AutoFixture.Common
             var methods = GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
 
             var genericConfigureMethod = Array
-                .Find(methods, m => m.Name == nameof(Build) && m.IsGenericMethodDefinition)?
+                .Find(methods, m => m.Name == nameof(Build) && m.IsGenericMethodDefinition)
                 .MakeGenericMethod(type);
 
-            return genericConfigureMethod?.Invoke(this, Array.Empty<object>());
+            return genericConfigureMethod.Invoke(this, Array.Empty<object>());
         }
     }
 }

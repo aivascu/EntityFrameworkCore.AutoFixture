@@ -8,7 +8,8 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
     {
         public SqliteConnectionSpecimenBuilder(IRequestSpecification connectionSpecification)
         {
-            ConnectionSpecification = connectionSpecification;
+            ConnectionSpecification = connectionSpecification
+                ?? throw new ArgumentNullException(nameof(connectionSpecification));
         }
 
         public SqliteConnectionSpecimenBuilder()

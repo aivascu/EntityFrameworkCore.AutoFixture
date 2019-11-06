@@ -1,6 +1,10 @@
 ﻿using System;
+using AutoFixture;
+using AutoFixture.Idioms;
 using AutoFixture.Kernel;
+using AutoFixture.Xunit2;
 using EntityFrameworkCore.AutoFixture.Common;
+using EntityFrameworkCore.AutoFixture.Sqlite;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Attributes;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
 using FluentAssertions;
@@ -28,6 +32,23 @@ namespace EntityFrameworkCore.AutoFixture.Tests
             Mock<ISpecimenContext> contextMock)
         {
             var actual = builder.Create(typeof(string), contextMock.Object);
+
+            actual.Should().BeOfType<NoSpecimen>();
+        }
+
+        [Theory]
+        [AutoDomainData]
+        public void Create_ShouldReturnNoSpecimen_WhenRequestNotType(
+            Mock<IRequestSpecification> specificationMock,
+            Mock<ISpecimenContext> contextMock)
+        {
+            specificationMock
+                .Setup(x => x.IsSatisfiedBy(It.IsAny<object>()))
+                .Returns(true);
+
+            var builder = new DbContextOptionsSpecimenBuilder(specificationMock.Object);
+            var property = typeof(string).GetProperty(nameof(string.Length));
+            var actual = builder.Create(property, contextMock.Object);
 
             actual.Should().BeOfType<NoSpecimen>();
         }
@@ -116,6 +137,16 @@ namespace EntityFrameworkCore.AutoFixture.Tests
             var actual = builder.Create(typeof(DbContextOptions<TestDbContext>), contextMock.Object);
 
             actual.Should().BeOfType<DbContextOptions<TestDbContext>>();
+        }
+
+        [Theory]
+        [AutoDomainData]
+        public void Ctors_ShouldReceiveInitializedParameters(Fixture fixture)
+        {
+            var assertion = new GuardClauseAssertion(fixture);
+            var members = typeof(DbContextOptionsSpecimenBuilder).GetConstructors();
+
+            assertion.Verify(members);
         }
     }
 }

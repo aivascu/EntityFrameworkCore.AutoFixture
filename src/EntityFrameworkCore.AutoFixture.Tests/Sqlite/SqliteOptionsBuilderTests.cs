@@ -1,5 +1,6 @@
 ﻿using System;
 using AutoFixture;
+using AutoFixture.Idioms;
 using AutoFixture.Xunit2;
 using EntityFrameworkCore.AutoFixture.Sqlite;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
@@ -74,6 +75,27 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
 
                 action.Should().Throw<ArgumentException>();
             }
+        }
+
+        [Theory]
+        [AutoData]
+        public void Ctors_ShouldInitializeProperties(Fixture fixture)
+        {
+            var assertion = new ConstructorInitializedMemberAssertion(fixture);
+            var members = typeof(SqliteOptionsBuilder).GetConstructors();
+
+            assertion.Verify(members);
+        }
+
+        [Theory]
+        [AutoData]
+        public void Ctors_ShouldReceiveInitializedParameters(Fixture fixture)
+        {
+            fixture.Inject(new SqliteConnection("Data Source=:memory:"));
+            var assertion = new GuardClauseAssertion(fixture);
+            var members = typeof(SqliteOptionsBuilder).GetConstructors();
+
+            assertion.Verify(members);
         }
 
         private abstract class AbstractDbContext : DbContext { }
