@@ -52,7 +52,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
         [AutoData]
         public void Ctors_ShouldReceiveInitializedParameters(Fixture fixture)
         {
-            var assertion = new ConstructorInitializedMemberAssertion(fixture);
+            var assertion = new GuardClauseAssertion(fixture);
             var members = typeof(InMemoryOptionsBuilder).GetConstructors();
 
             assertion.Verify(members);

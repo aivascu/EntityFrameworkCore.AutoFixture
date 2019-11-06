@@ -50,6 +50,23 @@ namespace EntityFrameworkCore.AutoFixture.Tests
 
         [Theory]
         [AutoDomainData]
+        public void Create_ShouldReturnNoSpecimen_WhenRequestNotType(
+            Mock<IRequestSpecification> requestSpecificationMock,
+            Mock<ISpecimenContext> contextMock)
+        {
+            requestSpecificationMock
+                .Setup(x => x.IsSatisfiedBy(It.IsAny<object>()))
+                .Returns(true);
+
+            var builder = new DbContextSpecimenBuilder(requestSpecificationMock.Object);
+            var property = typeof(string).GetProperty(nameof(string.Length));
+            var actual = builder.Create(property, contextMock.Object);
+
+            actual.Should().BeOfType<NoSpecimen>();
+        }
+
+        [Theory]
+        [AutoDomainData]
         public void Create_ShouldReturnNoSpecimen_WhenContextCanNotResolveOptions(
             DbContextSpecimenBuilder builder,
             Mock<ISpecimenContext> contextMock)
@@ -107,10 +124,10 @@ namespace EntityFrameworkCore.AutoFixture.Tests
         }
 
         [Theory]
-        [AutoData]
+        [AutoDomainData]
         public void Ctors_ShouldReceiveInitializedParameters(Fixture fixture)
         {
-            var assertion = new ConstructorInitializedMemberAssertion(fixture);
+            var assertion = new GuardClauseAssertion(fixture);
             var members = typeof(DbContextSpecimenBuilder).GetConstructors();
 
             assertion.Verify(members);

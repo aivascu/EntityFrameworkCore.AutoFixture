@@ -32,14 +32,12 @@ namespace EntityFrameworkCore.AutoFixture.Common
                 return new NoSpecimen();
             }
 
-            var type = (Type)request;
-
-            var contextType = type.GetGenericArguments().SingleOrDefault();
-
-            if (contextType is null)
+            if (!(request is Type type))
             {
                 return new NoSpecimen();
             }
+
+            var contextType = type.GetGenericArguments().Single();
 
             var optionsBuilderObj = context.Resolve(typeof(IOptionsBuilder));
 

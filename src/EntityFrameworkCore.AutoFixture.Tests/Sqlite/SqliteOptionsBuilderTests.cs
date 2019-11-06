@@ -79,9 +79,20 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
 
         [Theory]
         [AutoData]
-        public void Ctors_ShouldReceiveInitializedParameters(Fixture fixture)
+        public void Ctors_ShouldInitializeProperties(Fixture fixture)
         {
             var assertion = new ConstructorInitializedMemberAssertion(fixture);
+            var members = typeof(SqliteOptionsBuilder).GetConstructors();
+
+            assertion.Verify(members);
+        }
+
+        [Theory]
+        [AutoData]
+        public void Ctors_ShouldReceiveInitializedParameters(Fixture fixture)
+        {
+            fixture.Inject(new SqliteConnection("Data Source=:memory:"));
+            var assertion = new GuardClauseAssertion(fixture);
             var members = typeof(SqliteOptionsBuilder).GetConstructors();
 
             assertion.Verify(members);

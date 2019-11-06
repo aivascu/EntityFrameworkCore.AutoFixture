@@ -9,7 +9,8 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
     {
         public SqliteOptionsBuilder(SqliteConnection connection)
         {
-            Connection = connection ?? throw new ArgumentNullException(nameof(connection));
+            Connection = connection
+                ?? throw new ArgumentNullException(nameof(connection));
         }
 
         public SqliteConnection Connection { get; }
