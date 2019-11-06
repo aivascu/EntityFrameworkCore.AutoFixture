@@ -1,6 +1,10 @@
 ﻿using System;
+using AutoFixture;
+using AutoFixture.Idioms;
 using AutoFixture.Kernel;
+using AutoFixture.Xunit2;
 using EntityFrameworkCore.AutoFixture.Common;
+using EntityFrameworkCore.AutoFixture.Sqlite;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Attributes;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
 using FluentAssertions;
@@ -116,6 +120,16 @@ namespace EntityFrameworkCore.AutoFixture.Tests
             var actual = builder.Create(typeof(DbContextOptions<TestDbContext>), contextMock.Object);
 
             actual.Should().BeOfType<DbContextOptions<TestDbContext>>();
+        }
+
+        [Theory]
+        [AutoData]
+        public void Ctors_ShouldReceiveInitializedParameters(Fixture fixture)
+        {
+            var assertion = new ConstructorInitializedMemberAssertion(fixture);
+            var members = typeof(DbContextOptionsSpecimenBuilder).GetConstructors();
+
+            assertion.Verify(members);
         }
     }
 }
