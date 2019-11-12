@@ -9,17 +9,11 @@ pool:
 
 steps:
 
-- task: PowerShell@2
-  displayName: 'Build project'
-  inputs:
-    filePath: 'build.ps1'
-    arguments: '-t Build -c Release -Verbose'
-
 - task: Cake@0
-  displayName: 'Generate coverage report'
+  displayName: 'Build & Test'
   inputs:
     script: 'build.cake'
-    target: 'Report'
+    target: 'Test'
     verbosity: 'Normal'
 
 - task: PublishTestResults@2
