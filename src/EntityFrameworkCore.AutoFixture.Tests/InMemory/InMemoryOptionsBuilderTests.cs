@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using AutoFixture;
 using AutoFixture.Idioms;
 using AutoFixture.Xunit2;
@@ -6,6 +7,7 @@ using EntityFrameworkCore.AutoFixture.InMemory;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using Xunit;
 
 namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
@@ -56,6 +58,53 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
             var members = typeof(InMemoryOptionsBuilder).GetConstructors();
 
             assertion.Verify(members);
+        }
+
+        [Theory]
+        [AutoData]
+        public void GenericBuild_ShouldCreateDbContextOptions_WithInMemoryExtension(InMemoryOptionsBuilder builder)
+        {
+            var actual = builder.Build<TestDbContext>();
+
+            actual.Extensions.Should().Contain(x => x.GetType() == typeof(InMemoryOptionsExtension));
+        }
+
+        [Theory]
+        [AutoData]
+        public void GenericBuild_ShouldCreateDbContextOptions_WithInMemoryExtension_WithName(string expected)
+        {
+
+            var extension = new InMemoryOptionsBuilder(expected)
+                .Build<TestDbContext>()
+                .Extensions
+                .Single(x => x.GetType() == typeof(InMemoryOptionsExtension))
+                .As<InMemoryOptionsExtension>();
+
+            extension.StoreName.Should().Be(expected);
+        }
+
+        [Theory]
+        [AutoData]
+        public void Build_ShouldCreateDbContextOptions_WithInMemoryExtension(InMemoryOptionsBuilder builder)
+        {
+            var actual = builder.Build(typeof(TestDbContext)).As<DbContextOptions<TestDbContext>>();
+
+            actual.Extensions.Should().Contain(x => x.GetType() == typeof(InMemoryOptionsExtension));
+        }
+
+        [Theory]
+        [AutoData]
+        public void Build_ShouldCreateDbContextOptions_WithInMemoryExtension_WithName(string expected)
+        {
+
+            var extension = new InMemoryOptionsBuilder(expected)
+                .Build(typeof(TestDbContext))
+                .As<DbContextOptions<TestDbContext>>()
+                .Extensions
+                .Single(x => x.GetType() == typeof(InMemoryOptionsExtension))
+                .As<InMemoryOptionsExtension>();
+
+            extension.StoreName.Should().Be(expected);
         }
 
         private abstract class AbstractDbContext : DbContext { }
