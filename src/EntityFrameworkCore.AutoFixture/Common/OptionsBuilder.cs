@@ -6,7 +6,7 @@ namespace EntityFrameworkCore.AutoFixture.Common
 {
     public abstract class OptionsBuilder : IOptionsBuilder
     {
-        protected abstract DbContextOptions<TContext> Build<TContext>() where TContext : DbContext;
+        public abstract DbContextOptions<TContext> Build<TContext>() where TContext : DbContext;
 
         public virtual object Build(Type type)
         {
@@ -20,7 +20,7 @@ namespace EntityFrameworkCore.AutoFixture.Common
                 throw new ArgumentException($"The context type should be a non-abstract class inherited from {nameof(DbContext)}");
             }
 
-            var methods = GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
+            var methods = GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance);
 
             var genericConfigureMethod = Array
                 .Find(methods, m => m.Name == nameof(Build) && m.IsGenericMethodDefinition)

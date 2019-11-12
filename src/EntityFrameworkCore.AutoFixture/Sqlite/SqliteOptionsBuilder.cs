@@ -15,7 +15,7 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
 
         public SqliteConnection Connection { get; }
 
-        protected override DbContextOptions<TContext> Build<TContext>() => new DbContextOptionsBuilder<TContext>()
+        public override DbContextOptions<TContext> Build<TContext>() => new DbContextOptionsBuilder<TContext>()
             .UseSqlite(Connection)
             .Options;
     }

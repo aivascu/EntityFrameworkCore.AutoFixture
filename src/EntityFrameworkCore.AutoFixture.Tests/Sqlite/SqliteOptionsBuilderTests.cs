@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using AutoFixture;
 using AutoFixture.Idioms;
 using AutoFixture.Xunit2;
@@ -7,6 +8,7 @@ using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
 using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using Xunit;
 
 namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
@@ -96,6 +98,58 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
             var members = typeof(SqliteOptionsBuilder).GetConstructors();
 
             assertion.Verify(members);
+        }
+
+        [Fact]
+        public void GenericBuild_ShouldCreateDbContextOptions_WithSqliteExtension()
+        {
+            var connectionString = "Data Source=:memory:";
+            var connection = new SqliteConnection(connectionString);
+            var context = new SqliteOptionsBuilder(connection)
+                .Build<TestDbContext>();
+
+            context.Extensions.Should().Contain(x => x.GetType() == typeof(SqliteOptionsExtension));
+        }
+
+        [Fact]
+        public void GenericBuild_ShouldCreateDbContextOptions_WithSqliteExtension_WithConnectionString()
+        {
+            var connectionString = "Data Source=:memory:";
+            var connection = new SqliteConnection(connectionString);
+            var extension = new SqliteOptionsBuilder(connection)
+                .Build<TestDbContext>()
+                .Extensions
+                .Single(x => x.GetType() == typeof(SqliteOptionsExtension))
+                .As<SqliteOptionsExtension>();
+
+            extension.Connection.ConnectionString.Should().Be(connectionString);
+        }
+
+        [Fact]
+        public void Build_ShouldCreateDbContextOptions_WithSqliteExtension()
+        {
+            var connectionString = "Data Source=:memory:";
+            var connection = new SqliteConnection(connectionString);
+            var context = new SqliteOptionsBuilder(connection)
+                .Build(typeof(TestDbContext))
+                .As<DbContextOptions<TestDbContext>>();
+
+            context.Extensions.Should().Contain(x => x.GetType() == typeof(SqliteOptionsExtension));
+        }
+
+        [Fact]
+        public void Build_ShouldCreateDbContextOptions_WithSqliteExtension_WithConnectionString()
+        {
+            var connectionString = "Data Source=:memory:";
+            var connection = new SqliteConnection(connectionString);
+            var extension = new SqliteOptionsBuilder(connection)
+                .Build(typeof(TestDbContext))
+                .As<DbContextOptions<TestDbContext>>()
+                .Extensions
+                .Single(x => x.GetType() == typeof(SqliteOptionsExtension))
+                .As<SqliteOptionsExtension>();
+
+            extension.Connection.ConnectionString.Should().Be(connectionString);
         }
 
         private abstract class AbstractDbContext : DbContext { }

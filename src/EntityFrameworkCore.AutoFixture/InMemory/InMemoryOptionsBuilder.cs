@@ -19,7 +19,7 @@ namespace EntityFrameworkCore.AutoFixture.InMemory
 
         public string DatabaseName { get; }
 
-        protected override DbContextOptions<TContext> Build<TContext>() => new DbContextOptionsBuilder<TContext>()
+        public override DbContextOptions<TContext> Build<TContext>() => new DbContextOptionsBuilder<TContext>()
             .UseInMemoryDatabase(DatabaseName)
             .Options;
     }
