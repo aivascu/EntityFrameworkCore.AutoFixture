@@ -17,50 +17,47 @@ var cleanupSettings = new DeleteDirectorySettings {
    Force = true
 };
 
-Setup(context => {
-   if(DirectoryExists(Paths.CoverageDir))
-   {
-      DeleteDirectory(Paths.CoverageDir, cleanupSettings);
-      Verbose("Removed coverage folder");
-   }
-
-   var binDirs = GetDirectories(Paths.BinPattern);
-   if(binDirs.Count > 0)
-   {
-      DeleteDirectories(binDirs, cleanupSettings);
-      Verbose("Removed {0} \"bin\" directories", binDirs.Count);
-   }
-
-   var objDirs = GetDirectories(Paths.ObjPattern);
-   if (objDirs.Count > 0)
-   {
-      DeleteDirectories(objDirs, cleanupSettings);
-      Verbose("Removed {0} \"obj\" directories", objDirs.Count);
-   }
-
-   var testResultsDirs = GetDirectories(Paths.TestResultsPattern);
-   if(testResultsDirs.Count > 0)
-   {
-      DeleteDirectories(testResultsDirs, cleanupSettings);
-      Verbose("Removed {0} \"TestResults\" directories", testResultsDirs.Count);
-   }
-
-   var artifactDir = GetDirectories(Paths.ArtifactsPattern);
-   if(artifactDir.Count > 0)
-   {
-      DeleteDirectories(artifactDir, cleanupSettings);
-      Verbose("Removed {0} artifact directories", artifactDir.Count);
-   }
-});
-
 // TASKS
 
 Task("Clean")
    .Does(() => {
-      DeleteDirectory(Paths.CoverageDir, cleanupSettings);
+      if (DirectoryExists(Paths.CoverageDir))
+      {
+         DeleteDirectory(Paths.CoverageDir, cleanupSettings);
+         Verbose("Removed coverage folder");
+      }
+
+      var binDirs = GetDirectories(Paths.BinPattern);
+      if (binDirs.Count > 0)
+      {
+         DeleteDirectories(binDirs, cleanupSettings);
+         Verbose("Removed {0} \"bin\" directories", binDirs.Count);
+      }
+
+      var objDirs = GetDirectories(Paths.ObjPattern);
+      if (objDirs.Count > 0)
+      {
+         DeleteDirectories(objDirs, cleanupSettings);
+         Verbose("Removed {0} \"obj\" directories", objDirs.Count);
+      }
+
+      var testResultsDirs = GetDirectories(Paths.TestResultsPattern);
+      if (testResultsDirs.Count > 0)
+      {
+         DeleteDirectories(testResultsDirs, cleanupSettings);
+         Verbose("Removed {0} \"TestResults\" directories", testResultsDirs.Count);
+      }
+
+      var artifactDir = GetDirectories(Paths.ArtifactsPattern);
+      if (artifactDir.Count > 0)
+      {
+         DeleteDirectories(artifactDir, cleanupSettings);
+         Verbose("Removed {0} artifact directories", artifactDir.Count);
+      }
    });
 
 Task("Restore")
+   .IsDependentOn("Clean")
    .Does(() => DotNetCoreRestore());
 
 Task("Build")
@@ -77,10 +74,12 @@ Task("Build")
    });
 
 Task("Test")
-   .IsDependentOn("Restore")
+   .IsDependentOn("Build")
    .Does(() => {
       EnsureDirectoryExists(Paths.CoverageDir);
       var testSettings = new DotNetCoreTestSettings {
+         NoBuild = true,
+         Configuration = configuration,
          ResultsDirectory = Directory("TestResults"),
          ArgumentCustomization = args => args.Append($"--logger trx")
       };
@@ -88,7 +87,7 @@ Task("Test")
          CollectCoverage = true,
          CoverletOutputDirectory = Paths.CoverageDir,
          CoverletOutputFormat = CoverletOutputFormat.cobertura,
-         CoverletOutputName = $"{Guid.NewGuid().ToString("N")}.cobertura.xml"
+         CoverletOutputName = $"coverage.cobertura.xml"
       };
       DotNetCoreTest(Paths.TestProjectDirectory, testSettings, coverletSettings);
    });
@@ -100,7 +99,7 @@ Task("Report")
          ArgumentCustomization = args => args.Append($"-reportTypes:{reportTypes}")
       };
 
-      ReportGenerator("./coverage/*.xml", Paths.CoverageDir, reportSettings);
+      ReportGenerator("./coverage/coverage.cobertura.xml", Paths.CoverageDir, reportSettings);
    });
 
 Task("Version")
