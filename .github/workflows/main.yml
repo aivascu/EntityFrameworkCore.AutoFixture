@@ -9,9 +9,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
-        name: Checkout
-      
-      - name: Fetch Tags
       - run: |
           git fetch --tags
           git branch --create-reflog master origin/master
