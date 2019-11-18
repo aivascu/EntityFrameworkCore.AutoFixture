@@ -1,0 +1,14 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Restore
+      uses: ecampidoglio/cake-action@v1.1.1
+      with:
+        target: Test
