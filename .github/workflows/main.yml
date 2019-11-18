@@ -8,5 +8,5 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Restore
-      run: ./build.ps1 -t Test
+    - name: Test Project
+      run: build.ps1 -t Test
