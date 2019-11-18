@@ -8,7 +8,15 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Test Project
-      run: .\build.ps1 -t Test -Verbosity Diagnostic
-      shell: powershell
+      - uses: actions/checkout@v1
+        name: Checkout
+      
+      - name: Fetch Tags
+      - run: |
+          git fetch --tags
+          git branch --create-reflog master origin/master
+        shell: powershell
+      
+      - name: Test Project
+        run: .\build.ps1 -t Test -Verbosity Diagnostic
+        shell: powershell
