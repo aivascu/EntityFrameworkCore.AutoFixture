@@ -10,5 +10,5 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Test Project
-      run: .\build.ps1 -t Test
+      run: .\build.ps1 -t Test -Verbosity Diagnostic
       shell: powershell
