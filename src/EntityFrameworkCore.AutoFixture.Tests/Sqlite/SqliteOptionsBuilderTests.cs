@@ -11,6 +11,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using Xunit;
 
+#if NETCOREAPP3_0
+using Microsoft.EntityFrameworkCore.Sqlite.Infrastructure.Internal;
+#endif
+
 namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
 {
     public class SqliteOptionsBuilderTests
