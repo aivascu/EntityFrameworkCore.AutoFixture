@@ -10,6 +10,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using Xunit;
 
+#if NETCOREAPP3_0
+using Microsoft.EntityFrameworkCore.InMemory.Infrastructure.Internal;
+#endif
+
 namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
 {
     public class InMemoryOptionsBuilderTests
@@ -73,7 +77,6 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
         [AutoData]
         public void GenericBuild_ShouldCreateDbContextOptions_WithInMemoryExtension_WithName(string expected)
         {
-
             var extension = new InMemoryOptionsBuilder(expected)
                 .Build<TestDbContext>()
                 .Extensions
@@ -96,7 +99,6 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
         [AutoData]
         public void Build_ShouldCreateDbContextOptions_WithInMemoryExtension_WithName(string expected)
         {
-
             var extension = new InMemoryOptionsBuilder(expected)
                 .Build(typeof(TestDbContext))
                 .As<DbContextOptions<TestDbContext>>()
