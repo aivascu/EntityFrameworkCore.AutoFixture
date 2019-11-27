@@ -1,4 +1,5 @@
-﻿using AutoFixture;
+﻿using System;
+using AutoFixture;
 using EntityFrameworkCore.AutoFixture.Common;
 
 namespace EntityFrameworkCore.AutoFixture.Sqlite
@@ -7,6 +8,11 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
     {
         public override void Customize(IFixture fixture)
         {
+            if (fixture is null)
+            {
+                throw new ArgumentNullException(nameof(fixture));
+            }
+
             base.Customize(fixture);
 
             fixture.Customizations.Add(new SqliteOptionsSpecimenBuilder());

@@ -13,7 +13,7 @@ namespace EntityFrameworkCore.AutoFixture.Common
 
         public DbContextSpecimenBuilder(IRequestSpecification contextSpecification)
         {
-            ContextSpecification = contextSpecification
+            this.ContextSpecification = contextSpecification
                 ?? throw new ArgumentNullException(nameof(contextSpecification));
         }
 
@@ -26,7 +26,7 @@ namespace EntityFrameworkCore.AutoFixture.Common
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (!ContextSpecification.IsSatisfiedBy(request))
+            if (!this.ContextSpecification.IsSatisfiedBy(request))
             {
                 return new NoSpecimen();
             }

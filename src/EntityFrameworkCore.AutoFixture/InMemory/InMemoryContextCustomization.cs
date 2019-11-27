@@ -1,4 +1,5 @@
-﻿using AutoFixture;
+﻿using System;
+using AutoFixture;
 using EntityFrameworkCore.AutoFixture.Common;
 
 namespace EntityFrameworkCore.AutoFixture.InMemory
@@ -7,6 +8,11 @@ namespace EntityFrameworkCore.AutoFixture.InMemory
     {
         public override void Customize(IFixture fixture)
         {
+            if (fixture is null)
+            {
+                throw new ArgumentNullException(nameof(fixture));
+            }
+
             base.Customize(fixture);
 
             fixture.Customizations.Add(new InMemoryOptionsSpecimenBuilder());

@@ -13,7 +13,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Common.SpecimenBuilders
 
         public IgnoredVirtualMembersSpecimenBuilder(IRequestSpecification virtualMemberSpecification)
         {
-            VirtualMemberSpecification = virtualMemberSpecification;
+            this.VirtualMemberSpecification = virtualMemberSpecification;
         }
 
         public IRequestSpecification VirtualMemberSpecification { get; }
@@ -25,7 +25,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Common.SpecimenBuilders
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (!VirtualMemberSpecification.IsSatisfiedBy(request))
+            if (!this.VirtualMemberSpecification.IsSatisfiedBy(request))
             {
                 return new NoSpecimen();
             }

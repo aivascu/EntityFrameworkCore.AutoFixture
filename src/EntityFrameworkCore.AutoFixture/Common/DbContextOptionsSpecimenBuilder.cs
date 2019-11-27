@@ -14,7 +14,7 @@ namespace EntityFrameworkCore.AutoFixture.Common
 
         public DbContextOptionsSpecimenBuilder(IRequestSpecification optionsSpecification)
         {
-            OptionsSpecification = optionsSpecification
+            this.OptionsSpecification = optionsSpecification
                 ?? throw new ArgumentNullException(nameof(optionsSpecification));
         }
 
@@ -27,7 +27,7 @@ namespace EntityFrameworkCore.AutoFixture.Common
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (!OptionsSpecification.IsSatisfiedBy(request))
+            if (!this.OptionsSpecification.IsSatisfiedBy(request))
             {
                 return new NoSpecimen();
             }

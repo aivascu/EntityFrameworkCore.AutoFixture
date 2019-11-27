@@ -1,4 +1,5 @@
-﻿using AutoFixture;
+﻿using System;
+using AutoFixture;
 
 namespace EntityFrameworkCore.AutoFixture.Common
 {
@@ -6,6 +7,11 @@ namespace EntityFrameworkCore.AutoFixture.Common
     {
         public virtual void Customize(IFixture fixture)
         {
+            if (fixture is null)
+            {
+                throw new ArgumentNullException(nameof(fixture));
+            }
+
             fixture.Customizations.Add(new DbContextSpecimenBuilder());
             fixture.Customizations.Add(new DbContextOptionsSpecimenBuilder());
         }
