@@ -58,9 +58,8 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
 
         [Theory]
         [AutoDomainData]
-        public void Ctors_ShouldReceiveInitializedParameters(Fixture fixture)
+        public void Ctors_ShouldReceiveInitializedParameters(GuardClauseAssertion assertion)
         {
-            var assertion = new GuardClauseAssertion(fixture);
             var members = typeof(SqliteConnectionSpecimenBuilder).GetConstructors();
 
             assertion.Verify(members);

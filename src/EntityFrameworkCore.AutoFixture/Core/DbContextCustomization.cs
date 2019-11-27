@@ -1,7 +1,7 @@
 ﻿using System;
 using AutoFixture;
 
-namespace EntityFrameworkCore.AutoFixture.Common
+namespace EntityFrameworkCore.AutoFixture.Core
 {
     public class DbContextCustomization : ICustomization
     {

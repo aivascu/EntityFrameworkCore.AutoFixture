@@ -31,16 +31,12 @@
   <ItemGroup Condition="'$(TargetFramework)'=='netcoreapp2.0' OR '$(TargetFramework)'=='netcoreapp2.1' OR'$(TargetFramework)'=='netcoreapp2.2'">
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="[2.0.0, 3.0.0)" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[2.0.0, 3.0.0)" />
-    <ProjectReference
-      Include="..\EntityFrameworkCore.AutoFixture\EntityFrameworkCore.AutoFixture.csproj"
-      AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\EntityFrameworkCore.AutoFixture\EntityFrameworkCore.AutoFixture.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
-    <ProjectReference
-      Include="..\EntityFrameworkCore.AutoFixture\EntityFrameworkCore.AutoFixture.csproj"
-      AdditionalProperties="TargetFramework=netstandard2.1" />
+    <ProjectReference Include="..\EntityFrameworkCore.AutoFixture\EntityFrameworkCore.AutoFixture.csproj" AdditionalProperties="TargetFramework=netstandard2.1" />
   </ItemGroup>
 </Project>

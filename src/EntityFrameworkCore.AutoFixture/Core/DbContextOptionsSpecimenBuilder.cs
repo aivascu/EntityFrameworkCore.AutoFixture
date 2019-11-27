@@ -3,7 +3,7 @@ using System.Linq;
 using AutoFixture.Kernel;
 using Microsoft.EntityFrameworkCore;
 
-namespace EntityFrameworkCore.AutoFixture.Common
+namespace EntityFrameworkCore.AutoFixture.Core
 {
     public class DbContextOptionsSpecimenBuilder : ISpecimenBuilder
     {

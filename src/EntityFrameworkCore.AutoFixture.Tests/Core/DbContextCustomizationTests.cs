@@ -1,11 +1,11 @@
 ﻿using System;
 using AutoFixture;
 using AutoFixture.Xunit2;
-using EntityFrameworkCore.AutoFixture.Common;
+using EntityFrameworkCore.AutoFixture.Core;
 using FluentAssertions;
 using Xunit;
 
-namespace EntityFrameworkCore.AutoFixture.Tests
+namespace EntityFrameworkCore.AutoFixture.Tests.Core
 {
     public class DbContextCustomizationTests
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EntityFrameworkCore.AutoFixture.Common
+namespace EntityFrameworkCore.AutoFixture.Core
 {
     public interface IOptionsBuilder
     {

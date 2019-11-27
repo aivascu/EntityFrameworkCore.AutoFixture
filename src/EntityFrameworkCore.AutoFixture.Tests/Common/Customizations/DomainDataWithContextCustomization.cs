@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
 using AutoFixture.AutoMoq;
-using EntityFrameworkCore.AutoFixture.Common;
+using EntityFrameworkCore.AutoFixture.Core;
 
 namespace EntityFrameworkCore.AutoFixture.Tests.Common.Customizations
 {

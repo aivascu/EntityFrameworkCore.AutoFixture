@@ -3,7 +3,7 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using static System.FormattableString;
 
-namespace EntityFrameworkCore.AutoFixture.Common
+namespace EntityFrameworkCore.AutoFixture.Core
 {
     public abstract class OptionsBuilder : IOptionsBuilder
     {

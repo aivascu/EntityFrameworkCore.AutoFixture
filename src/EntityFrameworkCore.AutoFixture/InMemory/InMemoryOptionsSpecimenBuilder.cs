@@ -1,6 +1,6 @@
 ﻿using System;
 using AutoFixture.Kernel;
-using EntityFrameworkCore.AutoFixture.Common;
+using EntityFrameworkCore.AutoFixture.Core;
 
 namespace EntityFrameworkCore.AutoFixture.InMemory
 {

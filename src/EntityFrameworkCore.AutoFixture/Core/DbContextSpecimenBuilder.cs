@@ -2,7 +2,7 @@
 using AutoFixture.Kernel;
 using Microsoft.EntityFrameworkCore;
 
-namespace EntityFrameworkCore.AutoFixture.Common
+namespace EntityFrameworkCore.AutoFixture.Core
 {
     public class DbContextSpecimenBuilder : ISpecimenBuilder
     {
