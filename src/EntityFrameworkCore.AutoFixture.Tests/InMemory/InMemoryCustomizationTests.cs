@@ -13,10 +13,11 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
 {
     public class InMemoryCustomizationTests
     {
-        [Fact]
-        public void SaveChanges_ShouldCreateCustomerRecord()
+        [Theory]
+        [AutoData]
+        public void SaveChanges_ShouldCreateCustomerRecord(Fixture fixture, InMemoryContextCustomization customization)
         {
-            var fixture = new Fixture().Customize(new InMemoryContextCustomization());
+            fixture.Customize(customization);
             using var context = fixture.Create<TestDbContext>();
             context.Database.EnsureCreated();
 
@@ -43,18 +44,17 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
 
         [Theory]
         [AutoData]
-        public void Customize_ShouldAddOptionsBuilderToFixture(Fixture fixture)
+        public void Customize_ShouldAddOptionsBuilderToFixture(Fixture fixture, InMemoryContextCustomization customization)
         {
-            fixture.Customize(new InMemoryContextCustomization());
+            fixture.Customize(customization);
 
             fixture.Customizations.Should().ContainSingle(x => x.GetType() == typeof(InMemoryOptionsSpecimenBuilder));
         }
 
-        [Fact]
-        public void Customize_ForNullFixture_ShouldThrow()
+        [Theory]
+        [AutoData]
+        public void Customize_ForNullFixture_ShouldThrow(InMemoryContextCustomization customization)
         {
-            var customization = new InMemoryContextCustomization();
-
             Action act = () => customization.Customize(default);
 
             act.Should().ThrowExactly<ArgumentNullException>();

@@ -1,6 +1,6 @@
 ﻿using System;
 using AutoFixture.Kernel;
-using EntityFrameworkCore.AutoFixture.Common;
+using EntityFrameworkCore.AutoFixture.Core;
 using Microsoft.Data.Sqlite;
 
 namespace EntityFrameworkCore.AutoFixture.Sqlite

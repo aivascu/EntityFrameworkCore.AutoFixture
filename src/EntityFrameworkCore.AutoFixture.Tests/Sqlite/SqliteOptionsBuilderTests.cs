@@ -21,9 +21,11 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
     {
         [Theory]
         [AutoData]
-        public void Build_ShouldBuildDbContextOptionsInstance(Fixture fixture)
+        public void Build_ShouldBuildDbContextOptionsInstance(
+            Fixture fixture,
+            SqliteConnectionSpecimenBuilder specimenBuilder)
         {
-            fixture.Customizations.Add(new SqliteConnectionSpecimenBuilder());
+            fixture.Customizations.Add(specimenBuilder);
 
             using (var connection = fixture.Freeze<SqliteConnection>())
             {
@@ -37,9 +39,11 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
 
         [Theory]
         [AutoData]
-        public void Build_ShouldThrowArgumentNullException_WhenTypeIsNull(Fixture fixture)
+        public void Build_ShouldThrowArgumentNullException_WhenTypeIsNull(
+            Fixture fixture,
+            SqliteConnectionSpecimenBuilder specimenBuilder)
         {
-            fixture.Customizations.Add(new SqliteConnectionSpecimenBuilder());
+            fixture.Customizations.Add(specimenBuilder);
 
             using (var connection = fixture.Freeze<SqliteConnection>())
             {
@@ -53,9 +57,11 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
 
         [Theory]
         [AutoData]
-        public void Build_ShouldThrowArgumentNullException_WhenTypeIsNotDbContext(Fixture fixture)
+        public void Build_ShouldThrowArgumentNullException_WhenTypeIsNotDbContext(
+            Fixture fixture,
+            SqliteConnectionSpecimenBuilder specimenBuilder)
         {
-            fixture.Customizations.Add(new SqliteConnectionSpecimenBuilder());
+            fixture.Customizations.Add(specimenBuilder);
 
             using (var connection = fixture.Freeze<SqliteConnection>())
             {
@@ -69,9 +75,11 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
 
         [Theory]
         [AutoData]
-        public void Build_ShouldThrowArgumentNullException_WhenTypeIsAbstract(Fixture fixture)
+        public void Build_ShouldThrowArgumentNullException_WhenTypeIsAbstract(
+            Fixture fixture,
+            SqliteConnectionSpecimenBuilder specimenBuilder)
         {
-            fixture.Customizations.Add(new SqliteConnectionSpecimenBuilder());
+            fixture.Customizations.Add(specimenBuilder);
 
             using (var connection = fixture.Freeze<SqliteConnection>())
             {
@@ -85,9 +93,8 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
 
         [Theory]
         [AutoData]
-        public void Ctors_ShouldInitializeProperties(Fixture fixture)
+        public void Ctors_ShouldInitializeProperties(ConstructorInitializedMemberAssertion assertion)
         {
-            var assertion = new ConstructorInitializedMemberAssertion(fixture);
             var members = typeof(SqliteOptionsBuilder).GetConstructors();
 
             assertion.Verify(members);
@@ -95,10 +102,9 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
 
         [Theory]
         [AutoData]
-        public void Ctors_ShouldReceiveInitializedParameters(Fixture fixture)
+        public void Ctors_ShouldReceiveInitializedParameters(Fixture fixture, GuardClauseAssertion assertion)
         {
             fixture.Inject(new SqliteConnection("Data Source=:memory:"));
-            var assertion = new GuardClauseAssertion(fixture);
             var members = typeof(SqliteOptionsBuilder).GetConstructors();
 
             assertion.Verify(members);

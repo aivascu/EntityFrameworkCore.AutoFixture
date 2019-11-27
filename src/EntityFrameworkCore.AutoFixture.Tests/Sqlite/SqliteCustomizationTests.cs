@@ -36,27 +36,26 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
 
         [Theory]
         [AutoData]
-        public void Customize_ShouldAddOptionsBuilderToFixture(Fixture fixture)
+        public void Customize_ShouldAddOptionsBuilderToFixture(Fixture fixture, SqliteContextCustomization customization)
         {
-            fixture.Customize(new SqliteContextCustomization());
+            fixture.Customize(customization);
 
             fixture.Customizations.Should().ContainSingle(x => x.GetType() == typeof(SqliteOptionsSpecimenBuilder));
         }
 
         [Theory]
         [AutoData]
-        public void Customize_ShouldAddConnectionBuilderToFixture(Fixture fixture)
+        public void Customize_ShouldAddConnectionBuilderToFixture(Fixture fixture, SqliteContextCustomization customization)
         {
-            fixture.Customize(new SqliteContextCustomization());
+            fixture.Customize(customization);
 
             fixture.Customizations.Should().ContainSingle(x => x.GetType() == typeof(SqliteConnectionSpecimenBuilder));
         }
 
-        [Fact]
-        public void Customize_ForNullFixture_ShouldThrow()
+        [Theory]
+        [AutoData]
+        public void Customize_ForNullFixture_ShouldThrow(SqliteContextCustomization customization)
         {
-            var customization = new SqliteContextCustomization();
-
             Action act = () => customization.Customize(default);
 
             act.Should().ThrowExactly<ArgumentNullException>();

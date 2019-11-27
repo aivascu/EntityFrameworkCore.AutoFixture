@@ -1,5 +1,5 @@
 ﻿using System;
-using EntityFrameworkCore.AutoFixture.Common;
+using EntityFrameworkCore.AutoFixture.Core;
 using Microsoft.EntityFrameworkCore;
 
 namespace EntityFrameworkCore.AutoFixture.InMemory

@@ -2,7 +2,7 @@
 using AutoFixture;
 using AutoFixture.Idioms;
 using AutoFixture.Kernel;
-using EntityFrameworkCore.AutoFixture.Common;
+using EntityFrameworkCore.AutoFixture.Core;
 using EntityFrameworkCore.AutoFixture.Sqlite;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Attributes;
 using FluentAssertions;

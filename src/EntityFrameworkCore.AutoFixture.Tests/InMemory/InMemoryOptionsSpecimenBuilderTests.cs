@@ -2,7 +2,7 @@
 using AutoFixture;
 using AutoFixture.Idioms;
 using AutoFixture.Kernel;
-using EntityFrameworkCore.AutoFixture.Common;
+using EntityFrameworkCore.AutoFixture.Core;
 using EntityFrameworkCore.AutoFixture.InMemory;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Attributes;
 using FluentAssertions;
@@ -46,9 +46,8 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
 
         [Theory]
         [AutoDomainData]
-        public void Ctors_ShouldReceiveInitializedParameters(Fixture fixture)
+        public void Ctors_ShouldReceiveInitializedParameters(GuardClauseAssertion assertion)
         {
-            var assertion = new GuardClauseAssertion(fixture);
             var members = typeof(InMemoryOptionsSpecimenBuilder).GetConstructors();
 
             assertion.Verify(members);

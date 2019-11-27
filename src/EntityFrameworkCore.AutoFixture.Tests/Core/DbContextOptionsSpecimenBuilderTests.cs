@@ -2,7 +2,8 @@
 using AutoFixture;
 using AutoFixture.Idioms;
 using AutoFixture.Kernel;
-using EntityFrameworkCore.AutoFixture.Common;
+using AutoFixture.Xunit2;
+using EntityFrameworkCore.AutoFixture.Core;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Attributes;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
 using FluentAssertions;
@@ -10,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
 
-namespace EntityFrameworkCore.AutoFixture.Tests
+namespace EntityFrameworkCore.AutoFixture.Tests.Core
 {
     public class DbContextOptionsSpecimenBuilderTests
     {
@@ -37,14 +38,14 @@ namespace EntityFrameworkCore.AutoFixture.Tests
         [Theory]
         [AutoDomainData]
         public void Create_ShouldReturnNoSpecimen_WhenRequestNotType(
-            Mock<IRequestSpecification> specificationMock,
-            Mock<ISpecimenContext> contextMock)
+            [Frozen] Mock<IRequestSpecification> specificationMock,
+            Mock<ISpecimenContext> contextMock,
+            [Greedy] DbContextOptionsSpecimenBuilder builder)
         {
             specificationMock
                 .Setup(x => x.IsSatisfiedBy(It.IsAny<object>()))
                 .Returns(true);
 
-            var builder = new DbContextOptionsSpecimenBuilder(specificationMock.Object);
             var property = typeof(string).GetProperty(nameof(string.Length));
             var actual = builder.Create(property, contextMock.Object);
 
@@ -139,9 +140,8 @@ namespace EntityFrameworkCore.AutoFixture.Tests
 
         [Theory]
         [AutoDomainData]
-        public void Ctors_ShouldReceiveInitializedParameters(Fixture fixture)
+        public void Ctors_ShouldReceiveInitializedParameters(GuardClauseAssertion assertion)
         {
-            var assertion = new GuardClauseAssertion(fixture);
             var members = typeof(DbContextOptionsSpecimenBuilder).GetConstructors();
 
             assertion.Verify(members);
