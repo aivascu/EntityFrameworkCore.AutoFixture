@@ -10,7 +10,7 @@ namespace EntityFrameworkCore.AutoFixture.InMemory
 
         public InMemoryOptionsSpecimenBuilder(IRequestSpecification optionsSpecification)
         {
-            OptionsSpecification = optionsSpecification
+            this.OptionsSpecification = optionsSpecification
                 ?? throw new ArgumentNullException(nameof(optionsSpecification));
         }
 
@@ -26,7 +26,7 @@ namespace EntityFrameworkCore.AutoFixture.InMemory
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (!OptionsSpecification.IsSatisfiedBy(request))
+            if (!this.OptionsSpecification.IsSatisfiedBy(request))
             {
                 return new NoSpecimen();
             }

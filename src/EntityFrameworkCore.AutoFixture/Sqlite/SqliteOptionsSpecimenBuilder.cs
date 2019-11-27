@@ -9,7 +9,7 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
     {
         public SqliteOptionsSpecimenBuilder(IRequestSpecification optionsBuilderSpecification)
         {
-            OptionsBuilderSpecification = optionsBuilderSpecification
+            this.OptionsBuilderSpecification = optionsBuilderSpecification
                 ?? throw new ArgumentNullException(nameof(optionsBuilderSpecification));
         }
 
@@ -27,7 +27,7 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (!OptionsBuilderSpecification.IsSatisfiedBy(request))
+            if (!this.OptionsBuilderSpecification.IsSatisfiedBy(request))
             {
                 return new NoSpecimen();
             }

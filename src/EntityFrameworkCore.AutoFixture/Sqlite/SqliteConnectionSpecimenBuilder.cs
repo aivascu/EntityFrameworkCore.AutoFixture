@@ -8,7 +8,7 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
     {
         public SqliteConnectionSpecimenBuilder(IRequestSpecification connectionSpecification)
         {
-            ConnectionSpecification = connectionSpecification
+            this.ConnectionSpecification = connectionSpecification
                 ?? throw new ArgumentNullException(nameof(connectionSpecification));
         }
 
@@ -26,7 +26,7 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (!ConnectionSpecification.IsSatisfiedBy(request))
+            if (!this.ConnectionSpecification.IsSatisfiedBy(request))
             {
                 return new NoSpecimen();
             }

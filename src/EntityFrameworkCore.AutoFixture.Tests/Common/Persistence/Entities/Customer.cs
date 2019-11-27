@@ -12,8 +12,8 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(name));
             }
 
-            Name = name;
-            Orders = new List<Order>();
+            this.Name = name;
+            this.Orders = new List<Order>();
         }
 
         private Customer()
@@ -28,7 +28,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities
         public void Order(Item item, int count = 1)
         {
             var order = new Order(item, count, this);
-            Orders.Add(order);
+            this.Orders.Add(order);
         }
     }
 }

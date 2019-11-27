@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using static System.FormattableString;
 
 namespace EntityFrameworkCore.AutoFixture.Common
 {
@@ -17,10 +18,10 @@ namespace EntityFrameworkCore.AutoFixture.Common
 
             if (!typeof(DbContext).IsAssignableFrom(type) || type.IsAbstract)
             {
-                throw new ArgumentException($"The context type should be a non-abstract class inherited from {nameof(DbContext)}");
+                throw new ArgumentException(Invariant($"The context type should be a non-abstract class inherited from {typeof(DbContext)}"), nameof(type));
             }
 
-            var methods = GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance);
+            var methods = this.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance);
 
             var genericConfigureMethod = Array
                 .Find(methods, m => m.Name == nameof(Build) && m.IsGenericMethodDefinition)

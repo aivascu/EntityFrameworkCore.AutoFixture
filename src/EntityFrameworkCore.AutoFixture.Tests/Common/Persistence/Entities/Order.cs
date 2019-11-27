@@ -11,10 +11,10 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities
                 throw new ArgumentOutOfRangeException(nameof(count));
             }
 
-            Count = count;
+            this.Count = count;
 
-            Item = item ?? throw new ArgumentNullException(nameof(item));
-            Customer = customer ?? throw new ArgumentNullException(nameof(customer));
+            this.Item = item ?? throw new ArgumentNullException(nameof(item));
+            this.Customer = customer ?? throw new ArgumentNullException(nameof(customer));
         }
 
         private Order()

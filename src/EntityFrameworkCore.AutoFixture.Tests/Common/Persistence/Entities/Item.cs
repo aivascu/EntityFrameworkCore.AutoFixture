@@ -17,9 +17,9 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities
                 throw new ArgumentOutOfRangeException(nameof(price));
             }
 
-            Name = name;
-            Price = price;
-            Orders = new List<Order>();
+            this.Name = name;
+            this.Price = price;
+            this.Orders = new List<Order>();
         }
 
         private Item()

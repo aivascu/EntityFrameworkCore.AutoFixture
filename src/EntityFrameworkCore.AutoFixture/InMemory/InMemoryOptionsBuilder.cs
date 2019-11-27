@@ -8,7 +8,7 @@ namespace EntityFrameworkCore.AutoFixture.InMemory
     {
         public InMemoryOptionsBuilder(string databaseName)
         {
-            DatabaseName = databaseName
+            this.DatabaseName = databaseName
                 ?? throw new ArgumentNullException(nameof(databaseName));
         }
 
@@ -20,7 +20,7 @@ namespace EntityFrameworkCore.AutoFixture.InMemory
         public string DatabaseName { get; }
 
         public override DbContextOptions<TContext> Build<TContext>() => new DbContextOptionsBuilder<TContext>()
-            .UseInMemoryDatabase(DatabaseName)
+            .UseInMemoryDatabase(this.DatabaseName)
             .Options;
     }
 }

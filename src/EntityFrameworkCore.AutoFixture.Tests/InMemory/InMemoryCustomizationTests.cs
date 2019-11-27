@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AutoFixture;
+using AutoFixture.Xunit2;
 using EntityFrameworkCore.AutoFixture.InMemory;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Attributes;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
@@ -37,6 +39,25 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
 
                 context.Customers.Should().Contain(x => x.Name == "Jane Smith");
             }
+        }
+
+        [Theory]
+        [AutoData]
+        public void Customize_ShouldAddOptionsBuilderToFixture(Fixture fixture)
+        {
+            fixture.Customize(new InMemoryContextCustomization());
+
+            fixture.Customizations.Should().ContainSingle(x => x.GetType() == typeof(InMemoryOptionsSpecimenBuilder));
+        }
+
+        [Fact]
+        public void Customize_ForNullFixture_ShouldThrow()
+        {
+            var customization = new InMemoryContextCustomization();
+
+            Action act = () => customization.Customize(default);
+
+            act.Should().ThrowExactly<ArgumentNullException>();
         }
     }
 }

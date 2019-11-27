@@ -1,4 +1,7 @@
+﻿using System;
+using AutoFixture;
 using AutoFixture.Xunit2;
+using EntityFrameworkCore.AutoFixture.Sqlite;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Attributes;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities;
@@ -29,6 +32,34 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
 
                 context.Orders.Should().Contain(x => x.CustomerId == customer.Id && x.ItemId == item.Id);
             }
+        }
+
+        [Theory]
+        [AutoData]
+        public void Customize_ShouldAddOptionsBuilderToFixture(Fixture fixture)
+        {
+            fixture.Customize(new SqliteContextCustomization());
+
+            fixture.Customizations.Should().ContainSingle(x => x.GetType() == typeof(SqliteOptionsSpecimenBuilder));
+        }
+
+        [Theory]
+        [AutoData]
+        public void Customize_ShouldAddConnectionBuilderToFixture(Fixture fixture)
+        {
+            fixture.Customize(new SqliteContextCustomization());
+
+            fixture.Customizations.Should().ContainSingle(x => x.GetType() == typeof(SqliteConnectionSpecimenBuilder));
+        }
+
+        [Fact]
+        public void Customize_ForNullFixture_ShouldThrow()
+        {
+            var customization = new SqliteContextCustomization();
+
+            Action act = () => customization.Customize(default);
+
+            act.Should().ThrowExactly<ArgumentNullException>();
         }
     }
 }

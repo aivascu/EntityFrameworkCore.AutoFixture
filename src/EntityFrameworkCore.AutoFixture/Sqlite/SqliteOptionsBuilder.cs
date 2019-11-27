@@ -9,14 +9,14 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
     {
         public SqliteOptionsBuilder(SqliteConnection connection)
         {
-            Connection = connection
+            this.Connection = connection
                 ?? throw new ArgumentNullException(nameof(connection));
         }
 
         public SqliteConnection Connection { get; }
 
         public override DbContextOptions<TContext> Build<TContext>() => new DbContextOptionsBuilder<TContext>()
-            .UseSqlite(Connection)
+            .UseSqlite(this.Connection)
             .Options;
     }
 }
