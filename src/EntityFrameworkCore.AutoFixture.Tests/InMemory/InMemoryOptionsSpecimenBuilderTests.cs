@@ -2,7 +2,6 @@
 using AutoFixture;
 using AutoFixture.Idioms;
 using AutoFixture.Kernel;
-using AutoFixture.Xunit2;
 using EntityFrameworkCore.AutoFixture.Common;
 using EntityFrameworkCore.AutoFixture.InMemory;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Attributes;
