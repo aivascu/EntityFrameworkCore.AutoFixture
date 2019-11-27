@@ -1,4 +1,4 @@
-using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities;
+﻿using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
