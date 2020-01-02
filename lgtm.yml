@@ -1,0 +1,6 @@
+extraction:
+  csharp:
+    index:
+      solution: "./EntityFrameworkCore.AutoFixture.sln"
+      dotnet:
+        version: "3.1.100"
