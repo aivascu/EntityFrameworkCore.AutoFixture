@@ -3,6 +3,7 @@
 [![Build Status](https://dev.azure.com/aivascu/EntityFramework.AutoFixture/_apis/build/status/aivascu.EntityFrameworkCore.AutoFixture?branchName=master)](https://dev.azure.com/aivascu/EntityFramework.AutoFixture/_build/latest?definitionId=4&branchName=master)
 [![Azure DevOps tests](https://img.shields.io/azure-devops/tests/aivascu/EntityFramework.AutoFixture/4)](https://dev.azure.com/aivascu/EntityFramework.AutoFixture/_build/latest?definitionId=4&branchName=master)
 [![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/aivascu/EntityFramework.AutoFixture/4)](https://dev.azure.com/aivascu/EntityFramework.AutoFixture/_build)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/aivascu/EntityFrameworkCore.AutoFixture.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/aivascu/EntityFrameworkCore.AutoFixture/alerts/)
 [![Nuget](https://img.shields.io/nuget/v/EntityFrameworkCore.AutoFixture?logo=nuget)](https://www.nuget.org/packages/EntityFrameworkCore.AutoFixture/)
 [![GitHub](https://img.shields.io/github/license/aivascu/EntityFrameworkCore.AutoFixture?logo=MIT)](https://licenses.nuget.org/MIT)
 
