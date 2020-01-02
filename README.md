@@ -7,24 +7,28 @@
 [![Nuget](https://img.shields.io/nuget/v/EntityFrameworkCore.AutoFixture?logo=nuget)](https://www.nuget.org/packages/EntityFrameworkCore.AutoFixture/)
 [![GitHub](https://img.shields.io/github/license/aivascu/EntityFrameworkCore.AutoFixture?logo=MIT)](https://licenses.nuget.org/MIT)
 
-EntityFrameworkCore.AutoFixture is the logical product of the new [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/) in-memory [providers](https://docs.microsoft.com/en-us/ef/core/miscellaneous/testing/) and the [AutoFixture](https://github.com/AutoFixture/AutoFixture) library.
+**EntityFrameworkCore.AutoFixture** is the logical product of [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/) in-memory providers and [AutoFixture](https://github.com/AutoFixture/AutoFixture).
 
-The goal of this project is to minimize the boilerplate work, necessary to test the code that uses Entity Framework Core.
+Using **EntityFrameworkCore.AutoFixture** you can greatly reduce the boilerplate work necessary to unit test code that uses **Entity Framework Core** database contexts (see [examples](#examples)). You'll appreciate this library if you are already using **AutoFixture** as your auto-mocking container.
+
+**EntityFrameworkCore.AutoFixture** extens **AutoFixture** with the ability to create fully functional `DbContext` instances, with very little setup code.
+
+Unlike other libraries for faking EF contexts, **EntityFrameworkCore.AutoFixture** does not use mocking frameworks or dynamic proxies in order to create `DbContext` instances, instead it uses the Microsoft's own in-memory [providers](https://docs.microsoft.com/en-us/ef/core/miscellaneous/testing/) for EF Core. This allows to make less assumptions (read as: mock setups) in your tests about how the `DbContext` will behave in the real environment.
+
+## Features
+
+**EntityFrameworkCore.AutoFixture** offers three customizations to aid your unit testing workflow:
+
+- `InMemoryContextCustomization` - customizes fixtures to use the In-Memory database provider when creating *DbContext* instances
+- `SqliteContextCustomization` - customizes fixtures to use the SQLite database provider when creating *DbContext* instances.
+By default the customization will create contexts for an in-memory *connection string* (i.e. `DataSource=:memory:`). This can be changed by providing the fixture a predefined `SqliteConnection` instance.
+- `DbContextCustomization` - serves as the base customization for the other two implementations. The customization can be used, in more advanced scenarios, when you want to extend the fixtures with your own specimen builders.
 
 ## Examples
 
-The examples below demonstrate, the possible ways of using the library, both with a `[Fact]` and a `[Theory]`.
+The examples below demonstrate, the possible ways of using the library in [xUnit](https://github.com/xunit/xunit) test projects, both with `[Fact]` and `[Theory]` tests.
 
-The library is not however limited to `xUnit` and can be used with other testing frameworks like `NUnit` and `MSTest`, since it only provides a few `Customization` implementations.
-
-I will provide more examples, using different framework, as time goes.
-
-Mainly there are three available customizations at the moment:
-
-- `InMemoryContextCustomization` - by default uses the In-Memory database provider
-- `SqliteContextCustomization` - by default uses the SQLite database provider, with an in-memory *connection string* (i.e. `DataSource=:memory:`).
-- `DbContextCustomization` - serves as the base customization for the other two implementations.
-  Can be used if you'd like to have more flexibility in the way you configure your `Fixture`.
+The library is not limited to `xUnit` and can be used with other testing frameworks like `NUnit` and `MSTest`, since it only provides a few `Customization` implementations.
 
 ### Using In-Memory database provider
 
@@ -44,6 +48,8 @@ public void SaveChanges_ShouldCreateCustomerRecord()
     }
 }
 ```
+
+The next example uses a custom `AutoData` attribute `AutoDomainDataWithInMemoryContext` that customizes the fixture with the same customization as in the example above. This helps abstract away even more setup code. The attribute implementation can be found the sources of the test projects.
 
 ```csharp
 [Theory]
@@ -90,3 +96,8 @@ public void Customize_ShouldProvideSqliteContext([Frozen] SqliteConnection conne
     }
 }
 ```
+
+## License
+
+Copyright &copy; 2019 [Andrei Ivascu](https://github.com/aivascu).<br/>
+This project is [MIT](https://github.com/aivascu/EntityFrameworkCore.AutoFixture/blob/master/LICENSE) licensed.
