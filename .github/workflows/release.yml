@@ -10,7 +10,8 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v1
+      - name: Checkout repository
+        uses: actions/checkout@v1
 
       - name: Fetch tags and create reflog
         run: |
@@ -23,6 +24,12 @@ jobs:
         with:
           dotnet-version: '3.1.100'
 
+      - name: Setup nuget
+        uses: actions/setup-nuget@v1
+        with:
+          nuget-api-key: ${{ secrets.NUGET_API_KEY }}
+          nuget-version: latest
+
       - name: Build solution
         run: .\build.ps1 -t build
         shell: powershell
@@ -34,14 +41,17 @@ jobs:
       - name: Generate lcov report
         run: .\build.ps1 -t test:coverage:report -ScriptArgs '-reportTypes=lcov'
 
-      - name: Create NuGet packages
-        run: .\build.ps1 -t nuget:package
-        shell: powershell
-
-      - name: Publish NuGet packages
-        run: .\build.ps1 -t nuget:publish
-
       - name: Publish test coverage
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create nuget packages
+        run: .\build.ps1 -t nuget:package
+        shell: powershell
+
+      - name: Publish nuget packages
+        run: |
+          nuget push .\artifacts\*.nupkg
+          nuget push .\artifacts\*.snupkg
+        shell: powershell
