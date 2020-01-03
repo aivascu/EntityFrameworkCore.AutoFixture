@@ -1,5 +1,6 @@
 # EntityFrameworkCore.AutoFixture
 
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/aivascu/EntityFrameworkCore.AutoFixture/Release%20CD)
 [![Coverage Status](https://coveralls.io/repos/github/aivascu/EntityFrameworkCore.AutoFixture/badge.svg?branch=master)](https://coveralls.io/github/aivascu/EntityFrameworkCore.AutoFixture?branch=master)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/aivascu/EntityFrameworkCore.AutoFixture.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/aivascu/EntityFrameworkCore.AutoFixture/alerts/)
 [![Nuget](https://img.shields.io/nuget/v/EntityFrameworkCore.AutoFixture?logo=nuget)](https://www.nuget.org/packages/EntityFrameworkCore.AutoFixture/)
