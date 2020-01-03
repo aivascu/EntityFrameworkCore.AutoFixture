@@ -118,7 +118,7 @@ Task("Test:Coverage:Publish")
 
       if(string.IsNullOrWhiteSpace(token))
       {
-         Error("Unable to find variable {0} on current environemtn", "COVERALLS_REPO_TOKEN");
+         Error("Unable to find variable {0} on current environment", "COVERALLS_REPO_TOKEN");
       }
 
       CoverallsNet(
@@ -155,7 +155,7 @@ Task("NuGet:Publish")
 
       if(string.IsNullOrWhiteSpace(apiKey))
       {
-         Error("Unable to find variable {0} on current environemtn", "NUGET_API_KEY");
+         Error("Unable to find variable {0} on current environment", "NUGET_API_KEY");
       }
 
       var settings = new NuGetPushSettings {

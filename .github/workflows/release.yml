@@ -44,15 +44,8 @@ jobs:
         run: .\build.ps1 -t nuget:package
         shell: powershell
 
-      - name: Setup nuget
-        uses: nuget/setup-nuget@v1
-        with:
-          nuget-version: latest
-          nuget-api-key: ${{ secrets.NUGET_API_KEY }}
-          nuget-api-key-source: https://api.nuget.org/v3/index.json
-
       - name: Publish nuget packages
-        run: |
-          nuget push .\artifacts\*.nupkg
-          nuget push .\artifacts\*.snupkg
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: .\build.ps1 -t nuget:publish
         shell: powershell
