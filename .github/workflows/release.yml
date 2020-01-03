@@ -25,7 +25,7 @@ jobs:
           dotnet-version: '3.1.100'
 
       - name: Setup nuget
-        uses: actions/setup-nuget@v1
+        uses: nuget/setup-nuget@v1
         with:
           nuget-api-key: ${{ secrets.NUGET_API_KEY }}
           nuget-version: latest
