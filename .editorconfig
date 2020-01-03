@@ -35,6 +35,10 @@ indent_size = 2
 end_of_line = lf
 indent_size = 2
 
+# YAML files
+[*.{yml,yaml}]
+indent_size = 2
+
 # Dotnet code style settings:
 [*.{cs,vb}]
 # Sort using and Import directives with System.* appearing first

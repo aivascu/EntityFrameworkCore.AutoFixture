@@ -1,0 +1,47 @@
+name: Release CD
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Fetch tags and create reflog
+        run: |
+          git fetch --tags
+          git branch --create-reflog master origin/master
+        shell: powershell
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.1.100'
+
+      - name: Build solution
+        run: .\build.ps1 -t build
+        shell: powershell
+
+      - name: Run tests
+        run: .\build.ps1 -t test
+        shell: powershell
+
+      - name: Generate lcov report
+        run: .\build.ps1 -t test:coverage:publish -ScriptArgs '-reportTypes=lcov'
+
+      - name: Create NuGet packages
+        run: .\build.ps1 -t nuget:package
+        shell: powershell
+
+      - name: Publish NuGet packages
+        run: .\build.ps1 -t nuget:publish
+
+      - name: Publish test coverage
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
