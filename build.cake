@@ -160,6 +160,7 @@ Task("NuGet:Publish")
 
       var settings = new NuGetPushSettings {
          ApiKey = apiKey,
+         Source = "https://api.nuget.org/v3/index.json",
          SkipDuplicate = true
       };
 
