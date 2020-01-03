@@ -165,10 +165,8 @@ Task("NuGet:Publish")
       };
 
       var packagePath = GetFiles("./artifacts/*.nupkg").Single();
-      var symbolPackagePath = GetFiles("./artifacts/*.snupkg").Single();
 
       NuGetPush(packagePath, settings);
-      NuGetPush(symbolPackagePath, settings);
    });
 
 RunTarget(target);
