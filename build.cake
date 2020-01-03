@@ -2,15 +2,17 @@
 #tool "nuget:?package=OpenCover&version=4.6.519"
 #tool "nuget:?package=ReportGenerator&version=4.3.3"
 #tool "nuget:?package=GitVersion.CommandLine&version=5.1.1"
+#tool "nuget:?package=coveralls.net&version=1.0.0"
 
 #addin "nuget:?package=Cake.Coverlet&version=2.3.4"
+#addin "nuget:?package=Cake.Coveralls&version=0.10.1"
 
 #load "build/paths.cake"
 
 var target = Argument("target", "Build");
 var configuration = Argument("configuration", "Release");
+var reportTypes = Argument("reportTypes", "Html");
 var packageVersion = "0.1.0";
-var reportTypes = "HtmlInline_AzurePipelines";
 var solutionPath = "EntityFrameworkCore.AutoFixture.sln";
 var cleanupSettings = new DeleteDirectorySettings {
    Recursive = true,
@@ -56,6 +58,15 @@ Task("Clean")
       }
    });
 
+Task("Version")
+   .Does(() => {
+      var version = GitVersion();
+      Information($"Calculated semantic version: {version.SemVer}");
+
+      packageVersion = version.NuGetVersionV2;
+      Information($"Corresponding package version: {packageVersion}");
+   });
+
 Task("Restore")
    .IsDependentOn("Clean")
    .Does(() => DotNetCoreRestore());
@@ -74,7 +85,6 @@ Task("Build")
    });
 
 Task("Test")
-   .IsDependentOn("Build")
    .Does(() => {
       EnsureDirectoryExists(Paths.CoverageDir);
       var testSettings = new DotNetCoreTestSettings {
@@ -86,33 +96,41 @@ Task("Test")
       var coverletSettings = new CoverletSettings {
          CollectCoverage = true,
          CoverletOutputDirectory = Paths.CoverageDir,
-         CoverletOutputFormat = CoverletOutputFormat.cobertura,
-         CoverletOutputName = $"coverage.cobertura.xml"
+         CoverletOutputFormat = CoverletOutputFormat.opencover,
+         CoverletOutputName = $"coverage.xml"
       };
       DotNetCoreTest(Paths.TestProjectDirectory, testSettings, coverletSettings);
    });
 
-Task("Report")
+Task("Test:Coverage:Report")
    .IsDependentOn("Test")
    .Does(() => {
       var reportSettings = new ReportGeneratorSettings {
          ArgumentCustomization = args => args.Append($"-reportTypes:{reportTypes}")
       };
 
-      ReportGenerator("./coverage/coverage.cobertura.xml", Paths.CoverageDir, reportSettings);
+      ReportGenerator("./coverage/coverage.xml", Paths.CoverageDir, reportSettings);
    });
 
-Task("Version")
+Task("Test:Coverage:Publish")
    .Does(() => {
-      var version = GitVersion();
-      Information($"Calculated semantic version: {version.SemVer}");
+      var token = EnvironmentVariable("COVERALLS_REPO_TOKEN");
 
-      packageVersion = version.NuGetVersionV2;
-      Information($"Corresponding package version: {packageVersion}");
+      if(string.IsNullOrWhiteSpace(token))
+      {
+         Error("Unable to find variable {0} on current environemtn", "COVERALLS_REPO_TOKEN");
+      }
+
+      CoverallsNet(
+         "./coverage/coverage.xml",
+         CoverallsNetReportType.OpenCover,
+         new CoverallsNetSettings {
+         RepoToken = token
+      });
    });
 
-Task("Package")
-   .IsDependentOn("Build")
+Task("NuGet:Package")
+   .IsDependentOn("Version")
    .Does(() => {
       EnsureDirectoryExists("./artifacts");
 
@@ -131,18 +149,25 @@ Task("Package")
       }
    });
 
-Task("Publish")
-   .IsDependentOn("Package")
+Task("NuGet:Publish")
    .Does(() => {
+      var apiKey = EnvironmentVariable("NUGET_API_KEY");
+
+      if(string.IsNullOrWhiteSpace(apiKey))
+      {
+         Error("Unable to find variable {0} on current environemtn", "NUGET_API_KEY");
+      }
+
       var settings = new NuGetPushSettings {
-         ApiKey = EnvironmentVariable("NuGetApiKey"),
+         ApiKey = apiKey,
          SkipDuplicate = true
       };
 
-      foreach(var file in GetFiles("./artifacts/*.nupkg"))
-      {
-         NuGetPush(file, settings);
-      }
+      var packagePath = GetFiles("./artifacts/*.nupkg").Single();
+      var symbolPackagePath = GetFiles("./artifacts/*.snupkg").Single();
+
+      NuGetPush(packagePath, settings);
+      NuGetPush(symbolPackagePath, settings);
    });
 
 RunTarget(target);
