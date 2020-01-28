@@ -1,172 +1,116 @@
 #tool "nuget:?package=xunit.runner.console&version=2.4.1"
-#tool "nuget:?package=OpenCover&version=4.6.519"
 #tool "nuget:?package=ReportGenerator&version=4.3.3"
 #tool "nuget:?package=GitVersion.CommandLine&version=5.1.1"
-#tool "nuget:?package=coveralls.net&version=1.0.0"
 
 #addin "nuget:?package=Cake.Coverlet&version=2.3.4"
-#addin "nuget:?package=Cake.Coveralls&version=0.10.1"
 
-#load "build/paths.cake"
+#load "build/BuildData.cake"
 
 var target = Argument("target", "Build");
 var configuration = Argument("configuration", "Release");
-var reportTypes = Argument("reportTypes", "Html");
-var packageVersion = "0.1.0";
-var solutionPath = "EntityFrameworkCore.AutoFixture.sln";
-var cleanupSettings = new DeleteDirectorySettings {
-   Recursive = true,
-   Force = true
-};
+
+// SETUP
+Setup<BuildData>((context) => {
+   return new BuildData(context);
+});
 
 // TASKS
 
 Task("Clean")
-   .Does(() => {
-      if (DirectoryExists(Paths.CoverageDir))
-      {
-         DeleteDirectory(Paths.CoverageDir, cleanupSettings);
-         Verbose("Removed coverage folder");
-      }
-
-      var binDirs = GetDirectories(Paths.BinPattern);
-      if (binDirs.Count > 0)
-      {
-         DeleteDirectories(binDirs, cleanupSettings);
-         Verbose("Removed {0} \"bin\" directories", binDirs.Count);
-      }
-
-      var objDirs = GetDirectories(Paths.ObjPattern);
-      if (objDirs.Count > 0)
-      {
-         DeleteDirectories(objDirs, cleanupSettings);
-         Verbose("Removed {0} \"obj\" directories", objDirs.Count);
-      }
-
-      var testResultsDirs = GetDirectories(Paths.TestResultsPattern);
-      if (testResultsDirs.Count > 0)
-      {
-         DeleteDirectories(testResultsDirs, cleanupSettings);
-         Verbose("Removed {0} \"TestResults\" directories", testResultsDirs.Count);
-      }
-
-      var artifactDir = GetDirectories(Paths.ArtifactsPattern);
-      if (artifactDir.Count > 0)
-      {
-         DeleteDirectories(artifactDir, cleanupSettings);
-         Verbose("Removed {0} artifact directories", artifactDir.Count);
-      }
-   });
-
-Task("Version")
-   .Does(() => {
-      var version = GitVersion();
-      Information($"Calculated semantic version: {version.SemVer}");
-
-      packageVersion = version.NuGetVersionV2;
-      Information($"Corresponding package version: {packageVersion}");
+   .Does<BuildData>((data) => {
+      data.CoverageData.DeleteDirectories();
+      data.SolutionData.DeleteBuildDirectories();
+      data.TestData.DeleteDirectories();
+      data.PackageData.DeleteDirectories();
    });
 
 Task("Restore")
    .IsDependentOn("Clean")
-   .Does(() => DotNetCoreRestore());
+   .Does<BuildData>((data) =>{
+      var settings = new DotNetCoreRestoreSettings {
+         WorkingDirectory = data.SolutionData.SolutionPath.GetDirectory()
+      };
+      DotNetCoreRestore(settings);
+   } );
 
 Task("Build")
    .IsDependentOn("Restore")
-   .IsDependentOn("Version")
-   .Does(() => {
+   .Does<BuildData>((data) => {
       DotNetCoreBuild(
-         Paths.SolutionFile.ToString(),
+         data.SolutionData.SolutionPath.ToString(),
          new DotNetCoreBuildSettings
          { 
-            Configuration = configuration,
-            ArgumentCustomization = args => args.Append($"/p:Version={packageVersion}")
+            Configuration = data.Configuration,
+            ArgumentCustomization =
+               args => args.Append($"/p:Version={data.VersionData.Version.NuGetVersionV2}")
          });
    });
 
 Task("Test")
-   .Does(() => {
-      EnsureDirectoryExists(Paths.CoverageDir);
+   .IsDependentOn("Build")
+   .Does<BuildData>((data) => {
+      data.CoverageData.CreateDirectories();
       var testSettings = new DotNetCoreTestSettings {
          NoBuild = true,
-         Configuration = configuration,
-         ResultsDirectory = Directory("TestResults"),
+         Configuration = data.Configuration,
+         ResultsDirectory = data.TestData.TestResultsDirectory,
          ArgumentCustomization = args => args.Append($"--logger trx")
       };
       var coverletSettings = new CoverletSettings {
          CollectCoverage = true,
-         CoverletOutputDirectory = Paths.CoverageDir,
+         CoverletOutputDirectory = data.CoverageData.CoverageDirectory,
          CoverletOutputFormat = CoverletOutputFormat.opencover,
-         CoverletOutputName = $"coverage.xml"
-      };
-      DotNetCoreTest(Paths.TestProjectDirectory, testSettings, coverletSettings);
-   });
-
-Task("Test:Coverage:Report")
-   .IsDependentOn("Test")
-   .Does(() => {
-      var reportSettings = new ReportGeneratorSettings {
-         ArgumentCustomization = args => args.Append($"-reportTypes:{reportTypes}")
       };
 
-      ReportGenerator("./coverage/coverage.xml", Paths.CoverageDir, reportSettings);
-   });
-
-Task("Test:Coverage:Publish")
-   .Does(() => {
-      var token = EnvironmentVariable("COVERALLS_REPO_TOKEN");
-
-      if(string.IsNullOrWhiteSpace(token))
+      foreach(var project in data.SolutionData.GetTestProjects())
       {
-         Error("Unable to find variable {0} on current environment", "COVERALLS_REPO_TOKEN");
+         coverletSettings.CoverletOutputName = $"{project.Name}.opencover.xml";
+         DotNetCoreTest(project.Path.FullPath, testSettings, coverletSettings);
       }
+   });
 
-      CoverallsNet(
-         "./coverage/coverage.xml",
-         CoverallsNetReportType.OpenCover,
-         new CoverallsNetSettings {
-         RepoToken = token
-      });
+Task("Test:Coverage")
+   .IsDependentOn("Test")
+   .Does<BuildData>((data) => {
+      var reportSettings = new ReportGeneratorSettings {
+         ArgumentCustomization = args => args.Append($"-reportTypes:{data.CoverageData.ReportTypes}")
+      };
+      var reports = data.CoverageData.GetReportFiles();
+      ReportGenerator(reports, data.CoverageData.ReportsDirectory, reportSettings);
    });
 
 Task("NuGet:Package")
-   .IsDependentOn("Version")
-   .Does(() => {
-      EnsureDirectoryExists("./artifacts");
+   .IsDependentOn("Build")
+   .Does<BuildData>((data) => {
+      data.PackageData.CreateDirectories();
 
-      var projects = ParseSolution(solutionPath).Projects
-      .Where(p => p.GetType() != typeof(SolutionFolder) && !p.Name.EndsWith("Tests"));
+      var packSettings = new DotNetCorePackSettings 
+      {
+         Configuration = configuration,
+         OutputDirectory = data.PackageData.PackagesDirectory,
+         IncludeSymbols = true,
+         ArgumentCustomization =
+            args => args.Append($"/p:Version={data.VersionData.Version.NuGetVersionV2} /p:SymbolPackageFormat=snupkg")
+      };
 
+      var projects = data.SolutionData.GetAppProjects();
       foreach(var project in projects)
       {
          Information($"Packaging project {project.Name}...");
-         DotNetCorePack(project.Path.ToString(), new DotNetCorePackSettings {
-            Configuration = configuration,
-            OutputDirectory = Directory("./artifacts/"),
-            IncludeSymbols = true,
-            ArgumentCustomization = args => args.Append($"/p:Version={packageVersion} /p:SymbolPackageFormat=snupkg")
-         });
+         DotNetCorePack(project.Path.ToString(), packSettings);
       }
    });
 
 Task("NuGet:Publish")
-   .Does(() => {
-      var apiKey = EnvironmentVariable("NUGET_API_KEY");
-
-      if(string.IsNullOrWhiteSpace(apiKey))
-      {
-         Error("Unable to find variable {0} on current environment", "NUGET_API_KEY");
-      }
-
+   .IsDependentOn("NuGet:Package")
+   .Does<BuildData>((data) => {
       var settings = new NuGetPushSettings {
-         ApiKey = apiKey,
+         ApiKey = data.PackageData.ApiKey,
          Source = "https://api.nuget.org/v3/index.json",
          SkipDuplicate = true
       };
-
-      var packagePath = GetFiles("./artifacts/*.nupkg").Single();
-
-      NuGetPush(packagePath, settings);
+      var packageFiles = data.PackageData.GetPackageFiles();
+      NuGetPush(packageFiles, settings);
    });
 
 RunTarget(target);
