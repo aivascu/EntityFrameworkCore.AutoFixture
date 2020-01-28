@@ -27,6 +27,7 @@ Task("Clean")
 Task("Restore")
    .IsDependentOn("Clean")
    .Does<BuildData>((data) =>{
+      Environment.SetEnvironmentVariable("DOTNET_CLI_TELEMETRY_OPTOUT", "true");
       var settings = new DotNetCoreRestoreSettings {
          WorkingDirectory = data.SolutionData.SolutionPath.GetDirectory()
       };
