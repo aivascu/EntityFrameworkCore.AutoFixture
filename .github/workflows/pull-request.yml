@@ -36,7 +36,7 @@ jobs:
         shell: powershell
 
       - name: Generate lcov report
-        run: .\build.ps1 --target='test:coverage' --reportTypes='lcov' --exclusive
+        run: .\build.ps1 --target='test:coverage' --reportTypes='lcov' --reportDir='coverage' --exclusive
 
       - name: Publish test coverage
         uses: coverallsapp/github-action@master
