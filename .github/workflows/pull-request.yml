@@ -28,15 +28,15 @@ jobs:
           dotnet-version: '3.1.100'
 
       - name: Build solution
-        run: .\build.ps1 -t build
+        run: .\build.ps1 --target='build'
         shell: powershell
 
       - name: Run tests
-        run: .\build.ps1 -t test
+        run: .\build.ps1 --target='test' --exclusive
         shell: powershell
 
       - name: Generate lcov report
-        run: .\build.ps1 -t test:coverage:report -ScriptArgs '-reportTypes=lcov'
+        run: .\build.ps1 --target='test:coverage' --reportTypes='lcov' --exclusive
 
       - name: Publish test coverage
         uses: coverallsapp/github-action@master
