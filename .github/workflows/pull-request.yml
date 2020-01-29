@@ -32,12 +32,6 @@ jobs:
         run: .\build.ps1 --target='test:coverage' --reportTypes='lcov' --reportDir='coverage'
         shell: powershell
 
-      - name: Display version
-        run: Write-Host $env:build_version
-        shell: powershell
-        env:
-          build_version: ${{ steps.build.outputs.version }}
-
       - name: Publish test coverage
         uses: coverallsapp/github-action@master
         with:
