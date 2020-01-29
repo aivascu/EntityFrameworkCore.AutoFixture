@@ -27,17 +27,16 @@ jobs:
         with:
           dotnet-version: '3.1.100'
 
-      - name: Build solution
-        run: .\build.ps1 --target='build'
-        shell: powershell
-
-      - name: Run tests
-        run: .\build.ps1 --target='test' --exclusive
-        shell: powershell
-
       - name: Generate lcov report
-        run: .\build.ps1 --target='test:coverage' --reportTypes='lcov' --reportDir='coverage' --exclusive
+        id: build
+        run: .\build.ps1 --target='test:coverage' --reportTypes='lcov' --reportDir='coverage'
         shell: powershell
+
+      - name: Display version
+        run: Write-Host $env:build_version
+        shell: powershell
+        env:
+          build_version: ${{ steps.build.outputs.version }}
 
       - name: Publish test coverage
         uses: coverallsapp/github-action@master
