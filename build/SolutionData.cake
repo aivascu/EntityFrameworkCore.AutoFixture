@@ -51,12 +51,18 @@ public class SolutionData
             Force = true
         };
 
-        var binDirectories = this.context.GetDirectories("[Bb]in/");
-        this.context.Information($"Removing:\r\n{string.Join("\r\n", binDirectories.Select(d => d.FullPath))}");
-        this.context.DeleteDirectories(binDirectories, cleanupSettings);
+        var binDirectories = this.context.GetDirectories("**/[Bb]in/");
+        if (binDirectories.Count > 0)
+        {
+            this.context.Information($"Removing:\r\n{string.Join("\r\n", binDirectories.Select(d => d.FullPath))}");
+            this.context.DeleteDirectories(binDirectories, cleanupSettings);
+        }
 
-        var objDirectories = this.context.GetDirectories("[Oo]bj/");
-        this.context.Information($"Removing:\r\n{string.Join("\r\n", objDirectories.Select(d => d.FullPath))}");
-        this.context.DeleteDirectories(objDirectories, cleanupSettings);
+        var objDirectories = this.context.GetDirectories("**/[Oo]bj/");
+        if (objDirectories.Count > 0)
+        {
+            this.context.Information($"Removing:\r\n{string.Join("\r\n", objDirectories.Select(d => d.FullPath))}");
+            this.context.DeleteDirectories(objDirectories, cleanupSettings);
+        }
     }
 }
