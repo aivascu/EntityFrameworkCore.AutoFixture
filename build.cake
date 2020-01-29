@@ -26,8 +26,9 @@ Task("Clean")
 
 Task("Restore")
    .IsDependentOn("Clean")
+   .IsDependentOn("GitHub:Output:Version")
+   .IsDependentOn("DotNet:Telemetry:Optout")
    .Does<BuildData>((data) =>{
-      Environment.SetEnvironmentVariable("DOTNET_CLI_TELEMETRY_OPTOUT", "true");
       var settings = new DotNetCoreRestoreSettings {
          WorkingDirectory = data.SolutionData.SolutionPath.GetDirectory()
       };
@@ -87,17 +88,17 @@ Task("NuGet:Package")
 
       var packSettings = new DotNetCorePackSettings 
       {
-         Configuration = configuration,
+         Configuration = data.Configuration,
          OutputDirectory = data.PackageData.PackagesDirectory,
+         NoBuild = true,
          IncludeSymbols = true,
          ArgumentCustomization =
             args => args.Append($"/p:Version={data.VersionData.Version.NuGetVersionV2} /p:SymbolPackageFormat=snupkg")
       };
 
-      var projects = data.SolutionData.GetAppProjects();
-      foreach(var project in projects)
+      foreach(var project in data.SolutionData.GetAppProjects())
       {
-         Information($"Packaging project {project.Name}...");
+         Information("Packaging: {0}...", project.Name);
          DotNetCorePack(project.Path.ToString(), packSettings);
       }
    });
@@ -112,6 +113,16 @@ Task("NuGet:Publish")
       };
       var packageFiles = data.PackageData.GetPackageFiles();
       NuGetPush(packageFiles, settings);
+   });
+
+Task("GitHub:Output:Version")
+   .Does<BuildData>(data => {
+      Information("::set-output name={0}::{1}", "version", data.VersionData.Version.MajorMinorPatch);
+   });
+
+Task("DotNet:Telemetry:Optout")
+   .Does<BuildData>((data) => {
+      data.SetEnvironmentVariable("DOTNET_CLI_TELEMETRY_OPTOUT", "true");
    });
 
 RunTarget(target);
