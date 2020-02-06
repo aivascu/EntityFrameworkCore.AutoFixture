@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.0;netcoreapp2.1;netcoreapp2.2;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.0;netcoreapp2.1;netcoreapp2.2;netcoreapp3.0;netcoreapp3.1</TargetFrameworks>
 
     <IsPackable>false</IsPackable>
     <LangVersion>8.0</LangVersion>
@@ -34,9 +34,9 @@
     <ProjectReference Include="..\EntityFrameworkCore.AutoFixture\EntityFrameworkCore.AutoFixture.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="3.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0' OR '$(TargetFramework)'=='netcoreapp3.1'">
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="[3.0.0, 4.0.0)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[3.0.0, 4.0.0)" />
     <ProjectReference Include="..\EntityFrameworkCore.AutoFixture\EntityFrameworkCore.AutoFixture.csproj" AdditionalProperties="TargetFramework=netstandard2.1" />
   </ItemGroup>
 </Project>
