@@ -117,7 +117,7 @@ Task("NuGet:Publish")
 
 Task("GitHub:Output:Version")
    .Does<BuildData>(data => {
-      Information("::set-output name={0}::{1}", "version", data.VersionData.Version.MajorMinorPatch);
+      Information("::set-output name={0}::{1}", "version", data.VersionData.Version.NuGetVersionV2);
    });
 
 Task("DotNet:Telemetry:Optout")
