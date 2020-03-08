@@ -4,16 +4,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EntityFrameworkCore.AutoFixture.Tests.Common.Persistence
 {
-    public class TestDbContext : DbContext
+    public class TestCustomDbContext : DbContext
     {
-        public TestDbContext()
+        public TestCustomDbContext()
         {
         }
 
-        public TestDbContext(DbContextOptions<TestDbContext> options)
+        public TestCustomDbContext(
+            DbContextOptions<TestCustomDbContext> options,
+            ConfigurationOptions configurationOptions)
             : base(options)
         {
+            this.ConfigurationOptions = configurationOptions;
         }
+
+        public ConfigurationOptions ConfigurationOptions { get; }
 
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Item> Items { get; set; }
@@ -25,10 +30,5 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Common.Persistence
             modelBuilder.ApplyConfiguration(new ItemConfiguration());
             modelBuilder.ApplyConfiguration(new OrderConfiguration());
         }
-    }
-
-    public class ConfigurationOptions
-    {
-        public string SomeValue { get; set; }
     }
 }
