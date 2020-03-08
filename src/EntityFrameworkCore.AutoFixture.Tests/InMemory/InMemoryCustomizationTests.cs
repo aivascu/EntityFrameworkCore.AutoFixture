@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using AutoFixture;
+using AutoFixture.Kernel;
 using AutoFixture.Xunit2;
 using EntityFrameworkCore.AutoFixture.InMemory;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Attributes;
@@ -15,9 +16,17 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
     {
         [Theory]
         [AutoData]
-        public void SaveChanges_ShouldCreateCustomerRecord(Fixture fixture, InMemoryContextCustomization customization)
+        public void SaveChanges_ShouldCreateCustomerRecord(
+            InMemoryContextCustomization customization,
+            Fixture fixture)
         {
-            fixture.Customize(customization);
+            fixture.Customize(
+                    new CompositeCustomization(
+                        customization,
+                        new ConstructorCustomization(
+                            typeof(TestDbContext),
+                            new GreedyConstructorQuery())));
+
             using var context = fixture.Create<TestDbContext>();
             context.Database.EnsureCreated();
 
@@ -29,7 +38,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
 
         [Theory]
         [AutoDomainDataWithInMemoryContext]
-        public async Task SaveChangesAsync_ShouldCreateCustomerRecord(TestDbContext context)
+        public async Task SaveChangesAsync_ShouldCreateCustomerRecord([Greedy] TestDbContext context)
         {
             using (context)
             {
@@ -44,11 +53,13 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
 
         [Theory]
         [AutoData]
-        public void Customize_ShouldAddOptionsBuilderToFixture(Fixture fixture, InMemoryContextCustomization customization)
+        public void Customize_ShouldAddOptionsBuilderToFixture(InMemoryContextCustomization customization,
+            Fixture fixture)
         {
             fixture.Customize(customization);
 
-            fixture.Customizations.Should().ContainSingle(x => x.GetType() == typeof(InMemoryOptionsSpecimenBuilder));
+            fixture.Customizations.Should()
+                .ContainSingle(x => x.GetType() == typeof(InMemoryOptionsSpecimenBuilder));
         }
 
         [Theory]
@@ -58,6 +69,22 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
             Action act = () => customization.Customize(default);
 
             act.Should().ThrowExactly<ArgumentNullException>();
+        }
+
+        [Theory]
+        [AutoDomainDataWithInMemoryContext]
+        public void Customize_ForCustomDbContext_ShouldReturnContextInstance([Greedy] TestCustomDbContext context)
+        {
+            context.Should().NotBeNull()
+                .And.BeOfType<TestCustomDbContext>();
+        }
+        
+        [Theory]
+        [AutoDomainDataWithInMemoryContext]
+        public void Customize_ForCustomDbContext_ProvideValueForOtherParameters(
+            [Greedy] TestCustomDbContext context)
+        {
+            context.ConfigurationOptions.Should().NotBeNull();
         }
     }
 }

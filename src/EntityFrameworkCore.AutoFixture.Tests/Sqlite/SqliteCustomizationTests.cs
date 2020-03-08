@@ -15,7 +15,10 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
     {
         [Theory]
         [AutoDomainDataWithSqliteContext]
-        public void Customize_ShouldProvideSqliteContext([Frozen] SqliteConnection connection, TestDbContext context, Item item, Customer customer)
+        public void Customize_ShouldProvideSqliteContext(
+            [Frozen] SqliteConnection connection,
+            [Greedy] TestDbContext context,
+            Item item, Customer customer)
         {
             using (connection)
             using (context)

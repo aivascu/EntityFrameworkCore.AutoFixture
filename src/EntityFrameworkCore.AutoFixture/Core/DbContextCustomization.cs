@@ -12,7 +12,6 @@ namespace EntityFrameworkCore.AutoFixture.Core
                 throw new ArgumentNullException(nameof(fixture));
             }
 
-            fixture.Customizations.Add(new DbContextSpecimenBuilder());
             fixture.Customizations.Add(new DbContextOptionsSpecimenBuilder());
         }
     }
