@@ -63,5 +63,21 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
 
             act.Should().ThrowExactly<ArgumentNullException>();
         }
+        
+        [Theory]
+        [AutoDomainDataWithSqliteContext]
+        public void Customize_ForCustomDbContext_ShouldReturnContextInstance([Greedy] TestCustomDbContext context)
+        {
+            context.Should().NotBeNull()
+                .And.BeOfType<TestCustomDbContext>();
+        }
+        
+        [Theory]
+        [AutoDomainDataWithSqliteContext]
+        public void Customize_ForCustomDbContext_ProvideValueForOtherParameters(
+            [Greedy] TestCustomDbContext context)
+        {
+            context.ConfigurationOptions.Should().NotBeNull();
+        }
     }
 }
