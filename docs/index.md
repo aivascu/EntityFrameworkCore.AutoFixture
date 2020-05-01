@@ -67,6 +67,8 @@ public async Task SaveChangesAsync_ShouldCreateCustomerRecord(TestDbContext cont
 }
 ```
 
+For more examples using the In-Memory database provider see the [docs](./using-in-memory-provider).
+
 ### Using SQLite database provider
 
 When using the SQLite database provider be sure to also _freeze_ / _inject_ the `SqliteConnection` instance, in order to be able to control its lifetime.
