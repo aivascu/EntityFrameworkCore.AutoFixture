@@ -9,6 +9,7 @@ on:
         - '**.md'
         - 'readme'
         - 'license'
+        - '_config.yml'
 
 jobs:
   build:
