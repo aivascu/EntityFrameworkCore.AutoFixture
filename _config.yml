@@ -1,1 +1,5 @@
 theme: jekyll-theme-slate
+title: EntityFrameworkCore.AutoFixture
+description: Remove the boilerplate from your EF Core unit tests
+show_downloads: true
+google_analytics: UA-165286290-1
