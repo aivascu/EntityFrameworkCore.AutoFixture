@@ -4,12 +4,12 @@ on:
   push:
     branches:
       - master
-      paths-ignore:
-        - 'docs/'
-        - '**.md'
-        - 'readme'
-        - 'license'
-        - '_config.yml'
+    paths-ignore:
+      - 'docs/'
+      - '**.md'
+      - 'readme'
+      - 'license'
+      - '_config.yml'
 
 jobs:
   build:
