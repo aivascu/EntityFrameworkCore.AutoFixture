@@ -7,8 +7,11 @@ using EntityFrameworkCore.AutoFixture.InMemory;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using Xunit;
+
+#if NETCOREAPP2_1
+using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
+#endif
 
 #if NETCOREAPP3_0 || NETCOREAPP3_1
 using Microsoft.EntityFrameworkCore.InMemory.Infrastructure.Internal;
@@ -83,7 +86,9 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
                 .Single(x => x.GetType() == typeof(InMemoryOptionsExtension))
                 .As<InMemoryOptionsExtension>();
 
+#pragma warning disable EF1001 // Internal EF Core API usage.
             extension.StoreName.Should().Be(expected);
+#pragma warning restore EF1001 // Internal EF Core API usage.
         }
 
         [Theory]
@@ -106,7 +111,9 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
                 .Single(x => x.GetType() == typeof(InMemoryOptionsExtension))
                 .As<InMemoryOptionsExtension>();
 
+#pragma warning disable EF1001 // Internal EF Core API usage.
             extension.StoreName.Should().Be(expected);
+#pragma warning restore EF1001 // Internal EF Core API usage.
         }
 
         private abstract class AbstractDbContext : DbContext { }
