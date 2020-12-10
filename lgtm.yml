@@ -3,4 +3,4 @@ extraction:
     index:
       solution: "./EntityFrameworkCore.AutoFixture.sln"
       dotnet:
-        version: "3.1.100"
+        version: "5.0.100"
