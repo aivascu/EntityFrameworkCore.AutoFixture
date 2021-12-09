@@ -1,0 +1,32 @@
+<Project>
+  <PropertyGroup>
+    <Authors>Andrei Ivascu</Authors>
+    <Copyright>Andrei Ivascu</Copyright>
+
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>A library aimed to minimize the setup of Entity Framework Core unit-testing database providers in conjunction with AutoFixture.</Description>
+    <PackageTags>EntityFramework;EntityFrameworkCore;EFCore;EF;AutoFixture;UnitTest;SQLite;In-Memory;Database;Tests</PackageTags>
+    <PackageProjectUrl>https://github.com/aivascu/EntityFrameworkCore.AutoFixture</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/aivascu/EntityFrameworkCore.AutoFixture</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>readme.md</PackageReadmeFile> 
+
+    <!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+    <!-- Embed source files that are not tracked by the source control manager in the PDB -->
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- <SourceRoot Include="$(MSBuildThisFileDirectory)/"/> -->
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\readme.md" Pack="true" PackagePath="\" /> 
+    <None Include="..\..\icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+</Project>

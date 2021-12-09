@@ -1,10 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.1;netcoreapp3.0;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1;netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
 
     <IsPackable>false</IsPackable>
     <LangVersion>8.0</LangVersion>
+    <NoWarn>1701;1702;EF1001;NETSDK1138</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,10 +26,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="coverlet.msbuild" Version="2.9.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='netcoreapp2.1'">
@@ -37,9 +34,21 @@
     <ProjectReference Include="..\EntityFrameworkCore.AutoFixture\EntityFrameworkCore.AutoFixture.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0' OR '$(TargetFramework)'=='netcoreapp3.1'">
+  <ItemGroup Condition="'$(TargetFramework)'=='netcoreapp3.1'">
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="3.1.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.8" />
-    <ProjectReference Include="..\EntityFrameworkCore.AutoFixture\EntityFrameworkCore.AutoFixture.csproj" AdditionalProperties="TargetFramework=netstandard2.1" />
+    <ProjectReference Include="..\EntityFrameworkCore.AutoFixture\EntityFrameworkCore.AutoFixture.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net5.'))">
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="5.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0" />
+    <ProjectReference Include="..\EntityFrameworkCore.AutoFixture\EntityFrameworkCore.AutoFixture.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net6.'))">
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />
+    <ProjectReference Include="..\EntityFrameworkCore.AutoFixture\EntityFrameworkCore.AutoFixture.csproj" />
   </ItemGroup>
 </Project>

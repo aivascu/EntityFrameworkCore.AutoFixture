@@ -1,23 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\Common.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Copyright>Andrei Ivascu</Copyright>
-    <Authors>Andrei Ivascu</Authors>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageId>EntityFrameworkCore.AutoFixture</PackageId>
-    <Product>EntityFrameworkCore.AutoFixture</Product>
-    <Version>0.0.0</Version>
-    <Description>A library aimed to minimize the setup of Entity Framework Core unit-testing database providers in conjunction with AutoFixture.</Description>
-    <PackageProjectUrl>https://github.com/aivascu/EntityFrameworkCore.AutoFixture</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/aivascu/EntityFrameworkCore.AutoFixture</RepositoryUrl>
-    <PackageTags>EntityFramework, EntityFrameworkCore, EFCore, EF, AutoFixture,UnitTest, SQLite, In-Memory, Database Provider</PackageTags>
-    <LangVersion>8.0</LangVersion>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net5.0;net6.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoFixture" Version="[4.4.0, 5.0.0]" />
+    <PackageReference Include="AutoFixture" Version="4.4.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -33,10 +23,26 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="[3.0.0, 4.0.0)" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[3.0.0, 4.0.0)" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="[3.0.0, 4.0.0)" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="[3.0.0, 4.0.0)" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="[3.0.0, 4.0.0)" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="[3.0.0, 5.0.0)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[3.0.0, 5.0.0)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="[3.0.0, 5.0.0)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="[3.0.0, 5.0.0)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="[3.0.0, 5.0.0)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net5.'))">
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="5.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net6.'))">
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="6.0.0" />
   </ItemGroup>
 </Project>

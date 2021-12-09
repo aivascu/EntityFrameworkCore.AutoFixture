@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using AutoFixture;
 using AutoFixture.Idioms;
@@ -13,7 +13,7 @@ using Xunit;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 #endif
 
-#if NETCOREAPP3_0 || NETCOREAPP3_1
+#if NETCOREAPP3_1_OR_GREATER
 using Microsoft.EntityFrameworkCore.InMemory.Infrastructure.Internal;
 #endif
 

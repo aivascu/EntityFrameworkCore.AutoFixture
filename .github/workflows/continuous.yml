@@ -9,18 +9,21 @@
 #
 #     - To trigger manual generation invoke:
 #
-#         nuke --generate-configuration GitHubActions_release --host GitHubActions
+#         nuke --generate-configuration GitHubActions_continuous --host GitHubActions
 #
 # </auto-generated>
 # ------------------------------------------------------------------------------
 
-name: release
+name: continuous
 
 on:
   push:
-    tags:
-      - 'v0.*'
-      - 'v1.*'
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+      - develop
 
 jobs:
   windows-latest:
@@ -35,24 +38,7 @@ jobs:
             .nuke/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
-      - name: Run './build.cmd Cover Publish'
-        run: ./build.cmd Cover Publish
+      - name: Run './build.cmd Cover Pack'
+        run: ./build.cmd Cover Pack
         env:
           GitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          NuGetApiKey: ${{ secrets.NUGET_API_KEY }}
-      - uses: actions/upload-artifact@v1
-        with:
-          name: testresults
-          path: artifacts/testresults
-      - uses: actions/upload-artifact@v1
-        with:
-          name: coverage
-          path: artifacts/coverage
-      - uses: actions/upload-artifact@v1
-        with:
-          name: reports
-          path: artifacts/reports
-      - uses: actions/upload-artifact@v1
-        with:
-          name: packages
-          path: artifacts/packages

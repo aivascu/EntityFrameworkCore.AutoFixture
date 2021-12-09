@@ -1,11 +1,14 @@
-assembly-versioning-scheme: MajorMinorPatch
 mode: ContinuousDelivery
-major-version-bump-message: '\+semver:\s?(breaking|major)'
-minor-version-bump-message: '\+semver:\s?(feature|minor)'
-patch-version-bump-message: '\+semver:\s?(fix|patch)'
-no-bump-message: '\+semver:\s?(none|skip)'
-commit-message-incrementing: Enabled
+assembly-versioning-scheme: MajorMinorPatch
+tag-prefix: '[vV]'
+branches:
+  master:
+    tag: ''
+    increment: Patch
+  release:
+    source-branches: ['master']
+    prevent-increment-of-merged-branch-version: true
+    tag: 'preview'
 ignore:
   sha: []
-increment: Inherit
 merge-message-formats: {}
