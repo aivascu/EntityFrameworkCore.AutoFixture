@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using AutoFixture.Kernel;
 using Microsoft.EntityFrameworkCore;
@@ -22,48 +22,30 @@ namespace EntityFrameworkCore.AutoFixture.Core
 
         public object Create(object request, ISpecimenContext context)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            if (!this.OptionsSpecification.IsSatisfiedBy(request))
-            {
-                return new NoSpecimen();
-            }
-
-            if (!(request is Type type))
-            {
-                return new NoSpecimen();
-            }
+            if (context == null) throw new ArgumentNullException(nameof(context));
+            if (!this.OptionsSpecification.IsSatisfiedBy(request)) return new NoSpecimen();
+            if (request is not Type type) return new NoSpecimen();
 
             var contextType = type.GetGenericArguments().Single();
-
             var optionsBuilderObj = context.Resolve(typeof(IOptionsBuilder));
-
-            if (optionsBuilderObj is NoSpecimen
-                || optionsBuilderObj is OmitSpecimen
-                || optionsBuilderObj is null)
+            return optionsBuilderObj switch
             {
-                return optionsBuilderObj;
-            }
-
-            if (!(optionsBuilderObj is IOptionsBuilder optionsBuilder))
-            {
-                return new NoSpecimen();
-            }
-
-            return optionsBuilder.Build(contextType);
+                NoSpecimen or OmitSpecimen or null => optionsBuilderObj,
+                IOptionsBuilder optionsBuilder => optionsBuilder.Build(contextType),
+                _ => new NoSpecimen()
+            };
         }
 
         private class IsDbContextOptionsSpecification : IRequestSpecification
         {
             public bool IsSatisfiedBy(object request)
             {
-                return request is Type type
-                    && !type.IsAbstract
-                    && type.IsGenericType
-                    && typeof(DbContextOptions<>) == type.GetGenericTypeDefinition();
+                return request is Type
+                {
+                    IsAbstract: false,
+                    IsGenericType: true
+                } type
+                && typeof(DbContextOptions<>) == type.GetGenericTypeDefinition();
             }
         }
     }

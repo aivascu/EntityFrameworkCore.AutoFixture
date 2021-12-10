@@ -1,4 +1,4 @@
-﻿using AutoFixture;
+using AutoFixture;
 using AutoFixture.Xunit2;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Customizations;
 

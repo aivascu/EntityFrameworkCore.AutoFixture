@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities
 {

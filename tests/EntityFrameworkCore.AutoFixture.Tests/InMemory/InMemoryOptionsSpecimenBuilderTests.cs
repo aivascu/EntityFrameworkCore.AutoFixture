@@ -1,5 +1,4 @@
-﻿using System;
-using AutoFixture;
+using System;
 using AutoFixture.Idioms;
 using AutoFixture.Kernel;
 using EntityFrameworkCore.AutoFixture.Core;
@@ -13,7 +12,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
 {
     public class InMemoryOptionsSpecimenBuilderTests
     {
-        [Theory(DisplayName = "Create should create InMemoryOptionsBuilder instance when request type is IOptionsBuilder")]
+        [Theory]
         [AutoDomainData]
         public void Create_ShouldCreateInMemoryOptionsBuilder_WhenRequestTypeIsOptionsBuilderInterface(
             Mock<ISpecimenContext> context,

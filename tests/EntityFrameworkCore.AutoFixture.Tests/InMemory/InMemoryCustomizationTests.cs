@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.Kernel;
@@ -78,7 +78,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
             context.Should().NotBeNull()
                 .And.BeOfType<TestCustomDbContext>();
         }
-        
+
         [Theory]
         [AutoDomainDataWithInMemoryContext]
         public void Customize_ForCustomDbContext_ProvideValueForOtherParameters(

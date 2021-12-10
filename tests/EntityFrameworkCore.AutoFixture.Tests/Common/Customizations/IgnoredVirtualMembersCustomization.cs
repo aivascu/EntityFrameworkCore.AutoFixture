@@ -1,4 +1,4 @@
-﻿using AutoFixture;
+using AutoFixture;
 using EntityFrameworkCore.AutoFixture.Tests.Common.SpecimenBuilders;
 
 namespace EntityFrameworkCore.AutoFixture.Tests.Common.Customizations

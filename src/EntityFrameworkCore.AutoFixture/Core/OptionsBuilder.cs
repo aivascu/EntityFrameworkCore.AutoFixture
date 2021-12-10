@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using static System.FormattableString;
@@ -11,14 +11,13 @@ namespace EntityFrameworkCore.AutoFixture.Core
 
         public virtual object Build(Type type)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            if (type == null) throw new ArgumentNullException(nameof(type));
 
             if (!typeof(DbContext).IsAssignableFrom(type) || type.IsAbstract)
             {
-                throw new ArgumentException(Invariant($"The context type should be a non-abstract class inherited from {typeof(DbContext)}"), nameof(type));
+                throw new ArgumentException(
+                    Invariant($"The context type should be a non-abstract class inherited from {typeof(DbContext)}"),
+                    nameof(type));
             }
 
             var methods = this.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance);

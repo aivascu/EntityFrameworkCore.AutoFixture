@@ -1,4 +1,4 @@
-﻿using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Configuration;
+using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Configuration;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,10 +25,5 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Common.Persistence
             modelBuilder.ApplyConfiguration(new ItemConfiguration());
             modelBuilder.ApplyConfiguration(new OrderConfiguration());
         }
-    }
-
-    public class ConfigurationOptions
-    {
-        public string SomeValue { get; set; }
     }
 }

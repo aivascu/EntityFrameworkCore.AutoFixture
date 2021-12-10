@@ -1,6 +1,6 @@
 namespace EntityFrameworkCore.AutoFixture.Tests.Common.Persistence
 {
-    public class TestConfigurationOptions
+    public class ConfigurationOptions
     {
         public string SomeValue { get; set; }
     }

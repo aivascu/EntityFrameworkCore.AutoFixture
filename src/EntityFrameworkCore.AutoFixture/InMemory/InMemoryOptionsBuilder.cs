@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using EntityFrameworkCore.AutoFixture.Core;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,7 +19,8 @@ namespace EntityFrameworkCore.AutoFixture.InMemory
 
         public string DatabaseName { get; }
 
-        public override DbContextOptions<TContext> Build<TContext>() => new DbContextOptionsBuilder<TContext>()
+        public override DbContextOptions<TContext> Build<TContext>()
+            => new DbContextOptionsBuilder<TContext>()
             .UseInMemoryDatabase(this.DatabaseName)
             .Options;
     }

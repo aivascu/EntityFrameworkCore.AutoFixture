@@ -1,5 +1,4 @@
-﻿using System;
-using AutoFixture;
+using System;
 using AutoFixture.Idioms;
 using AutoFixture.Kernel;
 using EntityFrameworkCore.AutoFixture.Sqlite;

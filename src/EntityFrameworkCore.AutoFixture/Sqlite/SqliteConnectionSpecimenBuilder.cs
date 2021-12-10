@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AutoFixture.Kernel;
 using Microsoft.Data.Sqlite;
 
@@ -21,15 +21,9 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
 
         public object Create(object request, ISpecimenContext context)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            if (context == null) throw new ArgumentNullException(nameof(context));
 
-            if (!this.ConnectionSpecification.IsSatisfiedBy(request))
-            {
-                return new NoSpecimen();
-            }
+            if (!this.ConnectionSpecification.IsSatisfiedBy(request)) return new NoSpecimen();
 
             return new SqliteConnection("DataSource=:memory:");
         }
@@ -38,9 +32,8 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
         {
             public bool IsSatisfiedBy(object request)
             {
-                return request is Type type
-                       && !type.IsAbstract
-                       && type == typeof(SqliteConnection);
+                return request is Type { IsAbstract: false } type
+                    && type == typeof(SqliteConnection);
             }
         }
     }

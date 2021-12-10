@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AutoFixture.Kernel;
 using EntityFrameworkCore.AutoFixture.Core;
 
@@ -21,15 +21,8 @@ namespace EntityFrameworkCore.AutoFixture.InMemory
 
         public object Create(object request, ISpecimenContext context)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            if (!this.OptionsSpecification.IsSatisfiedBy(request))
-            {
-                return new NoSpecimen();
-            }
+            if (context == null) throw new ArgumentNullException(nameof(context));
+            if (!this.OptionsSpecification.IsSatisfiedBy(request)) return new NoSpecimen();
 
             return new InMemoryOptionsBuilder();
         }
@@ -38,9 +31,8 @@ namespace EntityFrameworkCore.AutoFixture.InMemory
         {
             public bool IsSatisfiedBy(object request)
             {
-                return request is Type type
-                       && type.IsInterface
-                       && type == typeof(IOptionsBuilder);
+                return request is Type { IsInterface: true } type
+                    && type == typeof(IOptionsBuilder);
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AutoFixture;
 using AutoFixture.Idioms;
 using AutoFixture.Kernel;

@@ -165,6 +165,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
             extension.Connection.ConnectionString.Should().Be(connectionString);
         }
 
-        private abstract class AbstractDbContext : DbContext { }
+        private abstract class AbstractDbContext : DbContext
+        { }
     }
 }

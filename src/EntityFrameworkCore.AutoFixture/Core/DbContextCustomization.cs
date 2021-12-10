@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AutoFixture;
 
 namespace EntityFrameworkCore.AutoFixture.Core
@@ -7,10 +7,7 @@ namespace EntityFrameworkCore.AutoFixture.Core
     {
         public virtual void Customize(IFixture fixture)
         {
-            if (fixture is null)
-            {
-                throw new ArgumentNullException(nameof(fixture));
-            }
+            if (fixture is null) throw new ArgumentNullException(nameof(fixture));
 
             fixture.Customizations.Add(new DbContextOptionsSpecimenBuilder());
         }

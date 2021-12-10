@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using EntityFrameworkCore.AutoFixture.Core;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +15,8 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
 
         public SqliteConnection Connection { get; }
 
-        public override DbContextOptions<TContext> Build<TContext>() => new DbContextOptionsBuilder<TContext>()
+        public override DbContextOptions<TContext> Build<TContext>()
+            => new DbContextOptionsBuilder<TContext>()
             .UseSqlite(this.Connection)
             .Options;
     }
