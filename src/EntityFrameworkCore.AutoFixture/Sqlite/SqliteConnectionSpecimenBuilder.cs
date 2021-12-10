@@ -4,6 +4,9 @@ using Microsoft.Data.Sqlite;
 
 namespace EntityFrameworkCore.AutoFixture.Sqlite
 {
+    /// <summary>
+    /// Creates <see cref="SqliteConnection"/> instances.
+    /// </summary>
     public class SqliteConnectionSpecimenBuilder : ISpecimenBuilder
     {
         public SqliteConnectionSpecimenBuilder(IRequestSpecification connectionSpecification)
@@ -19,6 +22,7 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
 
         public IRequestSpecification ConnectionSpecification { get; }
 
+        /// <inheritdoc />
         public object Create(object request, ISpecimenContext context)
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
