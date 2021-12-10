@@ -31,7 +31,7 @@ partial class Build : NukeBuild
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
     [GitRepository] readonly GitRepository GitRepository;
-    [GitVersion(Framework = "netcoreapp3.0")] readonly GitVersion GitVersion;
+    [GitVersion(Framework = "net5.0")] readonly GitVersion GitVersion;
 
     [Parameter] readonly bool Deterministic;
 
@@ -96,7 +96,6 @@ partial class Build : NukeBuild
                 .SetResultsDirectory(TestResultsDirectory)
                 .SetLogger("trx")
                 .SetUseSourceLink(IsServerBuild)
-                .SetVerbosity(DotNetVerbosity.Detailed)
                 .SetProcessArgumentConfigurator(a => a
                     .Add("-- RunConfiguration.DisableAppDomain=true")
                     .Add("-- RunConfiguration.NoAutoReporters=true"))
