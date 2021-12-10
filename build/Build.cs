@@ -104,7 +104,7 @@ partial class Build : NukeBuild
                 .CombineWith(TestProjects, (_, p) => _
                     .SetProjectFile(p)
                     .When(InvokedTargets.Contains(Cover), _ => _
-                        .SetResultsDirectory(TestResultsDirectory / $"{p.Name}.{_.Framework}"))));
+                        .SetResultsDirectory(TestResultsDirectory / p.Name))));
 
             Debug.Assert(
                 TestResultsDirectory.GlobFiles("**\\*.trx").Count > 0,
@@ -117,7 +117,7 @@ partial class Build : NukeBuild
 
             TestResultsDirectory.GlobFiles("**\\*.xml")
                 .Where(x => Guid.TryParse(x.GetParentDirectoryName(), out var _))
-                .ForEach(x => File.Copy(x, CoverageDirectory / $"{x.GetParentDirectoryName()}.xml", true));
+                .ForEach(x => File.Copy(x, CoverageDirectory / $"{x.Parent.GetParentDirectoryName()}.xml", true));
 
             if (InvokedTargets.Contains(Cover))
             {
