@@ -96,6 +96,7 @@ partial class Build : NukeBuild
                 .SetResultsDirectory(TestResultsDirectory)
                 .SetLogger("trx")
                 .SetUseSourceLink(IsServerBuild)
+                .SetVerbosity(DotNetVerbosity.Detailed)
                 .SetProcessArgumentConfigurator(a => a
                     .Add("-- RunConfiguration.DisableAppDomain=true")
                     .Add("-- RunConfiguration.NoAutoReporters=true"))
