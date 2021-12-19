@@ -27,7 +27,7 @@ jobs:
     name: windows-latest
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: |
@@ -47,19 +47,19 @@ jobs:
         env:
           GitHubToken: ${{ secrets.GITHUB_TOKEN }}
           NuGetApiKey: ${{ secrets.NUGET_API_KEY }}
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: testresults
           path: artifacts/testresults
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: coverage
           path: artifacts/coverage
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: reports
           path: artifacts/reports
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: packages
           path: artifacts/packages
