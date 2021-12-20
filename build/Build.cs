@@ -100,7 +100,10 @@ partial class Build : NukeBuild
                     .Add("-- RunConfiguration.DisableAppDomain=true")
                     .Add("-- RunConfiguration.NoAutoReporters=true"))
                 .When(InvokedTargets.Contains(Cover), _ => _
-                    .SetDataCollector("XPlat Code Coverage"))
+                    .SetDataCollector("XPlat Code Coverage")
+                    .When(IsServerBuild || Deterministic, _ => _
+                        .SetProcessArgumentConfigurator(a => a
+                            .Add("/p:DeterministicReport=true"))))
                 .CombineWith(TestProjects, (_, p) => _
                     .SetProjectFile(p)
                     .When(InvokedTargets.Contains(Cover), _ => _
