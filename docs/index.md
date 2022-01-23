@@ -98,6 +98,8 @@ public void Customize_ShouldProvideSqliteContext([Frozen] SqliteConnection conne
 }
 ```
 
+An example of the `AutoDomainDataWithSqliteContext` can be found in the [test project](https://github.com/aivascu/EntityFrameworkCore.AutoFixture/tree/master/tests/EntityFrameworkCore.AutoFixture.Tests/Common/Attributes).
+
 ## License
 
 Copyright &copy; 2019 [Andrei Ivascu](https://github.com/aivascu).<br/>
