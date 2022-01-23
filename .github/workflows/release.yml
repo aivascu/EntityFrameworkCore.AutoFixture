@@ -19,8 +19,7 @@ name: release
 on:
   push:
     tags:
-      - 'v0.*'
-      - 'v1.*'
+      - 'v*'
 
 jobs:
   windows-latest:
