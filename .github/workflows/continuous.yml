@@ -20,10 +20,21 @@ on:
   push:
     branches:
       - master
+      - 'release/*'
+    paths:
+      - '!**/*.md'
+      - '!**/*.yml'
+      - '!**/*.yaml'
+      - '!**/*.png'
   pull_request:
     branches:
       - master
-      - develop
+      - 'release/*'
+    paths:
+      - '!**/*.md'
+      - '!**/*.yml'
+      - '!**/*.yaml'
+      - '!**/*.png'
 
 jobs:
   windows-latest:
