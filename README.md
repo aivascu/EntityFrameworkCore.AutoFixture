@@ -14,6 +14,11 @@ Using **EntityFrameworkCore.AutoFixture** you can greatly reduce the boilerplate
 
 Unlike other libraries for faking EF contexts, **EntityFrameworkCore.AutoFixture** does not use mocking frameworks or dynamic proxies in order to create `DbContext` instances, instead it uses the Microsoft's own in-memory [providers](https://docs.microsoft.com/en-us/ef/core/miscellaneous/testing/) for EF Core. This allows to make less assumptions (read as: mock setups) in your tests about how the `DbContext` will behave in the real environment.
 
+#### :warning: .NET Standard 2.0 in EF Core v3.0.x :warning:
+
+Entity Framework Core `v3.0.0` - `v3.0.3` are targeting `netstandard2.1`, which means they are not compatible with target frameworks that support at most `netstandard2.0` (`>= net47` and `netcoreapp2.1`).
+Versions after `v3.1` are targeting `netstandard2.0`. If you've encountered this issue consider upgrading to a later version of Entity Framework Core.
+
 ## Features
 
 **EntityFrameworkCore.AutoFixture** offers three customizations to aid your unit testing workflow:
