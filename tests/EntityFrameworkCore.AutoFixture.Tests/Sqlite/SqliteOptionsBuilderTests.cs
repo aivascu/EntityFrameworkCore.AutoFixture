@@ -10,14 +10,6 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-#if NETCOREAPP2_1
-using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
-#endif
-
-#if NETCOREAPP3_1_OR_GREATER
-using Microsoft.EntityFrameworkCore.Sqlite.Infrastructure.Internal;
-#endif
-
 namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
 {
     public class SqliteOptionsBuilderTests
@@ -121,7 +113,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
             var context = new SqliteOptionsBuilder(connection)
                 .Build<TestDbContext>();
 
-            context.Extensions.Should().Contain(x => x.GetType() == typeof(SqliteOptionsExtension));
+            context.Extensions.Should().Contain(x => x.GetType() == GetOptionsType());
         }
 
         [Fact]
@@ -129,13 +121,13 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         {
             var connectionString = "Data Source=:memory:";
             var connection = new SqliteConnection(connectionString);
-            var extension = new SqliteOptionsBuilder(connection)
+            dynamic extension = new SqliteOptionsBuilder(connection)
                 .Build<TestDbContext>()
                 .Extensions
-                .Single(x => x.GetType() == typeof(SqliteOptionsExtension))
-                .As<SqliteOptionsExtension>();
+                .Single(x => x.GetType() == GetOptionsType());
 
-            extension.Connection.ConnectionString.Should().Be(connectionString);
+            string actual = extension.Connection.ConnectionString;
+            actual.Should().Be(connectionString);
         }
 
         [Fact]
@@ -147,7 +139,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
                 .Build(typeof(TestDbContext))
                 .As<DbContextOptions<TestDbContext>>();
 
-            context.Extensions.Should().Contain(x => x.GetType() == typeof(SqliteOptionsExtension));
+            context.Extensions.Should().Contain(x => x.GetType() == GetOptionsType());
         }
 
         [Fact]
@@ -155,17 +147,34 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         {
             var connectionString = "Data Source=:memory:";
             var connection = new SqliteConnection(connectionString);
-            var extension = new SqliteOptionsBuilder(connection)
+            dynamic extension = new SqliteOptionsBuilder(connection)
                 .Build(typeof(TestDbContext))
                 .As<DbContextOptions<TestDbContext>>()
                 .Extensions
-                .Single(x => x.GetType() == typeof(SqliteOptionsExtension))
-                .As<SqliteOptionsExtension>();
+                .Single(x => x.GetType() == GetOptionsType());
 
-            extension.Connection.ConnectionString.Should().Be(connectionString);
+            string actual = extension.Connection.ConnectionString;
+            actual.Should().Be(connectionString);
         }
 
         private abstract class AbstractDbContext : DbContext
         { }
+
+        private static Type GetOptionsType()
+        {
+            var assembly = AppDomain.CurrentDomain.GetAssemblies()
+                .Single(x => x.GetName().Name == "Microsoft.EntityFrameworkCore.Sqlite");
+
+            var internalExtensionType = assembly.GetType("Microsoft.EntityFrameworkCore.Infrastructure.Internal.SqliteOptionsExtension");
+            var extensionType = assembly.GetType("Microsoft.EntityFrameworkCore.Sqlite.Infrastructure.Internal.SqliteOptionsExtension");
+
+            if (extensionType is not null)
+                return extensionType;
+
+            if (internalExtensionType is not null)
+                return internalExtensionType;
+
+            throw new InvalidOperationException("Unable to find type \"SqliteOptionsExtension\" in the EF Core Sqlite provider assembly");
+        }
     }
 }

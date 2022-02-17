@@ -9,14 +9,6 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-#if NETCOREAPP2_1
-using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
-#endif
-
-#if NETCOREAPP3_1_OR_GREATER
-using Microsoft.EntityFrameworkCore.InMemory.Infrastructure.Internal;
-#endif
-
 namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
 {
     public class InMemoryOptionsBuilderTests
@@ -73,20 +65,20 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
         {
             var actual = builder.Build<TestDbContext>();
 
-            actual.Extensions.Should().Contain(x => x.GetType() == typeof(InMemoryOptionsExtension));
+            actual.Extensions.Should().Contain(x => x.GetType() == GetOptionsType());
         }
 
         [Theory]
         [AutoData]
         public void GenericBuild_ShouldCreateDbContextOptions_WithInMemoryExtension_WithName(string expected)
         {
-            var extension = new InMemoryOptionsBuilder(expected)
+            dynamic extension = new InMemoryOptionsBuilder(expected)
                 .Build<TestDbContext>()
                 .Extensions
-                .Single(x => x.GetType() == typeof(InMemoryOptionsExtension))
-                .As<InMemoryOptionsExtension>();
+                .Single(x => x.GetType() == GetOptionsType());
 
-            extension.StoreName.Should().Be(expected);
+            string actual = extension.StoreName;
+            actual.Should().Be(expected);
         }
 
         [Theory]
@@ -95,24 +87,40 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
         {
             var actual = builder.Build(typeof(TestDbContext)).As<DbContextOptions<TestDbContext>>();
 
-            actual.Extensions.Should().Contain(x => x.GetType() == typeof(InMemoryOptionsExtension));
+            actual.Extensions.Should().Contain(x => x.GetType() == GetOptionsType());
         }
 
         [Theory]
         [AutoData]
         public void Build_ShouldCreateDbContextOptions_WithInMemoryExtension_WithName(string expected)
         {
-            var extension = new InMemoryOptionsBuilder(expected)
+            dynamic extension = new InMemoryOptionsBuilder(expected)
                 .Build(typeof(TestDbContext))
                 .As<DbContextOptions<TestDbContext>>()
                 .Extensions
-                .Single(x => x.GetType() == typeof(InMemoryOptionsExtension))
-                .As<InMemoryOptionsExtension>();
+                .Single(x => x.GetType() == GetOptionsType());
 
-            extension.StoreName.Should().Be(expected);
+            string actual = extension.StoreName;
+            actual.Should().Be(expected);
         }
 
         private abstract class AbstractDbContext : DbContext
         { }
+
+        private static Type GetOptionsType()
+        {
+            var assembly = AppDomain.CurrentDomain.GetAssemblies()
+                .Single(x => x.GetName().Name == "Microsoft.EntityFrameworkCore.InMemory");
+
+            var extensionType = assembly.GetType("Microsoft.EntityFrameworkCore.InMemory.Infrastructure.Internal.InMemoryOptionsExtension");
+            if (extensionType is not null)
+                return extensionType;
+
+            var internalExtensionType = assembly.GetType("Microsoft.EntityFrameworkCore.Infrastructure.Internal.InMemoryOptionsExtension");
+            if (internalExtensionType is not null)
+                return internalExtensionType;
+
+            throw new InvalidOperationException("Unable to find type \"InMemoryOptionsExtension\" in the EF Core InMemory provider assembly");
+        }
     }
 }
