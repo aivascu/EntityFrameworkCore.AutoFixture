@@ -22,19 +22,13 @@ on:
       - master
       - 'release/*'
     paths:
-      - '!**/*.md'
-      - '!**/*.yml'
-      - '!**/*.yaml'
-      - '!**/*.png'
+      - '!docs/**'
   pull_request:
     branches:
       - master
       - 'release/*'
     paths:
-      - '!**/*.md'
-      - '!**/*.yml'
-      - '!**/*.yaml'
-      - '!**/*.png'
+      - '!docs/**'
 
 jobs:
   windows-latest:
