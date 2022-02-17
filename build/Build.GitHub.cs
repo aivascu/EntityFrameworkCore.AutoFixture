@@ -11,8 +11,8 @@ using Nuke.Common.CI.GitHubActions;
     PublishArtifacts = false,
     InvokedTargets = new[] { nameof(Cover), nameof(Pack) },
     ImportGitHubTokenAs = nameof(GitHubToken),
-    OnPushExcludePaths = new[] { "**/*.md", "**/*.yml", "**/*.yaml", "**/*.png" },
-    OnPullRequestExcludePaths = new[] { "**/*.md", "**/*.yml", "**/*.yaml", "**/*.png" })]
+    OnPushExcludePaths = new[] { "docs/**" },
+    OnPullRequestExcludePaths = new[] { "docs/**" })]
 [GitHubActions(
     "release",
     GitHubActionsImage.WindowsLatest,
