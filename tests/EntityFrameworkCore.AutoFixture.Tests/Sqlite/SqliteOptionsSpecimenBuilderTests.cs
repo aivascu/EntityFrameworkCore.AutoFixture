@@ -15,7 +15,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
     public class SqliteOptionsSpecimenBuilderTests
     {
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldThrowArgumentException_WhenSpecimenContextNull(SqliteOptionsSpecimenBuilder builder)
         {
             Action act = () => builder.Create(typeof(IOptionsBuilder), null);
@@ -24,7 +24,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldReturnNoSpecimen_WhenRequestTypeNotDbContextOptions(SqliteOptionsSpecimenBuilder builder, Mock<ISpecimenContext> contextMock)
         {
             var obj = builder.Create(typeof(string), contextMock.Object);
@@ -33,7 +33,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldReturnNoSpecimen_WhenSpecimenContextCannotResolveConnection(SqliteOptionsSpecimenBuilder builder, Mock<ISpecimenContext> contextMock)
         {
             contextMock
@@ -46,7 +46,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldReturnOmitSpecimen_WhenSpecimenContextSkipsConnectionResolve(SqliteOptionsSpecimenBuilder builder, Mock<ISpecimenContext> contextMock)
         {
             contextMock
@@ -59,7 +59,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldReturnNull_WhenSpecimenContextResolvesConnectionAsNull(SqliteOptionsSpecimenBuilder builder, Mock<ISpecimenContext> contextMock)
         {
             contextMock
@@ -72,7 +72,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldReturnNoSpecimen_WhenSpecimenContextResolvesConnectionToUnexpectedType(SqliteOptionsSpecimenBuilder builder, Mock<ISpecimenContext> contextMock)
         {
             contextMock
@@ -85,7 +85,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldReturnSqliteOptionsBuilder_WhenSpecimenContextResolvesConnection(SqliteOptionsSpecimenBuilder builder, Mock<ISpecimenContext> contextMock)
         {
             contextMock
@@ -98,7 +98,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldReturnSqliteOptionsBuilder_WithInMemoryConnectionString_WhenSpecimenContextResolvesConnection(SqliteOptionsSpecimenBuilder builder, Mock<ISpecimenContext> contextMock)
         {
             contextMock
@@ -111,7 +111,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Ctors_ShouldReceiveInitializedParameters(Fixture fixture)
         {
             var assertion = new GuardClauseAssertion(fixture);

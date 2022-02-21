@@ -4,9 +4,9 @@ using AutoFixture.Xunit2;
 
 namespace EntityFrameworkCore.AutoFixture.Tests.Common.Attributes
 {
-    public class AutoDomainDataAttribute : AutoDataAttribute
+    public class MockDataAttribute : AutoDataAttribute
     {
-        public AutoDomainDataAttribute()
+        public MockDataAttribute()
             : base(() => new Fixture()
                 .Customize(new AutoMoqCustomization()))
         {

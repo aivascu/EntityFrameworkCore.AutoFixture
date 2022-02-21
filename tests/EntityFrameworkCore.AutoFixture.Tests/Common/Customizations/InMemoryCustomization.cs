@@ -5,9 +5,9 @@ using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities;
 
 namespace EntityFrameworkCore.AutoFixture.Tests.Common.Customizations
 {
-    public class DomainDataWithInMemoryContextCustomization : CompositeCustomization
+    public class InMemoryCustomization : CompositeCustomization
     {
-        public DomainDataWithInMemoryContextCustomization()
+        public InMemoryCustomization()
             : base(
                 VirtualPropertyOmitterCustomization
                   .ForTypesInNamespaces(typeof(Customer)),

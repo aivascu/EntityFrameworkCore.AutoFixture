@@ -13,7 +13,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
     public class InMemoryOptionsSpecimenBuilderTests
     {
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldCreateInMemoryOptionsBuilder_WhenRequestTypeIsOptionsBuilderInterface(
             Mock<ISpecimenContext> context,
             InMemoryOptionsSpecimenBuilder builder)
@@ -24,7 +24,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldThrow_WhenSpecimenContextIsNull(InMemoryOptionsSpecimenBuilder builder)
         {
             Action act = () => builder.Create(typeof(IOptionsBuilder), null);
@@ -33,7 +33,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldReturnNoSpecimen_WhenRequestTypeNotOptionsBuilderInterface(
             Mock<ISpecimenContext> context,
             InMemoryOptionsSpecimenBuilder builder)
@@ -44,7 +44,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Ctors_ShouldReceiveInitializedParameters(GuardClauseAssertion assertion)
         {
             var members = typeof(InMemoryOptionsSpecimenBuilder).GetConstructors();

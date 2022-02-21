@@ -13,7 +13,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
     public class SqliteConnectionSpecimenBuilderTests
     {
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldThrowArgumentException_WhenSpecimenContextIsNull(
             SqliteConnectionSpecimenBuilder builder)
         {
@@ -23,7 +23,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldReturnNoSpecimen_WhenRequestTypeNotSqliteConnection(
             Mock<ISpecimenContext> contextMock,
             SqliteConnectionSpecimenBuilder builder)
@@ -34,7 +34,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldReturnSqliteConnectionInstance_WhenRequestTypeIsSqliteConnection(
             Mock<ISpecimenContext> contextMock,
             SqliteConnectionSpecimenBuilder builder)
@@ -45,7 +45,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldCreateSqliteConnection_WithConnectionString_WhenRequestTypeIsSqliteConnection(
             Mock<ISpecimenContext> contextMock,
             SqliteConnectionSpecimenBuilder builder)
@@ -56,7 +56,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Ctors_ShouldReceiveInitializedParameters(GuardClauseAssertion assertion)
         {
             var members = typeof(SqliteConnectionSpecimenBuilder).GetConstructors();
