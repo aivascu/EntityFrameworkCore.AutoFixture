@@ -1,6 +1,6 @@
 using AutoFixture;
+using AutoFixture.AutoMoq;
 using AutoFixture.Xunit2;
-using EntityFrameworkCore.AutoFixture.Tests.Common.Customizations;
 
 namespace EntityFrameworkCore.AutoFixture.Tests.Common.Attributes
 {
@@ -8,7 +8,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Common.Attributes
     {
         public AutoDomainDataAttribute()
             : base(() => new Fixture()
-                .Customize(new DomainDataCustomization()))
+                .Customize(new AutoMoqCustomization()))
         {
         }
     }

@@ -8,7 +8,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Common.Attributes
     {
         public AutoDomainDataWithSqliteContextAttribute()
             : base(() => new Fixture()
-                .Customize(new DomainDataWithSqliteContextCustomization()))
+                .Customize(new SqliteCustomization()))
         {
         }
     }

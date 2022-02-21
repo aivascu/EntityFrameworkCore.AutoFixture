@@ -1,6 +1,7 @@
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using EntityFrameworkCore.AutoFixture.InMemory;
+using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities;
 
 namespace EntityFrameworkCore.AutoFixture.Tests.Common.Customizations
 {
@@ -8,7 +9,8 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Common.Customizations
     {
         public DomainDataWithInMemoryContextCustomization()
             : base(
-                new IgnoredVirtualMembersCustomization(),
+                VirtualPropertyOmitterCustomization
+                  .ForTypesInNamespaces(typeof(Customer)),
                 new InMemoryContextCustomization(),
                 new AutoMoqCustomization())
         {

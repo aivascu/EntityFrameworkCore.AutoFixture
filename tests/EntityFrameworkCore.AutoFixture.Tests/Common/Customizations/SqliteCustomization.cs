@@ -1,17 +1,17 @@
 using AutoFixture;
 using AutoFixture.AutoMoq;
-using EntityFrameworkCore.AutoFixture.Core;
+using EntityFrameworkCore.AutoFixture.Sqlite;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities;
 
 namespace EntityFrameworkCore.AutoFixture.Tests.Common.Customizations
 {
-    public class DomainDataWithContextCustomization : CompositeCustomization
+    public class SqliteCustomization : CompositeCustomization
     {
-        public DomainDataWithContextCustomization()
+        public SqliteCustomization()
             : base(
                 VirtualPropertyOmitterCustomization
                   .ForTypesInNamespaces(typeof(Customer)),
-                new DbContextCustomization(),
+                new SqliteContextCustomization() { OmitDbSets = true },
                 new AutoMoqCustomization())
         {
         }
