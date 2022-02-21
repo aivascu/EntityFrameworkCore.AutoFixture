@@ -10,9 +10,7 @@ using Nuke.Common.CI.GitHubActions;
     OnPushBranches = new[] { MasterBranch, ReleaseBranch },
     PublishArtifacts = false,
     InvokedTargets = new[] { nameof(Cover), nameof(Pack) },
-    ImportGitHubTokenAs = nameof(GitHubToken),
-    OnPushExcludePaths = new[] { "docs/**" },
-    OnPullRequestExcludePaths = new[] { "docs/**" })]
+    ImportGitHubTokenAs = nameof(GitHubToken))]
 [GitHubActions(
     "release",
     GitHubActionsImage.WindowsLatest,

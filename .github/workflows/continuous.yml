@@ -21,14 +21,10 @@ on:
     branches:
       - master
       - 'release/*'
-    paths:
-      - '!docs/**'
   pull_request:
     branches:
       - master
       - 'release/*'
-    paths:
-      - '!docs/**'
 
 jobs:
   windows-latest:
