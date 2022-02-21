@@ -20,7 +20,10 @@ namespace EntityFrameworkCore.AutoFixture.Core
 
         public bool Equals(PropertyInfo other)
         {
-            if (other?.PropertyType.IsGenericType != true)
+            if (other is null)
+                return false;
+
+            if (!other.PropertyType.IsGenericType)
                 return false;
 
             var definition = other.PropertyType.GetGenericTypeDefinition();
