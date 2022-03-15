@@ -6,10 +6,6 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Common.Persistence
 {
     public class TestDbContext : DbContext
     {
-        public TestDbContext()
-        {
-        }
-
         public TestDbContext(DbContextOptions<TestDbContext> options)
             : base(options)
         {

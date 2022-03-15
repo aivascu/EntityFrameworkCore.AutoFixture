@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace EntityFrameworkCore.AutoFixture.Tests.Core
+namespace EntityFrameworkCore.AutoFixture.Tests.Common
 {
     public class DelegatingMethodHost<T>
     {

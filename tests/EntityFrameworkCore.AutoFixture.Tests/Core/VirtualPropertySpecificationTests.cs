@@ -1,3 +1,4 @@
+using EntityFrameworkCore.AutoFixture.Core;
 using FluentAssertions;
 using Xunit;
 
