@@ -11,7 +11,11 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Common.Customizations
             : base(
                 VirtualPropertyOmitterCustomization
                   .ForTypesInNamespaces(typeof(Customer)),
-                new InMemoryContextCustomization(),
+                new InMemoryContextCustomization
+                {
+                    AutoCreateDatabase = true,
+                    OmitDbSets = true
+                },
                 new AutoMoqCustomization())
         {
         }
