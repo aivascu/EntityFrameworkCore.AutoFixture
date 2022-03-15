@@ -1,9 +1,12 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
-using AutoFixture;
+using AutoFixture.Idioms;
 using AutoFixture.Kernel;
 using AutoFixture.Xunit2;
+using EntityFrameworkCore.AutoFixture.Core;
 using EntityFrameworkCore.AutoFixture.InMemory;
+using EntityFrameworkCore.AutoFixture.Tests.Common;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Attributes;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities;
@@ -14,77 +17,96 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
 {
     public class InMemoryCustomizationTests
     {
-        [Theory]
-        [AutoData]
-        public void SaveChanges_ShouldCreateCustomerRecord(
-            InMemoryContextCustomization customization,
-            Fixture fixture)
+        [Theory, InMemoryData]
+        public async Task CanAddItemToContext(TestDbContext context)
         {
-            fixture.Customize(
-                    new CompositeCustomization(
-                        customization,
-                        new ConstructorCustomization(
-                            typeof(TestDbContext),
-                            new GreedyConstructorQuery())));
+            context.Customers.Add(new Customer("Jane Smith"));
+            await context.SaveChangesAsync();
 
-            using var context = fixture.Create<TestDbContext>();
-            context.Database.EnsureCreated();
-
-            context.Customers.Add(new Customer("John Doe"));
-            context.SaveChanges();
-
-            context.Customers.Should().Contain(x => x.Name == "John Doe");
+            context.Customers.Should().Contain(x => x.Name == "Jane Smith");
         }
 
-        [Theory]
-        [InMemoryData]
-        public async Task SaveChangesAsync_ShouldCreateCustomerRecord([Greedy] TestDbContext context)
+        [Fact]
+        public void AddsExpectedCustomizations()
         {
-            using (context)
+            var actual = new Type[]
             {
-                await context.Database.EnsureCreatedAsync();
+                typeof(Omitter),
+                typeof(DbContextOptionsSpecimenBuilder),
+                typeof(InMemoryOptionsSpecimenBuilder),
+            };
+            var fixture = new DelegatingFixture();
+            var customization = new InMemoryContextCustomization
+            {
+                AutoCreateDatabase = true,
+                OmitDbSets = true,
+            };
 
-                context.Customers.Add(new Customer("Jane Smith"));
-                await context.SaveChangesAsync();
+            customization.Customize(fixture);
 
-                context.Customers.Should().Contain(x => x.Name == "Jane Smith");
-            }
+            fixture.Customizations.Select(x => x.GetType())
+                .Should().BeEquivalentTo(actual);
         }
 
-        [Theory]
-        [AutoData]
-        public void Customize_ShouldAddOptionsBuilderToFixture(InMemoryContextCustomization customization,
-            Fixture fixture)
+        [Fact]
+        public void AddsExpectedBehaviors()
         {
-            fixture.Customize(customization);
+            var actual = new Type[]
+            {
+                typeof(DatabaseInitializingBehavior)
+            };
+            var fixture = new DelegatingFixture();
+            var customization = new InMemoryContextCustomization
+            {
+                AutoCreateDatabase = true,
+                OmitDbSets = true,
+            };
 
-            fixture.Customizations.Should()
-                .ContainSingle(x => x.GetType() == typeof(InMemoryOptionsSpecimenBuilder));
+            customization.Customize(fixture);
+
+            fixture.Behaviors.Select(x => x.GetType())
+                .Should().BeEquivalentTo(actual);
         }
 
-        [Theory]
-        [AutoData]
-        public void Customize_ForNullFixture_ShouldThrow(InMemoryContextCustomization customization)
+        [Fact]
+        public void DoesNotAddBehaviorsWhenFlagsAreOff()
         {
-            Action act = () => customization.Customize(default);
+            var fixture = new DelegatingFixture();
+            var customization = new InMemoryContextCustomization
+            {
+                AutoCreateDatabase = false,
+                OmitDbSets = true,
+            };
 
-            act.Should().ThrowExactly<ArgumentNullException>();
+            customization.Customize(fixture);
+
+            fixture.Behaviors.Should().BeEmpty();
         }
 
-        [Theory]
-        [InMemoryData]
-        public void Customize_ForCustomDbContext_ShouldReturnContextInstance([Greedy] TestCustomDbContext context)
+        [Fact]
+        public void DoesNotAddDbSetOmitterWhenFlagOff()
         {
-            context.Should().NotBeNull()
-                .And.BeOfType<TestCustomDbContext>();
+            var actual = new Type[]
+            {
+                typeof(DbContextOptionsSpecimenBuilder),
+                typeof(InMemoryOptionsSpecimenBuilder),
+            };
+            var fixture = new DelegatingFixture();
+            var customization = new InMemoryContextCustomization
+            {
+                OmitDbSets = false,
+            };
+
+            customization.Customize(fixture);
+
+            fixture.Customizations.Select(x => x.GetType())
+                .Should().BeEquivalentTo(actual);
         }
 
-        [Theory]
-        [InMemoryData]
-        public void Customize_ForCustomDbContext_ProvideValueForOtherParameters(
-            [Greedy] TestCustomDbContext context)
+        [Theory, AutoData]
+        public void ImplementsGuardClauses(GuardClauseAssertion assertion)
         {
-            context.ConfigurationOptions.Should().NotBeNull();
+            assertion.Verify(typeof(InMemoryContextCustomization));
         }
     }
 }
