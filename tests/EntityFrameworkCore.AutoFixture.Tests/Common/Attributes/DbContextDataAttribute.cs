@@ -4,11 +4,11 @@ using EntityFrameworkCore.AutoFixture.Tests.Common.Customizations;
 
 namespace EntityFrameworkCore.AutoFixture.Tests.Common.Attributes
 {
-    public class AutoDomainDataWithContextAttribute : AutoDataAttribute
+    public class DbContextDataAttribute : AutoDataAttribute
     {
-        public AutoDomainDataWithContextAttribute()
+        public DbContextDataAttribute()
             : base(() => new Fixture()
-                .Customize(new DomainDataWithContextCustomization()))
+                .Customize(new ContextCustomization()))
         {
         }
     }

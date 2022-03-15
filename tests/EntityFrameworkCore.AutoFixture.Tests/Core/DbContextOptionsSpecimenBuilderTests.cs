@@ -15,7 +15,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Core
     public class DbContextOptionsSpecimenBuilderTests
     {
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldThrowArgumentException_WhenSpecimenContextIsNull(DbContextOptionsSpecimenBuilder builder)
         {
             Action act = () => builder.Create(typeof(DbContextOptions<TestDbContext>), null);
@@ -24,7 +24,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Core
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldReturnNoSpecimen_WhenRequestTypeNotDbContextOptions(
             DbContextOptionsSpecimenBuilder builder,
             Mock<ISpecimenContext> contextMock)
@@ -35,7 +35,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Core
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldReturnNoSpecimen_WhenRequestNotType(
             [Frozen] Mock<IRequestSpecification> specificationMock,
             Mock<ISpecimenContext> contextMock,
@@ -52,7 +52,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Core
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldReturnNoSpecimen_WhenRequestIsPropertyInfo(
             DbContextOptionsSpecimenBuilder builder,
             Mock<ISpecimenContext> contextMock)
@@ -64,7 +64,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Core
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldReturnNoSpecimen_WhenContextCanNotResolveOptionsBuilder(
             DbContextOptionsSpecimenBuilder builder,
             Mock<ISpecimenContext> contextMock)
@@ -78,7 +78,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Core
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldReturnNoSpecimen_WhenContextResolvesOptionsBuilderAsDifferentType(
             DbContextOptionsSpecimenBuilder builder,
             Mock<ISpecimenContext> contextMock)
@@ -92,7 +92,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Core
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldReturnOmitSpecimen_WhenContextSkipsOptionsBuilderResolution(
             DbContextOptionsSpecimenBuilder builder,
             Mock<ISpecimenContext> contextMock)
@@ -106,7 +106,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Core
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldReturnNull_WhenContextResolvesOptionsBuilderAsNull(
             DbContextOptionsSpecimenBuilder builder,
             Mock<ISpecimenContext> contextMock)
@@ -120,7 +120,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Core
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Create_ShouldBeOfRequestedType_WhenContextResolvesOptionsBuilder(
            DbContextOptionsSpecimenBuilder builder,
            Mock<ISpecimenContext> contextMock,
@@ -138,7 +138,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Core
         }
 
         [Theory]
-        [AutoDomainData]
+        [MockData]
         public void Ctors_ShouldReceiveInitializedParameters(GuardClauseAssertion assertion)
         {
             var members = typeof(DbContextOptionsSpecimenBuilder).GetConstructors();

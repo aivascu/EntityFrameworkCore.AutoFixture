@@ -37,7 +37,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
         }
 
         [Theory]
-        [AutoDomainDataWithInMemoryContext]
+        [InMemoryData]
         public async Task SaveChangesAsync_ShouldCreateCustomerRecord([Greedy] TestDbContext context)
         {
             using (context)
@@ -72,7 +72,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
         }
 
         [Theory]
-        [AutoDomainDataWithInMemoryContext]
+        [InMemoryData]
         public void Customize_ForCustomDbContext_ShouldReturnContextInstance([Greedy] TestCustomDbContext context)
         {
             context.Should().NotBeNull()
@@ -80,7 +80,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
         }
 
         [Theory]
-        [AutoDomainDataWithInMemoryContext]
+        [InMemoryData]
         public void Customize_ForCustomDbContext_ProvideValueForOtherParameters(
             [Greedy] TestCustomDbContext context)
         {

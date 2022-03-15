@@ -14,7 +14,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
     public class SqliteCustomizationTests
     {
         [Theory]
-        [AutoDomainDataWithSqliteContext]
+        [SqliteData]
         public void Customize_ShouldProvideSqliteContext(
             [Frozen] SqliteConnection connection,
             [Greedy] TestDbContext context,
@@ -65,7 +65,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         }
 
         [Theory]
-        [AutoDomainDataWithSqliteContext]
+        [SqliteData]
         public void Customize_ForCustomDbContext_ShouldReturnContextInstance([Greedy] TestCustomDbContext context)
         {
             context.Should().NotBeNull()
@@ -73,7 +73,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         }
 
         [Theory]
-        [AutoDomainDataWithSqliteContext]
+        [SqliteData]
         public void Customize_ForCustomDbContext_ProvideValueForOtherParameters(
             [Greedy] TestCustomDbContext context)
         {

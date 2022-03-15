@@ -4,11 +4,11 @@ using EntityFrameworkCore.AutoFixture.Tests.Common.Customizations;
 
 namespace EntityFrameworkCore.AutoFixture.Tests.Common.Attributes
 {
-    public class AutoDomainDataWithInMemoryContextAttribute : AutoDataAttribute
+    public class SqliteDataAttribute : AutoDataAttribute
     {
-        public AutoDomainDataWithInMemoryContextAttribute()
+        public SqliteDataAttribute()
             : base(() => new Fixture()
-                .Customize(new DomainDataWithInMemoryContextCustomization()))
+                .Customize(new SqliteCustomization()))
         {
         }
     }

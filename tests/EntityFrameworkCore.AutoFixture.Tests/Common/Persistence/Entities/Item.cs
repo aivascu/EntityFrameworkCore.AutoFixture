@@ -5,6 +5,10 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities
 {
     public class Item
     {
+        private Item()
+        {
+        }
+
         public Item(string name, decimal price)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -20,10 +24,6 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities
             this.Name = name;
             this.Price = price;
             this.Orders = new List<Order>();
-        }
-
-        private Item()
-        {
         }
 
         public Guid Id { get; private set; }
