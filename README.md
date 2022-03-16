@@ -38,65 +38,109 @@ The library is not limited to `xUnit` and can be used with other testing framewo
 
 ```csharp
 [Fact]
-public void SaveChanges_ShouldCreateCustomerRecord()
+public async Task CanUseGeneratedContext()
 {
-    var fixture = new Fixture().Customize(new InMemoryContextCustomization());
-    using (var context = fixture.Create<TestDbContext>())
+    // Arrange
+    var fixture = new Fixture().Customize(new InMemoryContextCustomization
     {
-        context.Database.EnsureCreated();
+        AutoCreateDatabase = true,
+        OmitDbSets = true
+    });
+    var context = fixture.Create<TestDbContext>();
 
-        context.Customers.Add(new Customer("John Doe"));
-        context.SaveChanges();
+    // Act
+    context.Customers.Add(new Customer("Jane Smith"));
+    await context.SaveChangesAsync();
 
-        context.Customers.Should().Contain(x => x.Name == "John Doe");
-    }
+    // Assert
+    context.Customers.Should().Contain(x => x.Name == "Jane Smith");
 }
 ```
 
-The next example uses a custom `AutoData` attribute `AutoDomainDataWithInMemoryContext` that customizes the fixture with the same customization as in the example above. This helps abstract away even more setup code. The attribute implementation can be found the sources of the test projects.
+The next example uses a custom `AutoData` attribute `AutoDomainDataWithInMemoryContext` that customizes the fixture with the same customization as in the example above. This helps abstract away even more setup code.
 
 ```csharp
-[Theory]
-[AutoDomainDataWithInMemoryContext]
-public async Task SaveChangesAsync_ShouldCreateCustomerRecord(TestDbContext context)
+[Theory, InMemoryData]
+public async Task CanUseGeneratedContext(TestDbContext context)
 {
-    await using (context)
+    // Arrange & Act
+    context.Customers.Add(new Customer("Jane Smith"));
+    await context.SaveChangesAsync();
+
+    // Assert
+    context.Customers.Should().Contain(x => x.Name == "Jane Smith");
+}
+```
+The attribute used in the test above might look something like the following.
+
+```csharp
+public class InMemoryDataAttribute : AutoDataAttribute
+{
+    public InMemoryDataAttribute()
+        : base(() => new Fixture()
+            .Customize(new InMemoryContextCustomization
+            {
+                OmitDbSets = true,
+                AutoCreateDatabase = true
+            }))
     {
-        await context.Database.EnsureCreatedAsync();
-
-        context.Customers.Add(new Customer("Jane Smith"));
-        await context.SaveChangesAsync();
-
-        context.Customers.Should().Contain(x => x.Name == "Jane Smith");
     }
 }
 ```
-
 ### Using SQLite database provider
 
-When using the SQLite database provider be sure to also *freeze* / *inject* the `SqliteConnection` instance, in order to be able to control its lifetime.
-Otherwise the connection might close, which might in its turn fail your tests.
+When using the SQLite database provider there is another configuration available in the customization, called `AutoOpenConnection` which allows to automatically open database connections, after they are resolved from the fixture. The option is turned off by default in v1, but might become the default in next major releases.
 
 ```csharp
-[Theory]
-[AutoDomainDataWithSqliteContext]
-public void Customize_ShouldProvideSqliteContext([Frozen] SqliteConnection connection,
-  TestDbContext context, Item item, Customer customer)
+[Fact]
+public async Task CanUseGeneratedContext()
 {
-    using (connection)
-    using (context)
+    // Arrange
+    var fixture = new Fixture()
+        .Customize(new SqliteContextCustomization
+        {
+            AutoCreateDatabase = true,
+            AutoOpenConnection = true,
+            OmitDbSets = true
+        });
+    var context = fixture.Create<TestDbContext>();
+
+    // Act
+    context.Customers.Add(new Customer("Jane Smith"));
+    await context.SaveChangesAsync();
+
+    // Assert
+    context.Customers.Should().Contain(x => x.Name == "Jane Smith");
+}
+```
+
+The same test can be written like this, by using a custom data attribute.
+
+```csharp
+[Theory, SqliteData]
+public void CanUseResolvedContextInstance(TestDbContext context)
+{
+    // Arrange & Act
+    context.Customers.Add(new Customer("Jane Smith"));
+    context.SaveChanges();
+
+    // Assert
+    context.Customers.Should().Contain(x => x.Name == "Jane Smith");
+}
+```
+
+```csharp
+public class SqliteDataAttribute : AutoDataAttribute
+{
+    public SqliteDataAttribute()
+        : base(() => new Fixture()
+            .Customize(new SqliteContextCustomization
+            {
+                OmitDbSets = true,
+                AutoOpenConnection = true,
+                AutoCreateDatabase = true
+            }))
     {
-        connection.Open();
-        context.Database.EnsureCreated();
-        context.Items.Add(item);
-
-        context.Customers.Add(customer);
-        context.SaveChanges();
-
-        customer.Order(item, 5);
-        context.SaveChanges();
-
-        context.Orders.Should().Contain(x => x.CustomerId == customer.Id && x.ItemId == item.Id);
     }
 }
 ```
