@@ -39,18 +39,13 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
             var actual = new[]
             {
                 typeof(Omitter),
-                typeof(DbContextOptionsSpecimenBuilder),
+                // typeof(DbContextOptionsSpecimenBuilder),
                 typeof(FilteringSpecimenBuilder),
                 typeof(TypeRelay),
                 typeof(FilteringSpecimenBuilder)
             };
             var fixture = new DelegatingFixture();
-            var customization = new SqliteContextCustomization
-            {
-                AutoCreateDatabase = true,
-                AutoOpenConnection = true,
-                OmitDbSets = true,
-            };
+            var customization = new SqliteContextCustomization();
 
             customization.Customize(fixture);
 
@@ -67,12 +62,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
                 typeof(DatabaseInitializingBehavior)
             };
             var fixture = new DelegatingFixture();
-            var customization = new SqliteContextCustomization
-            {
-                AutoCreateDatabase = true,
-                AutoOpenConnection = true,
-                OmitDbSets = true,
-            };
+            var customization = new SqliteContextCustomization();
 
             customization.Customize(fixture);
 
@@ -84,12 +74,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         public void DoesNotAddBehaviorsWhenFlagsAreOff()
         {
             var fixture = new DelegatingFixture();
-            var customization = new SqliteContextCustomization
-            {
-                AutoCreateDatabase = false,
-                AutoOpenConnection = false,
-                OmitDbSets = true,
-            };
+            var customization = new SqliteContextCustomization();
 
             customization.Customize(fixture);
 
@@ -101,7 +86,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         {
             var actual = new[]
             {
-                typeof(DbContextOptionsSpecimenBuilder),
+                // typeof(DbContextOptionsSpecimenBuilder),
                 typeof(FilteringSpecimenBuilder),
                 typeof(TypeRelay),
                 typeof(FilteringSpecimenBuilder)

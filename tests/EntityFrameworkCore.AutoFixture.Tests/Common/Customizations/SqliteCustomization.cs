@@ -11,11 +11,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Common.Customizations
             : base(
                 VirtualPropertyOmitterCustomization
                   .ForTypesInNamespaces(typeof(Customer)),
-                new SqliteContextCustomization() {
-                    OmitDbSets = true,
-                    AutoCreateDatabase = true,
-                    AutoOpenConnection = true
-                },
+                new SqliteContextCustomization(),
                 new AutoMoqCustomization())
         {
         }

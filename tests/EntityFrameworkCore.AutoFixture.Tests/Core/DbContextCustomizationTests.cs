@@ -11,18 +11,6 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Core
     {
         [Theory]
         [AutoData]
-        public void Customize_ShouldAddOptionsBuilderToFixture(
-            Fixture fixture,
-            DbContextCustomization customization)
-        {
-            fixture.Customize(customization);
-
-            fixture.Customizations.Should()
-                .ContainSingle(x => x.GetType() == typeof(DbContextOptionsSpecimenBuilder));
-        }
-
-        [Theory]
-        [AutoData]
         public void Customize_ForNullFixture_ShouldThrow(
             DbContextCustomization customization)
         {

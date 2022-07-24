@@ -5,87 +5,70 @@ using AutoFixture;
 using AutoFixture.Kernel;
 using EntityFrameworkCore.AutoFixture.Core;
 using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace EntityFrameworkCore.AutoFixture.Sqlite
+namespace EntityFrameworkCore.AutoFixture.Sqlite;
+
+/// <summary>
+/// Customizes AutoFixture to create sqlite Entity Framework database contexts.
+/// </summary>
+public class SqliteContextCustomization : DbContextCustomization
 {
+    private const string ConnectionStringParameter = "connectionString";
+    private const string DefaultConnectionString = "DataSource=:memory:";
+
+    private string connectionString = DefaultConnectionString;
+
     /// <summary>
-    /// Customizes AutoFixture to create sqlite Entity Framework database contexts.
+    /// Automatically open <see cref="DbConnection" /> database connections upon creation.<br />
+    /// Default value is <see langword="true" />.
     /// </summary>
-    public class SqliteContextCustomization : DbContextCustomization
+    public bool AutoOpenConnection { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the connection string used to create database connections.<br />
+    /// Default is &quot;DataSource=:memory:&quot;.
+    /// </summary>
+    public string ConnectionString
     {
-        private string connectionString = DefaultConnectionString;
-        private const string ConnectionStringParameter = "connectionString";
-        private const string DefaultConnectionString = "DataSource=:memory:";
+        get => this.connectionString;
+        set => this.SetConnectionString(value);
+    }
 
-        /// <summary>
-        /// Automatically open <see cref="DbConnection"/> database connections upon creation.
-        /// Default value is <see langword="false"/>.
-        /// </summary>
-        public bool AutoOpenConnection { get; set; }
+    /// <inheritdoc />
+    public override void Customize(IFixture fixture)
+    {
+        if (fixture is null) throw new ArgumentNullException(nameof(fixture));
 
-        /// <summary>
-        /// Automatically run <see cref="DatabaseFacade.EnsureCreated()"/>, on
-        /// <see cref="DbContext.Database"/>, upon creating a database context instance. Default
-        /// value is <see langword="false"/>.
-        /// </summary>
-        public bool AutoCreateDatabase { get; set; }
+        base.Customize(fixture);
 
-        /// <summary>
-        /// Gets or sets the default connection string used when creating <see cref="SqliteConnection"/> instances.
-        /// Default is &quot;DataSource=:memory:&quot;.
-        /// </summary>
-        public string ConnectionString
-        {
-            get => this.connectionString;
-            set => this.SetConnectionString(value);
-        }
+        fixture.Customizations.Add(new FilteringSpecimenBuilder(
+            new FixedBuilder(this.ConnectionString),
+            new AndRequestSpecification(
+                new ParameterSpecification(typeof(string), ConnectionStringParameter),
+                new ParameterSpecification(
+                    new DeclaringMemberCriterion(
+                        new DeclaringTypeCriterion<MemberInfo>(typeof(SqliteConnection)))))));
 
-        private void SetConnectionString(string value)
-        {
-            if (value is null)
-                throw new ArgumentNullException(nameof(value));
+        ISpecimenCommand onCreateConnection = this.AutoOpenConnection
+            ? new OpenDatabaseConnection()
+            : new EmptyCommand();
 
-            if (string.IsNullOrWhiteSpace(value))
-                throw new ArgumentException("Value cannot be empty or whitespace.", nameof(value));
+        fixture.Customizations.Insert(0, new FilteringSpecimenBuilder(
+            new Postprocessor(
+                new MethodInvoker(
+                    new GreedyConstructorQuery()),
+                onCreateConnection),
+            new ExactTypeSpecification(typeof(SqliteConnection))));
+    }
 
-            this.connectionString = value;
-        }
+    private void SetConnectionString(string value)
+    {
+        if (value is null)
+            throw new ArgumentNullException(nameof(value));
 
-        /// <inheritdoc/>
-        public override void Customize(IFixture fixture)
-        {
-            if (fixture is null) throw new ArgumentNullException(nameof(fixture));
+        if (string.IsNullOrWhiteSpace(value))
+            throw new ArgumentException("Value cannot be empty or whitespace.", nameof(value));
 
-            base.Customize(fixture);
-
-            fixture.Customizations.Add(new FilteringSpecimenBuilder(
-                new FixedBuilder(this.ConnectionString),
-                new AndRequestSpecification(
-                    new ParameterSpecification(typeof(string), ConnectionStringParameter),
-                    new ParameterSpecification(
-                        new DeclaringMemberCriterion(
-                            new DeclaringTypeCriterion<MemberInfo>(typeof(SqliteConnection)))))));
-            
-            fixture.Customizations.Add(new TypeRelay(typeof(IOptionsBuilder), typeof(SqliteOptionsBuilder)));
-            
-            var connectionBuilder = SpecimenBuilderNodeFactory.CreateTypedNode(
-                typeof(SqliteConnection),
-                new MethodInvoker(new GreedyConstructorQuery()));
-            fixture.Customizations.Insert(0, connectionBuilder);
-            
-            if (this.AutoOpenConnection)
-            {
-                fixture.Behaviors.Add(new ConnectionOpeningBehavior(
-                    new BaseTypeSpecification(typeof(DbConnection))));
-            }
-
-            if (this.AutoCreateDatabase)
-            {
-                fixture.Behaviors.Add(new DatabaseInitializingBehavior(
-                    new BaseTypeSpecification(typeof(DbContext))));
-            }
-        }
+        this.connectionString = value;
     }
 }

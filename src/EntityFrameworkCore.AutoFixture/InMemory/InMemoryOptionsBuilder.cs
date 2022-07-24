@@ -1,42 +1,50 @@
+#nullable enable
 using System;
-using EntityFrameworkCore.AutoFixture.Core;
+using AutoFixture.Kernel;
 using Microsoft.EntityFrameworkCore;
 
-namespace EntityFrameworkCore.AutoFixture.InMemory
+namespace EntityFrameworkCore.AutoFixture.InMemory;
+
+/// <summary>
+/// Configures the DbContextOptionsBuilder to use the in-memory database provider.
+/// </summary>
+public class InMemoryOptionsBuilder : ISpecimenBuilder
 {
     /// <summary>
-    /// Creates database context options.
+    /// Creates an instance of type <see cref="InMemoryOptionsBuilder"/>.
     /// </summary>
-    public class InMemoryOptionsBuilder : OptionsBuilder
+    /// <param name="builder">The decorated builder.</param>
+    /// <param name="options">The configuration options.</param>
+    /// <exception cref="ArgumentNullException">Thrown when any parameter is null.</exception>
+    public InMemoryOptionsBuilder(ISpecimenBuilder builder, InMemoryOptions options)
     {
-        /// <summary>
-        /// Creates a <see cref="InMemoryOptionsBuilder"/> instance.
-        /// </summary>
-        /// <param name="databaseName">The name of the database.</param>
-        /// <exception cref="ArgumentNullException">When <paramref name="databaseName"/> is null.</exception>
-        public InMemoryOptionsBuilder(string databaseName)
-        {
-            this.DatabaseName = databaseName
-                ?? throw new ArgumentNullException(nameof(databaseName));
-        }
+        this.Builder = builder ?? throw new ArgumentNullException(nameof(builder));
+        this.Options = options ?? throw new ArgumentNullException(nameof(options));
+    }
 
-        /// <summary>
-        /// Creates a <see cref="InMemoryOptionsBuilder"/> instance.
-        /// </summary>
-        public InMemoryOptionsBuilder()
-            : this(Guid.NewGuid().ToString())
-        {
-        }
+    /// <summary>
+    /// Gets the decorated builder.
+    /// </summary>
+    public ISpecimenBuilder Builder { get; }
 
-        /// <summary>
-        /// Gets the database name.
-        /// </summary>
-        public string DatabaseName { get; }
+    /// <summary>
+    /// Gets the configuration options.
+    /// </summary>
+    public InMemoryOptions Options { get; }
 
-        /// <inheritdoc />
-        public override DbContextOptions<TContext> Build<TContext>()
-            => new DbContextOptionsBuilder<TContext>()
-            .UseInMemoryDatabase(this.DatabaseName)
-            .Options;
+    /// <inheritdoc />
+    public object Create(object request, ISpecimenContext context)
+    {
+        if (context is null) throw new ArgumentNullException(nameof(context));
+
+        var result = this.Builder.Create(request, context);
+
+        var nameSeed = this.Options.DatabaseName ?? Guid.NewGuid().ToString();
+        var databaseName = this.Options.UseUniqueNames ? context.Create(nameSeed) : nameSeed;
+
+        if (result is not DbContextOptionsBuilder builder)
+            return new NoSpecimen();
+
+        return builder.UseInMemoryDatabase(databaseName, this.Options.Configure);
     }
 }

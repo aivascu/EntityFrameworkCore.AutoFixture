@@ -32,15 +32,10 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
             var actual = new[]
             {
                 typeof(Omitter),
-                typeof(DbContextOptionsSpecimenBuilder),
                 typeof(TypeRelay),
             };
             var fixture = new DelegatingFixture();
-            var customization = new InMemoryContextCustomization
-            {
-                AutoCreateDatabase = true,
-                OmitDbSets = true,
-            };
+            var customization = new InMemoryContextCustomization();
 
             customization.Customize(fixture);
 
@@ -56,11 +51,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
                 typeof(DatabaseInitializingBehavior)
             };
             var fixture = new DelegatingFixture();
-            var customization = new InMemoryContextCustomization
-            {
-                AutoCreateDatabase = true,
-                OmitDbSets = true,
-            };
+            var customization = new InMemoryContextCustomization();
 
             customization.Customize(fixture);
 
@@ -72,11 +63,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
         public void DoesNotAddBehaviorsWhenFlagsAreOff()
         {
             var fixture = new DelegatingFixture();
-            var customization = new InMemoryContextCustomization
-            {
-                AutoCreateDatabase = false,
-                OmitDbSets = true,
-            };
+            var customization = new InMemoryContextCustomization();
 
             customization.Customize(fixture);
 
@@ -88,7 +75,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
         {
             var actual = new[]
             {
-                typeof(DbContextOptionsSpecimenBuilder),
+                // typeof(DbContextOptionsSpecimenBuilder),
                 typeof(TypeRelay),
             };
             var fixture = new DelegatingFixture();
