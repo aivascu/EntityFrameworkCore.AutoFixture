@@ -29,11 +29,11 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
         [Fact]
         public void AddsExpectedCustomizations()
         {
-            var actual = new Type[]
+            var actual = new[]
             {
                 typeof(Omitter),
                 typeof(DbContextOptionsSpecimenBuilder),
-                typeof(InMemoryOptionsSpecimenBuilder),
+                typeof(TypeRelay),
             };
             var fixture = new DelegatingFixture();
             var customization = new InMemoryContextCustomization
@@ -45,13 +45,13 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
             customization.Customize(fixture);
 
             fixture.Customizations.Select(x => x.GetType())
-                .Should().BeEquivalentTo(actual);
+                .Should().BeEquivalentTo<Type>(actual);
         }
 
         [Fact]
         public void AddsExpectedBehaviors()
         {
-            var actual = new Type[]
+            var actual = new[]
             {
                 typeof(DatabaseInitializingBehavior)
             };
@@ -65,7 +65,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
             customization.Customize(fixture);
 
             fixture.Behaviors.Select(x => x.GetType())
-                .Should().BeEquivalentTo(actual);
+                .Should().BeEquivalentTo<Type>(actual);
         }
 
         [Fact]
@@ -86,10 +86,10 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
         [Fact]
         public void DoesNotAddDbSetOmitterWhenFlagOff()
         {
-            var actual = new Type[]
+            var actual = new[]
             {
                 typeof(DbContextOptionsSpecimenBuilder),
-                typeof(InMemoryOptionsSpecimenBuilder),
+                typeof(TypeRelay),
             };
             var fixture = new DelegatingFixture();
             var customization = new InMemoryContextCustomization
@@ -100,7 +100,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
             customization.Customize(fixture);
 
             fixture.Customizations.Select(x => x.GetType())
-                .Should().BeEquivalentTo(actual);
+                .Should().BeEquivalentTo<Type>(actual);
         }
 
         [Theory, AutoData]

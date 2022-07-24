@@ -1,7 +1,9 @@
 using System;
 using AutoFixture;
+using AutoFixture.Kernel;
 using EntityFrameworkCore.AutoFixture.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace EntityFrameworkCore.AutoFixture.InMemory
 {
@@ -24,11 +26,12 @@ namespace EntityFrameworkCore.AutoFixture.InMemory
 
             base.Customize(fixture);
 
-            fixture.Customizations.Add(new InMemoryOptionsSpecimenBuilder());
+            fixture.Customizations.Add(new TypeRelay(typeof(IOptionsBuilder), typeof(InMemoryOptionsBuilder)));
 
             if (this.AutoCreateDatabase)
             {
-                fixture.Behaviors.Add(new DatabaseInitializingBehavior(new BaseTypeSpecification(typeof(DbContext))));
+                fixture.Behaviors.Add(new DatabaseInitializingBehavior(
+                    new BaseTypeSpecification(typeof(DbContext))));
             }
         }
     }

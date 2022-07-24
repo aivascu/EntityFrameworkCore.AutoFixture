@@ -36,7 +36,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         [Fact]
         public void AddsExpectedCustomizations()
         {
-            var actual = new Type[]
+            var actual = new[]
             {
                 typeof(Omitter),
                 typeof(DbContextOptionsSpecimenBuilder),
@@ -60,7 +60,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         [Fact]
         public void AddsExpectedBehaviors()
         {
-            var actual = new Type[]
+            var actual = new[]
             {
                 typeof(ConnectionOpeningBehavior),
                 typeof(DatabaseInitializingBehavior)
@@ -98,7 +98,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         [Fact]
         public void DoesNotAddDbSetOmitterWhenFlagOff()
         {
-            var actual = new Type[]
+            var actual = new[]
             {
                 typeof(DbContextOptionsSpecimenBuilder),
                 typeof(SqliteOptionsSpecimenBuilder),
