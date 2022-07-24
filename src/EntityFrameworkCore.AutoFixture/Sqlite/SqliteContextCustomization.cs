@@ -15,6 +15,10 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
     /// </summary>
     public class SqliteContextCustomization : DbContextCustomization
     {
+        private string connectionString = DefaultConnectionString;
+        private const string ConnectionStringParameter = "connectionString";
+        private const string DefaultConnectionString = "DataSource=:memory:";
+
         /// <summary>
         /// Automatically open <see cref="DbConnection"/> database connections upon creation.
         /// Default value is <see langword="false"/>.
@@ -28,6 +32,27 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
         /// </summary>
         public bool AutoCreateDatabase { get; set; }
 
+        /// <summary>
+        /// Gets or sets the default connection string used when creating <see cref="SqliteConnection"/> instances.
+        /// Default is &quot;DataSource=:memory:&quot;.
+        /// </summary>
+        public string ConnectionString
+        {
+            get => this.connectionString;
+            set => this.SetConnectionString(value);
+        }
+
+        private void SetConnectionString(string value)
+        {
+            if (value is null)
+                throw new ArgumentNullException(nameof(value));
+
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentException("Value cannot be empty or whitespace.", nameof(value));
+
+            this.connectionString = value;
+        }
+
         /// <inheritdoc/>
         public override void Customize(IFixture fixture)
         {
@@ -36,9 +61,9 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
             base.Customize(fixture);
 
             fixture.Customizations.Add(new FilteringSpecimenBuilder(
-                new FixedBuilder("DataSource=:memory:"),
+                new FixedBuilder(this.ConnectionString),
                 new AndRequestSpecification(
-                    new ParameterSpecification(typeof(string), "connectionString"),
+                    new ParameterSpecification(typeof(string), ConnectionStringParameter),
                     new ParameterSpecification(
                         new DeclaringMemberCriterion(
                             new DeclaringTypeCriterion<MemberInfo>(typeof(SqliteConnection)))))));
