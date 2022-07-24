@@ -25,7 +25,7 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
         /// Creates a <see cref="SqliteConnectionSpecimenBuilder" />.
         /// </summary>
         public SqliteOptionsSpecimenBuilder()
-            : this(new IsOptionsBuilder())
+            : this(new ExactTypeSpecification(typeof(IOptionsBuilder)))
         {
         }
 
@@ -37,7 +37,7 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
         /// <inheritdoc />
         public object Create(object request, ISpecimenContext context)
         {
-            if (context == null) throw new ArgumentNullException(nameof(context));
+            if (context is null) throw new ArgumentNullException(nameof(context));
             if (!this.OptionsBuilderSpecification.IsSatisfiedBy(request)) return new NoSpecimen();
 
             var sqliteConnectionObj = context.Resolve(typeof(SqliteConnection));
@@ -47,15 +47,6 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
                 SqliteConnection sqliteConnection => new SqliteOptionsBuilder(sqliteConnection),
                 _ => new NoSpecimen()
             };
-        }
-
-        private class IsOptionsBuilder : IRequestSpecification
-        {
-            public bool IsSatisfiedBy(object request)
-            {
-                return request is Type { IsInterface: true } type
-                    && type == typeof(IOptionsBuilder);
-            }
         }
     }
 }

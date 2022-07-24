@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 namespace EntityFrameworkCore.AutoFixture.Sqlite
 {
     /// <summary>
-    /// Customizes AutoFixture to create sqlite Entity Framework database ontexts.
+    /// Customizes AutoFixture to create sqlite Entity Framework database contexts.
     /// </summary>
     public class SqliteContextCustomization : DbContextCustomization
     {
