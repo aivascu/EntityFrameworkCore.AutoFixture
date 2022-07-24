@@ -40,8 +40,9 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
             {
                 typeof(Omitter),
                 typeof(DbContextOptionsSpecimenBuilder),
+                typeof(FilteringSpecimenBuilder),
                 typeof(TypeRelay),
-                typeof(SqliteConnectionSpecimenBuilder)
+                typeof(FilteringSpecimenBuilder)
             };
             var fixture = new DelegatingFixture();
             var customization = new SqliteContextCustomization
@@ -101,8 +102,9 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
             var actual = new[]
             {
                 typeof(DbContextOptionsSpecimenBuilder),
+                typeof(FilteringSpecimenBuilder),
                 typeof(TypeRelay),
-                typeof(SqliteConnectionSpecimenBuilder)
+                typeof(FilteringSpecimenBuilder)
             };
             var fixture = new DelegatingFixture();
             var customization = new SqliteContextCustomization

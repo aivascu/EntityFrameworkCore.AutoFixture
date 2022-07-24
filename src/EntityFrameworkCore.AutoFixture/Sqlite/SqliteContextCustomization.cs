@@ -1,8 +1,10 @@
 using System;
 using System.Data.Common;
+using System.Reflection;
 using AutoFixture;
 using AutoFixture.Kernel;
 using EntityFrameworkCore.AutoFixture.Core;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
@@ -33,9 +35,21 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
 
             base.Customize(fixture);
 
+            fixture.Customizations.Add(new FilteringSpecimenBuilder(
+                new FixedBuilder("DataSource=:memory:"),
+                new AndRequestSpecification(
+                    new ParameterSpecification(typeof(string), "connectionString"),
+                    new ParameterSpecification(
+                        new DeclaringMemberCriterion(
+                            new DeclaringTypeCriterion<MemberInfo>(typeof(SqliteConnection)))))));
+            
             fixture.Customizations.Add(new TypeRelay(typeof(IOptionsBuilder), typeof(SqliteOptionsBuilder)));
-            fixture.Customizations.Add(new SqliteConnectionSpecimenBuilder());
-
+            
+            var connectionBuilder = SpecimenBuilderNodeFactory.CreateTypedNode(
+                typeof(SqliteConnection),
+                new MethodInvoker(new GreedyConstructorQuery()));
+            fixture.Customizations.Insert(0, connectionBuilder);
+            
             if (this.AutoOpenConnection)
             {
                 fixture.Behaviors.Add(new ConnectionOpeningBehavior(
