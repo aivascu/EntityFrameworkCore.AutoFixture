@@ -1,6 +1,7 @@
 using System;
 using System.Data.Common;
 using AutoFixture;
+using AutoFixture.Kernel;
 using EntityFrameworkCore.AutoFixture.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -32,17 +33,19 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite
 
             base.Customize(fixture);
 
-            fixture.Customizations.Add(new SqliteOptionsSpecimenBuilder());
+            fixture.Customizations.Add(new TypeRelay(typeof(IOptionsBuilder), typeof(SqliteOptionsBuilder)));
             fixture.Customizations.Add(new SqliteConnectionSpecimenBuilder());
 
             if (this.AutoOpenConnection)
             {
-                fixture.Behaviors.Add(new ConnectionOpeningBehavior(new BaseTypeSpecification(typeof(DbConnection))));
+                fixture.Behaviors.Add(new ConnectionOpeningBehavior(
+                    new BaseTypeSpecification(typeof(DbConnection))));
             }
 
             if (this.AutoCreateDatabase)
             {
-                fixture.Behaviors.Add(new DatabaseInitializingBehavior(new BaseTypeSpecification(typeof(DbContext))));
+                fixture.Behaviors.Add(new DatabaseInitializingBehavior(
+                    new BaseTypeSpecification(typeof(DbContext))));
             }
         }
     }

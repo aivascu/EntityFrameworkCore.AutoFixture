@@ -40,7 +40,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
             {
                 typeof(Omitter),
                 typeof(DbContextOptionsSpecimenBuilder),
-                typeof(SqliteOptionsSpecimenBuilder),
+                typeof(TypeRelay),
                 typeof(SqliteConnectionSpecimenBuilder)
             };
             var fixture = new DelegatingFixture();
@@ -54,7 +54,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
             customization.Customize(fixture);
 
             fixture.Customizations.Select(x => x.GetType())
-                .Should().BeEquivalentTo(actual);
+                .Should().BeEquivalentTo<Type>(actual);
         }
 
         [Fact]
@@ -76,7 +76,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
             customization.Customize(fixture);
 
             fixture.Behaviors.Select(x => x.GetType())
-                .Should().BeEquivalentTo(actual);
+                .Should().BeEquivalentTo<Type>(actual);
         }
 
         [Fact]
@@ -101,7 +101,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
             var actual = new[]
             {
                 typeof(DbContextOptionsSpecimenBuilder),
-                typeof(SqliteOptionsSpecimenBuilder),
+                typeof(TypeRelay),
                 typeof(SqliteConnectionSpecimenBuilder)
             };
             var fixture = new DelegatingFixture();
@@ -113,7 +113,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
             customization.Customize(fixture);
 
             fixture.Customizations.Select(x => x.GetType())
-                .Should().BeEquivalentTo(actual);
+                .Should().BeEquivalentTo<Type>(actual);
         }
 
         [Theory, AutoData]
