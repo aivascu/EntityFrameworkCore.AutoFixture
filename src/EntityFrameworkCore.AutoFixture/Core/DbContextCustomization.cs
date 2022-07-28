@@ -12,19 +12,24 @@ namespace EntityFrameworkCore.AutoFixture.Core;
 public class DbContextCustomization : ICustomization
 {
     /// <summary>
-    /// Gets or sets the configuration to omit <see cref="DbSet{TEntity}" />
-    /// properties, on <see cref="DbContext" /> derived types. <br />
+    /// Configures whether <see cref="DbSet{TEntity}"/> properties on <see cref="DbContext"/> will be omitted by AutoFixture.
     /// Default value is <see langword="true"/>.
     /// </summary>
     public bool OmitDbSets { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets the postprocessing action for <see cref="DbContext" />.<br/>
-    /// Default value is <see cref="OnCreateAction.None"/>.
+    /// Gets or sets the postprocessing action for <see cref="DbContext"/>.
+    /// Default value is <see cref="OnCreateAction.EnsureCreated"/>.
     /// </summary>
     public OnCreateAction OnCreate { get; set; } = OnCreateAction.EnsureCreated;
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Gets or sets the DbContext options builder configuration delegate,
+    /// which runs after configuring the database provider.
+    /// </summary>
+    public Func<DbContextOptionsBuilder, DbContextOptionsBuilder> Configure { get; set; }
+
+    /// <inheritdoc/>
     public virtual void Customize(IFixture fixture)
     {
         if (fixture is null) throw new ArgumentNullException(nameof(fixture));
@@ -51,7 +56,7 @@ public class DbContextCustomization : ICustomization
         fixture.Customizations.Add(new FilteringSpecimenBuilder(
             new ContextOptionsBuilder(),
             new ExactTypeSpecification(typeof(DbContextOptions<>))));
-        
+
         fixture.Customizations.Add(new FilteringSpecimenBuilder(
             new Postprocessor(
                 new MethodInvoker(

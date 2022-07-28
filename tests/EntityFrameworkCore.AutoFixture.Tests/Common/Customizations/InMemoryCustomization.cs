@@ -5,13 +5,13 @@ using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities;
 
 namespace EntityFrameworkCore.AutoFixture.Tests.Common.Customizations
 {
-    public class InMemoryCustomization : CompositeCustomization
+    public class InMemoryDataCustomization : CompositeCustomization
     {
-        public InMemoryCustomization()
+        public InMemoryDataCustomization()
             : base(
                 VirtualPropertyOmitterCustomization
                   .ForTypesInNamespaces(typeof(Customer)),
-                new InMemoryContextCustomization(),
+                new InMemoryCustomization(),
                 new AutoMoqCustomization())
         {
         }

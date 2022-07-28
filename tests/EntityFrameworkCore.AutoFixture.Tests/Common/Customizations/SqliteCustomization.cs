@@ -5,13 +5,13 @@ using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities;
 
 namespace EntityFrameworkCore.AutoFixture.Tests.Common.Customizations
 {
-    public class SqliteCustomization : CompositeCustomization
+    public class SqliteDataCustomization : CompositeCustomization
     {
-        public SqliteCustomization()
+        public SqliteDataCustomization()
             : base(
                 VirtualPropertyOmitterCustomization
                   .ForTypesInNamespaces(typeof(Customer)),
-                new SqliteContextCustomization(),
+                new SqliteCustomization(),
                 new AutoMoqCustomization())
         {
         }

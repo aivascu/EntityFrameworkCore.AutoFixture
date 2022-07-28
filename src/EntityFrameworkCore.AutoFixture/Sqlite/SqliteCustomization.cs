@@ -1,17 +1,18 @@
 using System;
-using System.Data.Common;
 using System.Reflection;
 using AutoFixture;
 using AutoFixture.Kernel;
 using EntityFrameworkCore.AutoFixture.Core;
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace EntityFrameworkCore.AutoFixture.Sqlite;
 
 /// <summary>
 /// Customizes AutoFixture to create sqlite Entity Framework database contexts.
 /// </summary>
-public class SqliteContextCustomization : DbContextCustomization
+public class SqliteCustomization : DbContextCustomization
 {
     private const string ConnectionStringParameter = "connectionString";
     private const string DefaultConnectionString = "DataSource=:memory:";
@@ -19,14 +20,12 @@ public class SqliteContextCustomization : DbContextCustomization
     private string connectionString = DefaultConnectionString;
 
     /// <summary>
-    /// Automatically open <see cref="DbConnection" /> database connections upon creation.<br />
-    /// Default value is <see langword="true" />.
+    /// Configures the database connections to open immidiately after creation. Default value is <see langword="true"/>.
     /// </summary>
     public bool AutoOpenConnection { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets the connection string used to create database connections.<br />
-    /// Default is &quot;DataSource=:memory:&quot;.
+    /// Gets or sets the connection string used to create database connections. Default is "DataSource=:memory:".
     /// </summary>
     public string ConnectionString
     {
@@ -34,7 +33,12 @@ public class SqliteContextCustomization : DbContextCustomization
         set => this.SetConnectionString(value);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Provides additional in-memory specific configuration. Default value is <see langword="null"/>.
+    /// </summary>
+    public Action<SqliteDbContextOptionsBuilder> ConfigureProvider { get; set; }
+
+    /// <inheritdoc/>
     public override void Customize(IFixture fixture)
     {
         if (fixture is null) throw new ArgumentNullException(nameof(fixture));
@@ -59,6 +63,16 @@ public class SqliteContextCustomization : DbContextCustomization
                     new GreedyConstructorQuery()),
                 onCreateConnection),
             new ExactTypeSpecification(typeof(SqliteConnection))));
+
+        fixture.Customizations.Add(new FilteringSpecimenBuilder(
+            new OptionsBuilderConfigurator(
+                new SqliteOptionsBuilder(
+                    new MethodInvoker(
+                        new ModestConstructorQuery()),
+                    this.ConfigureProvider),
+                this.Configure),
+            new ExactTypeSpecification(
+                typeof(DbContextOptionsBuilder<>))));
     }
 
     private void SetConnectionString(string value)

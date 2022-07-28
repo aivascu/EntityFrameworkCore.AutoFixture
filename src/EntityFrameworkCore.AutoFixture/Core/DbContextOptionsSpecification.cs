@@ -8,11 +8,7 @@ internal class DbContextOptionsSpecification : IRequestSpecification
 {
     public bool IsSatisfiedBy(object request)
     {
-        return request is Type
-               {
-                   IsAbstract: false,
-                   IsGenericType: true
-               } type
-               && typeof(DbContextOptions<>) == type.GetGenericTypeDefinition();
+        return request is Type { IsAbstract: false, IsGenericType: true } type
+            && typeof(DbContextOptions<>) == type.GetGenericTypeDefinition();
     }
 }

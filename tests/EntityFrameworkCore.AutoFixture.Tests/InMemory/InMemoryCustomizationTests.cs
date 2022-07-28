@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoFixture;
 using AutoFixture.Idioms;
 using AutoFixture.Kernel;
 using AutoFixture.Xunit2;
@@ -17,6 +18,22 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
 {
     public class InMemoryCustomizationTests
     {
+        [Fact]
+        public void CanCreateContext()
+        {
+            var fixture = new Fixture().Customize(
+                new InMemoryCustomization
+                {
+                    DatabaseName = "MyDb",
+                    UseUniqueNames = true,
+                    Configure = x => x.ConfigureWarnings(y => y.Ignore()),
+                    OmitDbSets = true,
+                    OnCreate = OnCreateAction.Migrate // By default it is OnCreateAction.EnsureCreated
+                });
+
+            var context = fixture.Create<TestDbContext>();
+        }
+
         [Theory, InMemoryData]
         public async Task CanAddItemToContext(TestDbContext context)
         {
@@ -35,7 +52,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
                 typeof(TypeRelay),
             };
             var fixture = new DelegatingFixture();
-            var customization = new InMemoryContextCustomization();
+            var customization = new InMemoryCustomization();
 
             customization.Customize(fixture);
 
@@ -51,7 +68,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
                 typeof(DatabaseInitializingBehavior)
             };
             var fixture = new DelegatingFixture();
-            var customization = new InMemoryContextCustomization();
+            var customization = new InMemoryCustomization();
 
             customization.Customize(fixture);
 
@@ -63,7 +80,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
         public void DoesNotAddBehaviorsWhenFlagsAreOff()
         {
             var fixture = new DelegatingFixture();
-            var customization = new InMemoryContextCustomization();
+            var customization = new InMemoryCustomization();
 
             customization.Customize(fixture);
 
@@ -79,7 +96,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
                 typeof(TypeRelay),
             };
             var fixture = new DelegatingFixture();
-            var customization = new InMemoryContextCustomization
+            var customization = new InMemoryCustomization
             {
                 OmitDbSets = false,
             };
@@ -93,7 +110,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
         [Theory, AutoData]
         public void ImplementsGuardClauses(GuardClauseAssertion assertion)
         {
-            assertion.Verify(typeof(InMemoryContextCustomization));
+            assertion.Verify(typeof(InMemoryCustomization));
         }
     }
 }

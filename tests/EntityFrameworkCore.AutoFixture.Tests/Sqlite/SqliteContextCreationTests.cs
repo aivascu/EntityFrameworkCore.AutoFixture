@@ -1,5 +1,6 @@
 using System;
 using AutoFixture;
+using EntityFrameworkCore.AutoFixture.Sqlite;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Customizations;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities;
@@ -27,7 +28,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         public void DoesNotSetDbSets()
         {
             var fixture = new Fixture().Customize(
-                new SqliteCustomization());
+                new SqliteDataCustomization());
 
             var context = fixture.Create<TestDbContext>();
 

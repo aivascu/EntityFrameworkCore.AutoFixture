@@ -8,7 +8,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Common.Attributes
     {
         public InMemoryDataAttribute()
             : base(() => new Fixture()
-                .Customize(new InMemoryCustomization()))
+                .Customize(new InMemoryDataCustomization()))
         {
         }
     }

@@ -33,58 +33,6 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
             assertion.Verify(members);
         }
 
-        [Fact]
-        public void GenericBuild_ShouldCreateDbContextOptions_WithSqliteExtension()
-        {
-            var connectionString = "Data Source=:memory:";
-            var connection = new SqliteConnection(connectionString);
-            var context = new SqliteOptionsBuilder(connection)
-                .Build<TestDbContext>();
-
-            context.Extensions.Should().Contain(x => x.GetType() == GetOptionsType());
-        }
-
-        [Fact]
-        public void GenericBuild_ShouldCreateDbContextOptions_WithSqliteExtension_WithConnectionString()
-        {
-            var connectionString = "Data Source=:memory:";
-            var connection = new SqliteConnection(connectionString);
-            dynamic extension = new SqliteOptionsBuilder(connection)
-                .Build<TestDbContext>()
-                .Extensions
-                .Single(x => x.GetType() == GetOptionsType());
-
-            string actual = extension.Connection.ConnectionString;
-            actual.Should().Be(connectionString);
-        }
-
-        [Fact]
-        public void Build_ShouldCreateDbContextOptions_WithSqliteExtension()
-        {
-            var connectionString = "Data Source=:memory:";
-            var connection = new SqliteConnection(connectionString);
-            var context = new SqliteOptionsBuilder(connection)
-                .Build(typeof(TestDbContext))
-                .As<DbContextOptions<TestDbContext>>();
-
-            context.Extensions.Should().Contain(x => x.GetType() == GetOptionsType());
-        }
-
-        [Fact]
-        public void Build_ShouldCreateDbContextOptions_WithSqliteExtension_WithConnectionString()
-        {
-            var connectionString = "Data Source=:memory:";
-            var connection = new SqliteConnection(connectionString);
-            dynamic extension = new SqliteOptionsBuilder(connection)
-                .Build(typeof(TestDbContext))
-                .As<DbContextOptions<TestDbContext>>()
-                .Extensions
-                .Single(x => x.GetType() == GetOptionsType());
-
-            string actual = extension.Connection.ConnectionString;
-            actual.Should().Be(connectionString);
-        }
-
         private abstract class AbstractDbContext : DbContext
         { }
 

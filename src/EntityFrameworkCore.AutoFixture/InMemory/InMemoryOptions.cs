@@ -19,5 +19,5 @@ public record InMemoryOptions
     /// <summary>
     /// Gets or sets an optional action to allow additional in-memory specific configuration.
     /// </summary>
-    public Action<InMemoryDbContextOptionsBuilder>? Configure { get; set; }
+    public Action<InMemoryDbContextOptionsBuilder>? ConfigureProvider { get; set; }
 }

@@ -45,7 +45,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
                 typeof(FilteringSpecimenBuilder)
             };
             var fixture = new DelegatingFixture();
-            var customization = new SqliteContextCustomization();
+            var customization = new SqliteCustomization();
 
             customization.Customize(fixture);
 
@@ -62,7 +62,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
                 typeof(DatabaseInitializingBehavior)
             };
             var fixture = new DelegatingFixture();
-            var customization = new SqliteContextCustomization();
+            var customization = new SqliteCustomization();
 
             customization.Customize(fixture);
 
@@ -74,7 +74,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         public void DoesNotAddBehaviorsWhenFlagsAreOff()
         {
             var fixture = new DelegatingFixture();
-            var customization = new SqliteContextCustomization();
+            var customization = new SqliteCustomization();
 
             customization.Customize(fixture);
 
@@ -92,7 +92,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
                 typeof(FilteringSpecimenBuilder)
             };
             var fixture = new DelegatingFixture();
-            var customization = new SqliteContextCustomization
+            var customization = new SqliteCustomization
             {
                 OmitDbSets = false,
             };
@@ -106,7 +106,7 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
         [Theory, AutoData]
         public void ImplementsGuardClauses(GuardClauseAssertion assertion)
         {
-            assertion.Verify(typeof(SqliteContextCustomization));
+            assertion.Verify(typeof(SqliteCustomization));
         }
     }
 }

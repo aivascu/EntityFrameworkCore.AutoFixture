@@ -45,6 +45,6 @@ public class InMemoryOptionsBuilder : ISpecimenBuilder
         if (result is not DbContextOptionsBuilder builder)
             return new NoSpecimen();
 
-        return builder.UseInMemoryDatabase(databaseName, this.Options.Configure);
+        return builder.UseInMemoryDatabase(databaseName, this.Options.ConfigureProvider);
     }
 }

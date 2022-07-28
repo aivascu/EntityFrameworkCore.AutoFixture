@@ -1,35 +1,47 @@
+#nullable enable
+
 using System;
-using EntityFrameworkCore.AutoFixture.Core;
+using AutoFixture;
+using AutoFixture.Kernel;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace EntityFrameworkCore.AutoFixture.Sqlite
 {
     /// <summary>
-    /// Creates <see cref="DbContextOptions{TContext}"/> using SQLite.
+    /// Creates a <see cref="DbContextOptionsBuilder{TContext}"/> instance using SQLite.
     /// </summary>
-    public class SqliteOptionsBuilder : OptionsBuilder
+    public class SqliteOptionsBuilder : ISpecimenBuilder
     {
-        public SqliteOptionsBuilder(SqliteConnection connection)
+        public SqliteOptionsBuilder(ISpecimenBuilder builder, Action<SqliteDbContextOptionsBuilder>? configureProvider = null)
         {
-            this.Connection = connection
-                ?? throw new ArgumentNullException(nameof(connection));
+            this.Builder = builder ?? throw new ArgumentNullException(nameof(builder));
+            this.ConfigureProvider = configureProvider;
         }
 
         /// <summary>
-        /// Gets the database connection.
+        /// Gets the decorated builder.
         /// </summary>
-        public SqliteConnection Connection { get; }
+        public ISpecimenBuilder Builder { get; }
 
         /// <summary>
-        /// Builds default <see cref="DbContextOptions{TContext}"/>,
-        /// using the SQLite connection.
+        /// Gets or sets an optional action to allow additional provider specific configuration.
         /// </summary>
-        /// <typeparam name="TContext"></typeparam>
-        /// <returns>Returns a <see cref="DbContextOptions{TContext}" /> instance.</returns>
-        public override DbContextOptions<TContext> Build<TContext>()
-            => new DbContextOptionsBuilder<TContext>()
-            .UseSqlite(this.Connection)
-            .Options;
+        public Action<SqliteDbContextOptionsBuilder>? ConfigureProvider { get; set; }
+
+        public object Create(object request, ISpecimenContext context)
+        {
+            if (context is null) throw new ArgumentNullException(nameof(context));
+
+            var result = this.Builder.Create(request, context);
+
+            var connection = context.Create<SqliteConnection>();
+
+            if (result is not DbContextOptionsBuilder builder)
+                return new NoSpecimen();
+
+            return builder.UseSqlite(connection, this.ConfigureProvider);
+        }
     }
 }
