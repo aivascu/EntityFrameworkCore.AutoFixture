@@ -1,22 +1,20 @@
 ﻿using System;
 using AutoFixture.Kernel;
 
-namespace EntityFrameworkCore.AutoFixture.Core
+namespace EntityFrameworkCore.AutoFixture.Core;
+
+public class BaseTypeSpecification : IRequestSpecification
 {
-    public class BaseTypeSpecification : IRequestSpecification
+    public BaseTypeSpecification(Type type)
     {
-        public BaseTypeSpecification(Type baseType)
-        {
-            this.BaseType = baseType
-                ?? throw new ArgumentNullException(nameof(baseType));
-        }
+        this.Type = type ?? throw new ArgumentNullException(nameof(type));
+    }
 
-        public Type BaseType { get; }
+    public Type Type { get; }
 
-        public bool IsSatisfiedBy(object request)
-        {
-            return request is Type type
-                && this.BaseType.IsAssignableFrom(type);
-        }
+    public bool IsSatisfiedBy(object request)
+    {
+        return request is Type type
+               && this.Type.IsAssignableFrom(type);
     }
 }

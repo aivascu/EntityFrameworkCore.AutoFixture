@@ -10,10 +10,12 @@ public enum OnCreateAction
     /// Does not perform any action after context is created.
     /// </summary>
     None = 0,
+
     /// <summary>
     /// Runs the EnsureCreated method on context after it is created.
     /// </summary>
     EnsureCreated = 1,
+
     /// <summary>
     /// Runs the Migrate method on context after it is created.
     /// </summary>

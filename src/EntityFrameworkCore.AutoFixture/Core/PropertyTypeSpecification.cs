@@ -4,14 +4,14 @@ using AutoFixture.Kernel;
 
 namespace EntityFrameworkCore.AutoFixture.Core;
 
-public class DeclaringTypeSpecification : IRequestSpecification
+public class PropertyTypeSpecification : IRequestSpecification
 {
-    public DeclaringTypeSpecification(Type type)
+    public PropertyTypeSpecification(Type type)
         : this(new ExactTypeSpecification(type))
     {
     }
 
-    public DeclaringTypeSpecification(IRequestSpecification specification)
+    public PropertyTypeSpecification(IRequestSpecification specification)
     {
         this.Specification = specification ?? throw new ArgumentNullException(nameof(specification));
     }
@@ -20,9 +20,7 @@ public class DeclaringTypeSpecification : IRequestSpecification
 
     public bool IsSatisfiedBy(object request)
     {
-        if (request is not MemberInfo memberInfo)
-            return false;
-
-        return this.Specification.IsSatisfiedBy(memberInfo.DeclaringType);
+        return request is PropertyInfo propertyInfo
+               && this.Specification.IsSatisfiedBy(propertyInfo.PropertyType);
     }
 }

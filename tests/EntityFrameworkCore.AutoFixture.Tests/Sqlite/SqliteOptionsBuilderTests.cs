@@ -1,56 +1,70 @@
 using System;
-using System.Linq;
-using AutoFixture;
-using AutoFixture.Idioms;
-using AutoFixture.Xunit2;
+using AutoFixture.Kernel;
 using EntityFrameworkCore.AutoFixture.Sqlite;
-using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
+using EntityFrameworkCore.AutoFixture.Tests.Common;
 using FluentAssertions;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
+using FluentAssertions.Execution;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Xunit;
 
-namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
+namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite;
+
+public class SqliteOptionsBuilderTests
 {
-    public class SqliteOptionsBuilderTests
+    [Fact]
+    public void CanCreateInstance()
     {
-        [Theory]
-        [AutoData]
-        public void Ctors_ShouldInitializeProperties(ConstructorInitializedMemberAssertion assertion)
+        _ = new SqliteOptionsBuilder(new DelegatingBuilder());
+    }
+
+    [Fact]
+    public void ThrowsWhenBuilderNull()
+    {
+        Action act = () => _ = new SqliteOptionsBuilder(null!);
+
+        act.Should().ThrowExactly<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void CanCreateInstanceWithOptionalParameter()
+    {
+        _ = new SqliteOptionsBuilder(new DelegatingBuilder(), x => x.MaxBatchSize(10));
+    }
+
+    [Fact]
+    public void SetsPropertiesFromConstructor()
+    {
+        var specimenBuilder = new DelegatingBuilder();
+        Action<SqliteDbContextOptionsBuilder> provider = x => x.MaxBatchSize(10);
+        var builder = new SqliteOptionsBuilder(specimenBuilder, provider);
+
+        using (new AssertionScope())
         {
-            var members = typeof(SqliteOptionsBuilder).GetConstructors();
-
-            assertion.Verify(members);
+            builder.Builder.Should().BeSameAs(specimenBuilder);
+            builder.ConfigureProvider.Should().BeSameAs(provider);
         }
+    }
 
-        [Theory]
-        [AutoData]
-        public void Ctors_ShouldReceiveInitializedParameters(Fixture fixture, GuardClauseAssertion assertion)
+    [Fact]
+    public void ThrowsWhenContextNull()
+    {
+        var builder = new SqliteOptionsBuilder(new DelegatingBuilder());
+
+        Action act = () => builder.Create(null!, null!);
+
+        act.Should().ThrowExactly<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void ReturnsNoSpecimenWhenDecoratedBuilderWhenNoResult()
+    {
+        var builder = new SqliteOptionsBuilder(new DelegatingBuilder
         {
-            fixture.Inject(new SqliteConnection("Data Source=:memory:"));
-            var members = typeof(SqliteOptionsBuilder).GetConstructors();
+            OnCreate = (_,_) => new NoSpecimen()
+        });
 
-            assertion.Verify(members);
-        }
+        var actual = builder.Create(new object(), new DelegatingSpecimenContext());
 
-        private abstract class AbstractDbContext : DbContext
-        { }
-
-        private static Type GetOptionsType()
-        {
-            var assembly = AppDomain.CurrentDomain.GetAssemblies()
-                .Single(x => x.GetName().Name == "Microsoft.EntityFrameworkCore.Sqlite");
-
-            var internalExtensionType = assembly.GetType("Microsoft.EntityFrameworkCore.Infrastructure.Internal.SqliteOptionsExtension");
-            var extensionType = assembly.GetType("Microsoft.EntityFrameworkCore.Sqlite.Infrastructure.Internal.SqliteOptionsExtension");
-
-            if (extensionType is not null)
-                return extensionType;
-
-            if (internalExtensionType is not null)
-                return internalExtensionType;
-
-            throw new InvalidOperationException("Unable to find type \"SqliteOptionsExtension\" in the EF Core Sqlite provider assembly");
-        }
+        actual.Should().BeOfType<NoSpecimen>();
     }
 }

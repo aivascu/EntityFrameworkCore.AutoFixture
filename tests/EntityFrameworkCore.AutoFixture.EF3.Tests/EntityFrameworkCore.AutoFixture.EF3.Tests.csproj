@@ -23,6 +23,10 @@
     <Compile Remove="..\EntityFrameworkCore.AutoFixture.Tests\obj\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Core" />
+  </ItemGroup>
+
   <Choose>
     <When Condition="'$(TargetFramework)' == 'netcoreapp2.1'">
       <ItemGroup>

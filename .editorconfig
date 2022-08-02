@@ -137,7 +137,7 @@ dotnet_naming_rule.members_should_be_pascal_case.style = pascal_case_style
 dotnet_naming_symbols.all_members.applicable_kinds = *
 
 dotnet_naming_style.pascal_case_style.capitalization = pascal_case
-dotnet_style_operator_placement_when_wrapping=beginning_of_line
+dotnet_style_operator_placement_when_wrapping = beginning_of_line
 
 # CSharp code style settings:
 [*.cs]
@@ -205,6 +205,6 @@ csharp_space_between_parentheses = false
 csharp_space_between_square_brackets = false
 
 # Blocks are allowed
-csharp_prefer_braces =when_multiline:warning
+csharp_prefer_braces = when_multiline:warning
 csharp_preserve_single_line_blocks = true
 csharp_preserve_single_line_statements = true

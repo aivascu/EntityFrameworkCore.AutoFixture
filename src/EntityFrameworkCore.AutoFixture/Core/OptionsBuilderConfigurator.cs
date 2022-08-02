@@ -1,5 +1,3 @@
-#nullable enable
-
 using System;
 using AutoFixture.Kernel;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +6,8 @@ namespace EntityFrameworkCore.AutoFixture.Core;
 
 public class OptionsBuilderConfigurator : ISpecimenBuilder
 {
-    public OptionsBuilderConfigurator(ISpecimenBuilder builder, Func<DbContextOptionsBuilder, DbContextOptionsBuilder>? configure)
+    public OptionsBuilderConfigurator(ISpecimenBuilder builder,
+        Func<DbContextOptionsBuilder, DbContextOptionsBuilder>? configure)
     {
         this.Builder = builder ?? throw new ArgumentNullException(nameof(builder));
         this.Configure = configure;
@@ -20,6 +19,7 @@ public class OptionsBuilderConfigurator : ISpecimenBuilder
     public object Create(object request, ISpecimenContext context)
     {
         var result = this.Builder.Create(request, context);
+
         if (result is not DbContextOptionsBuilder optionsBuilder)
             return result;
 

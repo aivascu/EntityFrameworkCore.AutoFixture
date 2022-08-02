@@ -1,5 +1,3 @@
-#nullable enable
-
 using System;
 using AutoFixture;
 using AutoFixture.Kernel;

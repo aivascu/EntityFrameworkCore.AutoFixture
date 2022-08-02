@@ -9,35 +9,34 @@ using FluentAssertions.Execution;
 using Microsoft.EntityFrameworkCore.Internal;
 using Xunit;
 
-namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
+namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite;
+
+public class SqliteContextCreationTests
 {
-    public class SqliteContextCreationTests
+    [Fact]
+    public void CanCreateContext()
     {
-        [Fact]
-        public void CanCreateContext()
+        var fixture = new Fixture().Customize(
+            new SqliteCustomization());
+
+        Action act = () => _ = fixture.Create<TestDbContext>();
+
+        act.Should().NotThrow();
+    }
+
+    [Fact]
+    public void DoesNotSetDbSets()
+    {
+        var fixture = new Fixture().Customize(
+            new SqliteDataCustomization());
+
+        var context = fixture.Create<TestDbContext>();
+
+        using (new AssertionScope())
         {
-            var fixture = new Fixture().Customize(
-                new SqliteCustomization());
-
-            Action act = () => _ = fixture.Create<TestDbContext>();
-
-            act.Should().NotThrow();
-        }
-
-        [Fact]
-        public void DoesNotSetDbSets()
-        {
-            var fixture = new Fixture().Customize(
-                new SqliteDataCustomization());
-
-            var context = fixture.Create<TestDbContext>();
-
-            using (new AssertionScope())
-            {
-                context.Items.Should().BeOfType<InternalDbSet<Item>>();
-                context.Customers.Should().BeOfType<InternalDbSet<Customer>>();
-                context.Orders.Should().BeOfType<InternalDbSet<Order>>();
-            }
+            context.Items.Should().BeOfType<InternalDbSet<Item>>();
+            context.Customers.Should().BeOfType<InternalDbSet<Customer>>();
+            context.Orders.Should().BeOfType<InternalDbSet<Order>>();
         }
     }
 }

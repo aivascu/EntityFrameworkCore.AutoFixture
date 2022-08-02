@@ -6,9 +6,9 @@ branches:
     tag: ''
     increment: Patch
   release:
-    source-branches: ['master']
+    source-branches: [ 'master' ]
     prevent-increment-of-merged-branch-version: true
     tag: 'preview'
 ignore:
-  sha: []
-merge-message-formats: {}
+  sha: [ ]
+merge-message-formats: { }

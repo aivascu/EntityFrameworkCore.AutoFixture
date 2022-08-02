@@ -1,7 +1,7 @@
 using System.Data.Common;
 using AutoFixture.Kernel;
 
-namespace EntityFrameworkCore.AutoFixture;
+namespace EntityFrameworkCore.AutoFixture.Core;
 
 public class OpenDatabaseConnection : ISpecimenCommand
 {

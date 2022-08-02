@@ -1,7 +1,6 @@
-namespace EntityFrameworkCore.AutoFixture.Tests.Core
+namespace EntityFrameworkCore.AutoFixture.Tests.Core;
+
+public class PropertyHolder<T>
 {
-    public class PropertyHolder<T>
-    {
-        public T Property { get; set; }
-    }
+    public T Property { get; set; }
 }

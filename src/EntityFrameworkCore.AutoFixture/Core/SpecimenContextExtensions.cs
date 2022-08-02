@@ -1,8 +1,7 @@
-#nullable enable
 using System;
 using AutoFixture.Kernel;
 
-namespace EntityFrameworkCore.AutoFixture;
+namespace EntityFrameworkCore.AutoFixture.Core;
 
 internal static class SpecimenContextExtensions
 {

@@ -1,112 +1,136 @@
-using System;
 using System.Linq;
-using AutoFixture.Idioms;
-using AutoFixture.Kernel;
-using AutoFixture.Xunit2;
+using AutoFixture;
 using EntityFrameworkCore.AutoFixture.Core;
 using EntityFrameworkCore.AutoFixture.Sqlite;
-using EntityFrameworkCore.AutoFixture.Tests.Common;
-using EntityFrameworkCore.AutoFixture.Tests.Common.Attributes;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities;
 using FluentAssertions;
+using FluentAssertions.Execution;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
+namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite;
+
+public class SqliteCustomizationTests
 {
-    public class SqliteCustomizationTests
+    [Fact]
+    public void IsCustomization()
     {
-        [Theory, SqliteData]
-        public void CanUseResolvedContextInstance(
-            TestDbContext context,
-            Item item, Customer customer)
+        typeof(SqliteCustomization).Should().BeAssignableTo<ICustomization>();
+    }
+
+    [Fact]
+    public void IsContextCustomization()
+    {
+        typeof(SqliteCustomization).Should().BeAssignableTo<DbContextCustomization>();
+    }
+
+    [Fact]
+    public void CanInstantiateCustomization()
+    {
+        _ = new SqliteCustomization();
+    }
+
+    [Fact]
+    public void CanInstantiateCustomizationWithCustomConfiguration()
+    {
+        _ = new SqliteCustomization
         {
-            context.Items.Add(item);
+            OnCreate = OnCreateAction.Migrate, OmitDbSets = true, Configure = x => x.EnableSensitiveDataLogging()
+        };
+    }
 
-            context.Customers.Add(customer);
-            context.SaveChanges();
+    [Fact]
+    public void CanCustomizeFixture()
+    {
+        _ = new Fixture().Customize(new SqliteCustomization());
+    }
 
-            customer.Order(item, 5);
-            context.SaveChanges();
+    [Fact]
+    public void CanCreateContextOptionsBuilder()
+    {
+        var fixture = new Fixture().Customize(new SqliteCustomization());
 
-            context.Orders.Should()
-                .Contain(x => x.CustomerId == customer.Id && x.ItemId == item.Id);
-        }
+        var builder = fixture.Create<DbContextOptionsBuilder<TestDbContext>>();
 
-        [Fact]
-        public void AddsExpectedCustomizations()
+        builder.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void OptionsBuilderUsesProvider()
+    {
+        var extensionType = typeof(SqliteDbContextOptionsBuilderExtensions).Assembly
+            .FindTypesByName("SqliteOptionsExtension")
+            .FirstOrDefault();
+        var fixture = new Fixture().Customize(new SqliteCustomization());
+        var builder = fixture.Create<DbContextOptionsBuilder<TestDbContext>>();
+
+        builder.Options.Extensions.Should().Contain(x => x.GetType() == extensionType);
+    }
+
+    [Fact]
+    public void CanCreateOptions()
+    {
+        var extensionType = typeof(SqliteDbContextOptionsBuilderExtensions).Assembly
+            .FindTypesByName("SqliteOptionsExtension")
+            .FirstOrDefault();
+        var fixture = new Fixture().Customize(new SqliteCustomization());
+        var options = fixture.Create<DbContextOptions<TestDbContext>>();
+
+        options.Extensions.Should().Contain(x => x.GetType() == extensionType);
+    }
+
+    [Fact]
+    public void CanCreateContext()
+    {
+        var fixture = new Fixture().Customize(new SqliteCustomization());
+        var context = fixture.Create<TestDbContext>();
+
+        context.Database.ProviderName.Should().Be("Microsoft.EntityFrameworkCore.Sqlite");
+    }
+
+    [Fact]
+    public void UsesConfiguredConnectionString()
+    {
+        const string ConnectionString = "Data Source=:memory:;Mode=Memory;Cache=Shared;";
+        var fixture = new Fixture().Customize(new SqliteCustomization { ConnectionString = ConnectionString });
+        var context = fixture.Create<TestDbContext>();
+
+        var actual = context.Database.GetDbConnection();
+        actual.ConnectionString.Should().Be(ConnectionString);
+    }
+
+    [Fact]
+    public void CreatesDifferentConnections()
+    {
+        var fixture = new Fixture().Customize(new SqliteCustomization());
+        var context1 = fixture.Create<TestDbContext>();
+        context1.Customers.Add(fixture.Create<Customer>());
+        context1.SaveChanges();
+
+        var context2 = fixture.Create<TestDbContext>();
+
+        context2.Customers.Count().Should().Be(0);
+    }
+
+    [Fact]
+    public void CreatesSameConnections()
+    {
+        var fixture = new Fixture().Customize(new SqliteCustomization());
+        fixture.Freeze<SqliteConnection>();
+        var context1 = fixture.Create<TestDbContext>();
+        var customer = fixture.Create<Customer>();
+        context1.Customers.Add(customer);
+        context1.SaveChanges();
+
+        var context2 = fixture.Create<TestDbContext>();
+
+        using (new AssertionScope())
         {
-            var actual = new[]
-            {
-                typeof(Omitter),
-                // typeof(DbContextOptionsSpecimenBuilder),
-                typeof(FilteringSpecimenBuilder),
-                typeof(TypeRelay),
-                typeof(FilteringSpecimenBuilder)
-            };
-            var fixture = new DelegatingFixture();
-            var customization = new SqliteCustomization();
-
-            customization.Customize(fixture);
-
-            fixture.Customizations.Select(x => x.GetType())
-                .Should().BeEquivalentTo<Type>(actual);
-        }
-
-        [Fact]
-        public void AddsExpectedBehaviors()
-        {
-            var actual = new[]
-            {
-                typeof(ConnectionOpeningBehavior),
-                typeof(DatabaseInitializingBehavior)
-            };
-            var fixture = new DelegatingFixture();
-            var customization = new SqliteCustomization();
-
-            customization.Customize(fixture);
-
-            fixture.Behaviors.Select(x => x.GetType())
-                .Should().BeEquivalentTo<Type>(actual);
-        }
-
-        [Fact]
-        public void DoesNotAddBehaviorsWhenFlagsAreOff()
-        {
-            var fixture = new DelegatingFixture();
-            var customization = new SqliteCustomization();
-
-            customization.Customize(fixture);
-
-            fixture.Behaviors.Should().BeEmpty();
-        }
-
-        [Fact]
-        public void DoesNotAddDbSetOmitterWhenFlagOff()
-        {
-            var actual = new[]
-            {
-                // typeof(DbContextOptionsSpecimenBuilder),
-                typeof(FilteringSpecimenBuilder),
-                typeof(TypeRelay),
-                typeof(FilteringSpecimenBuilder)
-            };
-            var fixture = new DelegatingFixture();
-            var customization = new SqliteCustomization
-            {
-                OmitDbSets = false,
-            };
-
-            customization.Customize(fixture);
-
-            fixture.Customizations.Select(x => x.GetType())
-                .Should().BeEquivalentTo<Type>(actual);
-        }
-
-        [Theory, AutoData]
-        public void ImplementsGuardClauses(GuardClauseAssertion assertion)
-        {
-            assertion.Verify(typeof(SqliteCustomization));
+            context2.Customers.Should().HaveCount(1);
+            var actual = context2.Customers.Include(x => x.Orders).Single();
+            actual.Should().BeEquivalentTo(customer);
         }
     }
 }

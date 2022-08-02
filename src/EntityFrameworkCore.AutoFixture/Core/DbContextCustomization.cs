@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 using AutoFixture;
 using AutoFixture.Kernel;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +26,7 @@ public class DbContextCustomization : ICustomization
     /// Gets or sets the DbContext options builder configuration delegate,
     /// which runs after configuring the database provider.
     /// </summary>
-    public Func<DbContextOptionsBuilder, DbContextOptionsBuilder> Configure { get; set; }
+    public Func<DbContextOptionsBuilder, DbContextOptionsBuilder>? Configure { get; set; }
 
     /// <inheritdoc/>
     public virtual void Customize(IFixture fixture)
@@ -38,16 +37,13 @@ public class DbContextCustomization : ICustomization
         {
             fixture.Customizations.Add(new Omitter(
                 new AndRequestSpecification(
-                    new PropertySpecification(
-                        new GenericPropertyTypeCriterion(typeof(DbSet<>))),
-                    new PropertySpecification(
-                        new DeclaringTypeCriterion<PropertyInfo>(
-                            new BaseTypeCriterion(typeof(DbContext)))))));
+                    new PropertyTypeSpecification(typeof(DbSet<>)),
+                    new DeclaringTypeSpecification(
+                        new BaseTypeSpecification(typeof(DbContext))))));
         }
 
         ISpecimenCommand onCreate = this.OnCreate switch
         {
-            OnCreateAction.None => new EmptyCommand(),
             OnCreateAction.EnsureCreated => new EnsureCreatedCommand(),
             OnCreateAction.Migrate => new MigrateCommand(),
             _ => new EmptyCommand()

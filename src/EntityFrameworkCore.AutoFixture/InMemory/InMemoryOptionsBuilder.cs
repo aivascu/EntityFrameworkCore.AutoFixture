@@ -1,6 +1,6 @@
-#nullable enable
 using System;
 using AutoFixture.Kernel;
+using EntityFrameworkCore.AutoFixture.Core;
 using Microsoft.EntityFrameworkCore;
 
 namespace EntityFrameworkCore.AutoFixture.InMemory;

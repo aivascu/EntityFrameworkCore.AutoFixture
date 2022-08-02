@@ -1,11 +1,10 @@
-#nullable enable
 using System;
 using AutoFixture.Kernel;
 using Microsoft.EntityFrameworkCore;
 
-namespace EntityFrameworkCore.AutoFixture;
+namespace EntityFrameworkCore.AutoFixture.Core;
 
-public class MigrateCommand : ISpecimenCommand
+public class EnsureCreatedCommand : ISpecimenCommand
 {
     public void Execute(object specimen, ISpecimenContext context)
     {
@@ -13,6 +12,6 @@ public class MigrateCommand : ISpecimenCommand
         if (specimen is not DbContext dbContext)
             throw new ArgumentException("Argument should be a DbContext instance", nameof(specimen));
 
-        dbContext.Database.Migrate();
+        dbContext.Database.EnsureCreated();
     }
 }
