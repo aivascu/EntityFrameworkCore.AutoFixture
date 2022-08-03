@@ -13,13 +13,16 @@
 
     <PackageReference Include="Moq" Version="4.14.5" />
 
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="2.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.2.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.6" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Include="..\EntityFrameworkCore.AutoFixture.Tests\**\*.cs" Link="%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Remove="..\EntityFrameworkCore.AutoFixture.Tests\obj\**" />
+    <Compile Remove="..\EntityFrameworkCore.AutoFixture.Tests\Migrations\**" />
   </ItemGroup>
 
   <ItemGroup>

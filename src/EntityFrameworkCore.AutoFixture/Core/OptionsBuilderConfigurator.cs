@@ -7,7 +7,7 @@ namespace EntityFrameworkCore.AutoFixture.Core;
 public class OptionsBuilderConfigurator : ISpecimenBuilder
 {
     public OptionsBuilderConfigurator(ISpecimenBuilder builder,
-        Func<DbContextOptionsBuilder, DbContextOptionsBuilder>? configure)
+        Func<DbContextOptionsBuilder, DbContextOptionsBuilder>? configure = default)
     {
         this.Builder = builder ?? throw new ArgumentNullException(nameof(builder));
         this.Configure = configure;

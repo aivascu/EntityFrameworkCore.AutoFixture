@@ -94,12 +94,16 @@ public class InMemoryCustomizationTests
     }
 
     [Fact]
-    public void CanCreateContext()
+    public void CanCreateContextUsingProvider()
     {
         var fixture = new Fixture().Customize(new InMemoryCustomization());
         var context = fixture.Create<TestDbContext>();
 
-        context.Database.ProviderName.Should().Be("Microsoft.EntityFrameworkCore.InMemory");
+        using (new AssertionScope())
+        {
+            context.Database.ProviderName.Should().Be("Microsoft.EntityFrameworkCore.InMemory");
+            context.Database.IsInMemory().Should().BeTrue();
+        }
     }
 
     [Fact]

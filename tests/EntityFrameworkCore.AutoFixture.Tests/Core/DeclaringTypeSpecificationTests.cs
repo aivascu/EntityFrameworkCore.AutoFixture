@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using AutoFixture.Kernel;
 using EntityFrameworkCore.AutoFixture.Core;
 using FluentAssertions;
@@ -56,5 +57,34 @@ public class DeclaringTypeSpecificationTests
         var actual = sut.IsSatisfiedBy(request);
 
         actual.Should().BeFalse();
+    }
+
+    [Fact]
+    public void DelegatesDeclaringType()
+    {
+        object request = null;
+        var sut = new DeclaringTypeSpecification(
+            new DelegatingSpecification
+            {
+                OnIsSatisfiedBy = x =>
+                {
+                    request = x;
+                    return true;
+                }
+            });
+        var member = typeof(B).GetMethod(nameof(A.DoStuff), BindingFlags.Instance | BindingFlags.Public);
+
+        _ = sut.IsSatisfiedBy(member!);
+
+        request.Should().BeSameAs(typeof(A));
+    }
+
+    private class A
+    {
+        public void DoStuff() { }
+    }
+
+    private class B : A
+    {
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using AutoFixture.Kernel;
 
@@ -7,7 +8,7 @@ public class ParameterMemberSpecification : IRequestSpecification
 {
     public ParameterMemberSpecification(IRequestSpecification specification)
     {
-        this.Specification = specification;
+        this.Specification = specification ?? throw new ArgumentNullException(nameof(specification));
     }
 
     public IRequestSpecification Specification { get; }
