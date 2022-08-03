@@ -1,4 +1,5 @@
 using System;
+using AutoFixture.Kernel;
 using EntityFrameworkCore.AutoFixture.Core;
 using EntityFrameworkCore.AutoFixture.Tests.Common;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
@@ -12,6 +13,13 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Core;
 
 public class EnsureCreatedCommandTests
 {
+    [Fact]
+    public void IsCommand()
+    {
+        typeof(EnsureCreatedCommand)
+            .Should().BeAssignableTo<ISpecimenCommand>();
+    }
+
     [Fact]
     public void CanCreateInstance()
     {
@@ -27,7 +35,7 @@ public class EnsureCreatedCommandTests
 
         act.Should().ThrowExactly<ArgumentNullException>();
     }
-    
+
     [Fact]
     public void ThrowsWhenRequestNotContext()
     {
@@ -48,7 +56,7 @@ public class EnsureCreatedCommandTests
             .Options;
         var context = new TestDbContext(options);
         connection.Open();
-        
+
         command.Execute(context, default!);
 
         context.Items.Add(new Item("potato", 1));

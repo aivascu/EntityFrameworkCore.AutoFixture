@@ -13,6 +13,13 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Core;
 public class PropertyTypeSpecificationTests
 {
     [Fact]
+    public void IsSpecification()
+    {
+        typeof(PropertyTypeSpecification)
+            .Should().BeAssignableTo<IRequestSpecification>();
+    }
+
+    [Fact]
     public void CanCreateInstance()
     {
         _ = new PropertyTypeSpecification(new DelegatingSpecification());

@@ -17,8 +17,12 @@ public class ContextOptionsBuilder : ISpecimenBuilder
         var builderRequest = typeof(DbContextOptionsBuilder<>).MakeGenericType(dbContextType);
         var result = context.Resolve(builderRequest);
 
-        return result is DbContextOptionsBuilder builder
-            ? builder.Options
-            : result;
+        return result switch
+        {
+            DbContextOptionsBuilder builder => builder.Options,
+            OmitSpecimen omitSpecimen => omitSpecimen,
+            NoSpecimen noSpecimen => noSpecimen,
+            _ => new NoSpecimen()
+        };
     }
 }

@@ -11,6 +11,13 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Core;
 public class DeclaringTypeSpecificationTests
 {
     [Fact]
+    public void IsSpecification()
+    {
+        typeof(DeclaringTypeSpecification)
+            .Should().BeAssignableTo<IRequestSpecification>();
+    }
+
+    [Fact]
     public void ThrowsWhenTypeSpecificationNull()
     {
         Action act = () => _ = new DeclaringTypeSpecification(default(IRequestSpecification)!);

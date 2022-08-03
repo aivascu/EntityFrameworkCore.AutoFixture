@@ -38,13 +38,13 @@ public class SqliteCustomization : DbContextCustomization
     public string ConnectionString
     {
         get => this.connectionString;
-        set => this.SetConnectionString(value);
+        set => this.connectionString = value ?? throw new ArgumentNullException(nameof(value));
     }
 
     /// <summary>
     /// Provides additional in-memory specific configuration. Default value is <see langword="null"/>.
     /// </summary>
-    public Action<SqliteDbContextOptionsBuilder>? ConfigureProvider { get; set; }
+    public Action<SqliteDbContextOptionsBuilder>? ConfigureProvider { get; set; } = null;
 
     /// <inheritdoc/>
     public override void Customize(IFixture fixture)
@@ -80,16 +80,5 @@ public class SqliteCustomization : DbContextCustomization
                 this.Configure),
             new ExactTypeSpecification(
                 typeof(DbContextOptionsBuilder<>))));
-    }
-
-    private void SetConnectionString(string value)
-    {
-        if (value is null)
-            throw new ArgumentNullException(nameof(value));
-
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Value cannot be empty or whitespace.", nameof(value));
-
-        this.connectionString = value;
     }
 }

@@ -1,5 +1,7 @@
 using System.Linq;
 using AutoFixture;
+using AutoFixture.Idioms;
+using AutoFixture.Xunit2;
 using EntityFrameworkCore.AutoFixture.Core;
 using EntityFrameworkCore.AutoFixture.Sqlite;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
@@ -26,11 +28,27 @@ public class SqliteCustomizationTests
         typeof(SqliteCustomization).Should().BeAssignableTo<DbContextCustomization>();
     }
 
+    [Theory]
+    [AutoData]
+    public void PropertiesSetValues(WritablePropertyAssertion assertion)
+    {
+        assertion.Verify(typeof(SqliteCustomization));
+    }
+
+    [Theory]
+    [AutoData]
+    public void GuardsMethods(GuardClauseAssertion assertion)
+    {
+        assertion.Verify(typeof(SqliteCustomization)
+            .GetMethods().Where(x => !x.IsSpecialName));
+    }
+
     [Fact]
     public void CanInstantiateCustomization()
     {
         _ = new SqliteCustomization();
     }
+
 
     [Fact]
     public void CanInstantiateCustomizationWithCustomConfiguration()

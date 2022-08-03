@@ -1,4 +1,7 @@
 using System;
+using AutoFixture.Idioms;
+using AutoFixture.Kernel;
+using AutoFixture.Xunit2;
 using EntityFrameworkCore.AutoFixture.Core;
 using FluentAssertions;
 using Xunit;
@@ -7,6 +10,27 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Core;
 
 public class BaseTypeSpecificationTests
 {
+    [Fact]
+    public void IsSpecification()
+    {
+        typeof(BaseTypeSpecification)
+            .Should().BeAssignableTo<IRequestSpecification>();
+    }
+
+    [Theory]
+    [AutoData]
+    public void GuardsConstructors(GuardClauseAssertion assertion)
+    {
+        assertion.Verify(typeof(BaseTypeSpecification).GetConstructors());
+    }
+
+    [Theory]
+    [AutoData]
+    public void InitializesMembers(ConstructorInitializedMemberAssertion assertion)
+    {
+        assertion.Verify(typeof(BaseTypeSpecification));
+    }
+
     [Fact]
     public void ReturnsTrueForSameType()
     {
@@ -30,7 +54,7 @@ public class BaseTypeSpecificationTests
     [Fact]
     public void ThrowsForNullType()
     {
-        Action act = () => _ = new BaseTypeSpecification(null);
+        Action act = () => _ = new BaseTypeSpecification(null!);
 
         act.Should().ThrowExactly<ArgumentNullException>();
     }

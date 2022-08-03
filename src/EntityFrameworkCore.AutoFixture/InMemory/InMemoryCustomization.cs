@@ -12,10 +12,16 @@ namespace EntityFrameworkCore.AutoFixture.InMemory;
 /// </summary>
 public class InMemoryCustomization : DbContextCustomization
 {
+    private string databaseName = "TestDatabase";
+
     /// <summary>
     /// Gets or sets the database name. <br/> Default value is <see langword="TestDatabase"/>.
     /// </summary>
-    public string DatabaseName { get; set; } = "TestDatabase";
+    public string DatabaseName
+    {
+        get => this.databaseName;
+        set => this.databaseName = value ?? throw new ArgumentNullException(nameof(value));
+    }
 
     /// <summary>
     /// Configures whether the database names should contain a random suffix.

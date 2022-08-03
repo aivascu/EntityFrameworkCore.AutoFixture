@@ -1,4 +1,8 @@
+using System;
+using AutoFixture;
+using AutoFixture.Idioms;
 using AutoFixture.Kernel;
+using AutoFixture.Xunit2;
 using EntityFrameworkCore.AutoFixture.Core;
 using EntityFrameworkCore.AutoFixture.Tests.Common;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
@@ -10,6 +14,13 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Core;
 
 public class ContextOptionsBuilderTests
 {
+    [Fact]
+    public void IsSpecification()
+    {
+        typeof(ContextOptionsBuilder)
+            .Should().BeAssignableTo<ISpecimenBuilder>();
+    }
+
     [Fact]
     public void CanCreateInstance()
     {
@@ -27,7 +38,7 @@ public class ContextOptionsBuilderTests
 
         result.Should().BeSameAs(optionsBuilder.Options);
     }
-    
+
     [Fact]
     public void ForwardsReceivedResponse()
     {
@@ -36,5 +47,71 @@ public class ContextOptionsBuilderTests
         var result = builder.Create(typeof(DbContextOptionsBuilder<TestDbContext>), context);
 
         result.Should().BeOfType<NoSpecimen>();
+    }
+
+    [Theory]
+    [AutoData]
+    public void GuardsMethods(Fixture fixture, GuardClauseAssertion assertion)
+    {
+        fixture.Inject<ISpecimenContext>(new DelegatingSpecimenContext());
+
+        assertion.Verify(typeof(ContextOptionsBuilder));
+    }
+
+    [Fact]
+    public void ThrowsWhenRequestNotType()
+    {
+        var builder = new ContextOptionsBuilder();
+
+        var act = () => _ = builder.Create(new object(), new DelegatingSpecimenContext());
+
+        act.Should().ThrowExactly<ArgumentException>();
+    }
+
+    [Fact]
+    public void RequestsCorrectBuilderType()
+    {
+        object request = null;
+        var builder = new ContextOptionsBuilder();
+        var context = new DelegatingSpecimenContext
+        {
+            OnResolve = r =>
+            {
+                request = r;
+                return new DbContextOptionsBuilder<TestDbContext>();
+            }
+        };
+
+        _ = builder.Create(typeof(DbContextOptions<TestDbContext>), context);
+
+        request.Should().Be(typeof(DbContextOptionsBuilder<TestDbContext>));
+    }
+
+    [Fact]
+    public void ReturnsExpectedOptions()
+    {
+        var optionsBuilder = new DbContextOptionsBuilder<TestDbContext>()
+            .UseInMemoryDatabase("Batman");
+        var builder = new ContextOptionsBuilder();
+        var context = new DelegatingSpecimenContext { OnResolve = _ => optionsBuilder };
+
+        var actual = builder.Create(typeof(DbContextOptions<TestDbContext>), context);
+
+        actual.Should().Be(optionsBuilder.Options);
+    }
+
+    [Theory]
+    [InlineData(typeof(NoSpecimen), typeof(NoSpecimen))]
+    [InlineData(typeof(PropertyHolder<string>), typeof(NoSpecimen))]
+    [InlineData(typeof(OmitSpecimen), typeof(OmitSpecimen))]
+    public void ReturnsResultFor(Type resultType, Type expected)
+    {
+        var result = Activator.CreateInstance(resultType);
+        var builder = new ContextOptionsBuilder();
+        var context = new DelegatingSpecimenContext { OnResolve = _ => result };
+
+        var actual = builder.Create(typeof(DbContextOptions<TestDbContext>), context);
+
+        actual.Should().BeOfType(expected);
     }
 }

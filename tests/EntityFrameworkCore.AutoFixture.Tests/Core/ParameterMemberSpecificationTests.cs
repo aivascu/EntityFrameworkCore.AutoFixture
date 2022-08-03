@@ -13,6 +13,13 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Core;
 public class ParameterMemberSpecificationTests
 {
     [Fact]
+    public void IsSpecification()
+    {
+        typeof(ParameterMemberSpecification)
+            .Should().BeAssignableTo<IRequestSpecification>();
+    }
+
+    [Fact]
     public void CanCreateInstance()
     {
         _ = new ParameterMemberSpecification(new DelegatingSpecification());

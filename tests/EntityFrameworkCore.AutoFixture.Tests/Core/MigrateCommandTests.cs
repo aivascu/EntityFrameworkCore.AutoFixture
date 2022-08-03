@@ -1,4 +1,5 @@
 using System;
+using AutoFixture.Kernel;
 using EntityFrameworkCore.AutoFixture.Core;
 using EntityFrameworkCore.AutoFixture.Tests.Common;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
@@ -12,6 +13,13 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Core;
 
 public class MigrateCommandTests
 {
+    [Fact]
+    public void IsCommand()
+    {
+        typeof(MigrateCommand)
+            .Should().BeAssignableTo<ISpecimenCommand>();
+    }
+
     [Fact]
     public void CanCreateInstance()
     {

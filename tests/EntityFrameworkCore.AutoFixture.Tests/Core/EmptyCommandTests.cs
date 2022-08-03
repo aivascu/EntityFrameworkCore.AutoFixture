@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using AutoFixture.Kernel;
 using EntityFrameworkCore.AutoFixture.Core;
 using EntityFrameworkCore.AutoFixture.Tests.Common;
 using FluentAssertions;
@@ -10,6 +11,13 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Core;
 
 public class EmptyCommandTests
 {
+    [Fact]
+    public void IsCommand()
+    {
+        typeof(EmptyCommand)
+            .Should().BeAssignableTo<ISpecimenCommand>();
+    }
+
     [Fact]
     public void HasSingleConstructor()
     {
@@ -33,7 +41,7 @@ public class EmptyCommandTests
     public void CanCreateInstance()
     {
         var command = new EmptyCommand();
-        
+
         command.Execute(new object(), new DelegatingSpecimenContext());
     }
 }

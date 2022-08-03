@@ -11,7 +11,7 @@ namespace EntityFrameworkCore.AutoFixture.InMemory;
 public class InMemoryOptionsBuilder : ISpecimenBuilder
 {
     /// <summary>
-    /// Creates an instance of type <see cref="InMemoryOptionsBuilder"/>.
+    /// Creates an instance of type <see cref="InMemoryOptionsBuilder" />.
     /// </summary>
     /// <param name="builder">The decorated builder.</param>
     /// <param name="options">The configuration options.</param>
@@ -38,13 +38,18 @@ public class InMemoryOptionsBuilder : ISpecimenBuilder
         if (context is null) throw new ArgumentNullException(nameof(context));
 
         var result = this.Builder.Create(request, context);
-
-        var nameSeed = this.Options.DatabaseName ?? Guid.NewGuid().ToString();
-        var databaseName = this.Options.UseUniqueNames ? context.Create(nameSeed) : nameSeed;
-
         if (result is not DbContextOptionsBuilder builder)
-            return new NoSpecimen();
+            return result is NoSpecimen or OmitSpecimen ? result : new NoSpecimen();
+
+        var databaseName = this.GetDatabaseName(context);
 
         return builder.UseInMemoryDatabase(databaseName, this.Options.ConfigureProvider);
+    }
+
+    private string GetDatabaseName(ISpecimenContext context)
+    {
+        return this.Options.UseUniqueNames
+            ? context.Create(this.Options.DatabaseName)
+            : this.Options.DatabaseName;
     }
 }

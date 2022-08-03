@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using AutoFixture;
+using AutoFixture.Idioms;
+using AutoFixture.Xunit2;
 using EntityFrameworkCore.AutoFixture.Core;
 using EntityFrameworkCore.AutoFixture.InMemory;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
@@ -26,11 +28,19 @@ public class InMemoryCustomizationTests
         typeof(InMemoryCustomization).Should().BeAssignableTo<DbContextCustomization>();
     }
 
+    [Theory]
+    [AutoData]
+    public void PropertiesSetValues(WritablePropertyAssertion assertion)
+    {
+        assertion.Verify(typeof(InMemoryCustomization));
+    }
+
     [Fact]
     public void CanInstantiateCustomization()
     {
         _ = new InMemoryCustomization();
     }
+
 
     [Fact]
     public void CanInstantiateCustomizationWithCustomConfiguration()

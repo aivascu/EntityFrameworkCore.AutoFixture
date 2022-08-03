@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using AutoFixture.Kernel;
 using EntityFrameworkCore.AutoFixture.Core;
 using FluentAssertions;
 using Microsoft.Data.Sqlite;
@@ -9,6 +10,13 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Core;
 
 public class OpenDatabaseConnectionTests
 {
+    [Fact]
+    public void IsCommand()
+    {
+        typeof(OpenDatabaseConnection)
+            .Should().BeAssignableTo<ISpecimenCommand>();
+    }
+
     [Fact]
     public void CanCreateInstance()
     {

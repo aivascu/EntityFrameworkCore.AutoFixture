@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using AutoFixture;
 using AutoFixture.Idioms;
 using AutoFixture.Kernel;
 using AutoFixture.Xunit2;
@@ -13,6 +14,13 @@ namespace EntityFrameworkCore.AutoFixture.Tests.Core;
 
 public class DbContextCustomizationTests
 {
+    [Fact]
+    public void IsCustomization()
+    {
+        typeof(DbContextCustomization)
+            .Should().BeAssignableTo<ICustomization>();
+    }
+
     [Theory]
     [AutoData]
     public void ThrowsWhenFixtureNull(DbContextCustomization customization)
