@@ -34,7 +34,7 @@ public class ContextOptionsBuilderTests
             .UseInMemoryDatabase("hello");
         var context = new DelegatingSpecimenContext { OnResolve = _ => optionsBuilder };
         var builder = new ContextOptionsBuilder();
-        var result = builder.Create(typeof(DbContextOptionsBuilder<TestDbContext>), context);
+        var result = builder.Create(typeof(DbContextOptions<TestDbContext>), context);
 
         result.Should().BeSameAs(optionsBuilder.Options);
     }
@@ -44,7 +44,7 @@ public class ContextOptionsBuilderTests
     {
         var context = new DelegatingSpecimenContext { OnResolve = _ => new NoSpecimen() };
         var builder = new ContextOptionsBuilder();
-        var result = builder.Create(typeof(DbContextOptionsBuilder<TestDbContext>), context);
+        var result = builder.Create(typeof(DbContextOptions<TestDbContext>), context);
 
         result.Should().BeOfType<NoSpecimen>();
     }
@@ -59,13 +59,13 @@ public class ContextOptionsBuilderTests
     }
 
     [Fact]
-    public void ThrowsWhenRequestNotType()
+    public void ReturnsNoSpecimenForInvalidRequest()
     {
         var builder = new ContextOptionsBuilder();
 
-        var act = () => _ = builder.Create(new object(), new DelegatingSpecimenContext());
+        var actual = builder.Create(new object(), new DelegatingSpecimenContext());
 
-        act.Should().ThrowExactly<ArgumentException>();
+        actual.Should().BeOfType<NoSpecimen>();
     }
 
     [Fact]
@@ -104,7 +104,7 @@ public class ContextOptionsBuilderTests
     [InlineData(typeof(NoSpecimen), typeof(NoSpecimen))]
     [InlineData(typeof(PropertyHolder<string>), typeof(NoSpecimen))]
     [InlineData(typeof(OmitSpecimen), typeof(OmitSpecimen))]
-    public void ReturnsResultFor(Type resultType, Type expected)
+    public void ReturnsNoResultForNonBuilderContextResult(Type resultType, Type expected)
     {
         var result = Activator.CreateInstance(resultType);
         var builder = new ContextOptionsBuilder();
@@ -113,5 +113,18 @@ public class ContextOptionsBuilderTests
         var actual = builder.Create(typeof(DbContextOptions<TestDbContext>), context);
 
         actual.Should().BeOfType(expected);
+    }
+
+    [Theory]
+    [InlineData(typeof(PropertyHolder<string>))]
+    [InlineData(typeof(PropertyHolder<>))]
+    [InlineData("hello")]
+    public void ReturnsNoResultForInvalidRequest(object request)
+    {
+        var builder = new ContextOptionsBuilder();
+
+        var actual = builder.Create(request, new DelegatingSpecimenContext());
+
+        actual.Should().BeOfType<NoSpecimen>();
     }
 }

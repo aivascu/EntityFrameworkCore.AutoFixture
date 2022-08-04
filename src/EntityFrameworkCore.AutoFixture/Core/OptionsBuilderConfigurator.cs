@@ -4,12 +4,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EntityFrameworkCore.AutoFixture.Core;
 
+/// <summary>
+/// 
+/// </summary>
 public class OptionsBuilderConfigurator : ISpecimenBuilder
 {
-    public OptionsBuilderConfigurator(ISpecimenBuilder builder,
-        Func<DbContextOptionsBuilder, DbContextOptionsBuilder>? configure = default)
+    public OptionsBuilderConfigurator(
+        ISpecimenBuilder builder, Func<DbContextOptionsBuilder, DbContextOptionsBuilder>? configure = default)
     {
-        this.Builder = builder ?? throw new ArgumentNullException(nameof(builder));
+        Check.NotNull(builder, nameof(builder));
+
+        this.Builder = builder;
         this.Configure = configure;
     }
 

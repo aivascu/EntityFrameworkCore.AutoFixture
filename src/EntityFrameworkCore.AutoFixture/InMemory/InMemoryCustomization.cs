@@ -15,30 +15,39 @@ public class InMemoryCustomization : DbContextCustomization
     private string databaseName = "TestDatabase";
 
     /// <summary>
-    /// Gets or sets the database name. <br/> Default value is <see langword="TestDatabase"/>.
+    /// Gets or sets the database name. Default value is "TestDatabase".
     /// </summary>
+    /// <exception cref="ArgumentNullException">Thrown when assigned <see langword="null" />.</exception>
+    /// <exception cref="ArgumentException">Thrown when assigned an empty value.</exception>
     public string DatabaseName
     {
         get => this.databaseName;
-        set => this.databaseName = value ?? throw new ArgumentNullException(nameof(value));
+        set => this.SetDatabaseName(value);
     }
 
     /// <summary>
     /// Configures whether the database names should contain a random suffix.
-    /// Default value is <see langword="true"/>.
+    /// Default value is <see langword="true" />.
     /// </summary>
     public bool UseUniqueNames { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets an optional action to allow additional in-memory specific configuration. <br/>
-    /// Default value is <see langword="null"/>.
+    /// Gets or sets an optional action to allow additional in-memory specific configuration.
+    /// Default value is <see langword="null" />.
     /// </summary>
     public Action<InMemoryDbContextOptionsBuilder>? ConfigureProvider { get; set; } = null;
 
-    /// <inheritdoc/>
+    private void SetDatabaseName(string value)
+    {
+        Check.NotEmpty(value, nameof(value));
+
+        this.databaseName = value;
+    }
+
+    /// <inheritdoc />
     public override void Customize(IFixture fixture)
     {
-        if (fixture is null) throw new ArgumentNullException(nameof(fixture));
+        Check.NotNull(fixture, nameof(fixture));
 
         base.Customize(fixture);
 

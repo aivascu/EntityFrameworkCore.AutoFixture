@@ -19,7 +19,7 @@ public class SqliteCustomization : DbContextCustomization
     private string connectionString = DefaultConnectionString;
 
     /// <summary>
-    /// Configures the database connections to open immediately after creation. Default value is <see langword="true"/>.
+    /// Configures the database connections to open immediately after creation. Default value is <see langword="true" />.
     /// </summary>
     public bool AutoOpenConnection { get; set; } = true;
 
@@ -38,18 +38,24 @@ public class SqliteCustomization : DbContextCustomization
     public string ConnectionString
     {
         get => this.connectionString;
-        set => this.connectionString = value ?? throw new ArgumentNullException(nameof(value));
+        set => this.SetConnectionString(value);
     }
 
     /// <summary>
-    /// Provides additional in-memory specific configuration. Default value is <see langword="null"/>.
+    /// Provides additional in-memory specific configuration. Default value is <see langword="null" />.
     /// </summary>
     public Action<SqliteDbContextOptionsBuilder>? ConfigureProvider { get; set; } = null;
 
-    /// <inheritdoc/>
+    private void SetConnectionString(string value)
+    {
+        Check.NotEmpty(value, nameof(value));
+        this.connectionString = value;
+    }
+
+    /// <inheritdoc />
     public override void Customize(IFixture fixture)
     {
-        if (fixture is null) throw new ArgumentNullException(nameof(fixture));
+        Check.NotNull(fixture, nameof(fixture));
 
         base.Customize(fixture);
 

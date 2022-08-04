@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using AutoFixture.Kernel;
 using EntityFrameworkCore.AutoFixture.Core;
@@ -22,7 +23,15 @@ public class OptionsBuilderConfiguratorTests
     [Fact]
     public void CanCreateInstance()
     {
-        _ = new OptionsBuilderConfigurator(new DelegatingBuilder(), builder => builder);
+        _ = new OptionsBuilderConfigurator(new DelegatingBuilder(), x => x);
+    }
+
+    [Fact]
+    public void ThrowsWhenBuilderNull()
+    {
+        var act = () => _ = new OptionsBuilderConfigurator(null!, x => x);
+
+        act.Should().ThrowExactly<ArgumentNullException>();
     }
 
     [Fact]

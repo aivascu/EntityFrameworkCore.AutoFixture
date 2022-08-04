@@ -18,8 +18,11 @@ public class InMemoryOptionsBuilder : ISpecimenBuilder
     /// <exception cref="ArgumentNullException">Thrown when any parameter is null.</exception>
     public InMemoryOptionsBuilder(ISpecimenBuilder builder, InMemoryOptions options)
     {
-        this.Builder = builder ?? throw new ArgumentNullException(nameof(builder));
-        this.Options = options ?? throw new ArgumentNullException(nameof(options));
+        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(options, nameof(options));
+
+        this.Builder = builder;
+        this.Options = options;
     }
 
     /// <summary>
@@ -35,7 +38,7 @@ public class InMemoryOptionsBuilder : ISpecimenBuilder
     /// <inheritdoc />
     public object Create(object request, ISpecimenContext context)
     {
-        if (context is null) throw new ArgumentNullException(nameof(context));
+        Check.NotNull(context, nameof(context));
 
         var result = this.Builder.Create(request, context);
         if (result is not DbContextOptionsBuilder builder)

@@ -13,7 +13,9 @@ public class PropertyTypeSpecification : IRequestSpecification
 
     public PropertyTypeSpecification(IRequestSpecification specification)
     {
-        this.Specification = specification ?? throw new ArgumentNullException(nameof(specification));
+        Check.NotNull(specification, nameof(specification));
+
+        this.Specification = specification;
     }
 
     public IRequestSpecification Specification { get; }

@@ -11,14 +11,14 @@ namespace EntityFrameworkCore.AutoFixture.Core;
 public class DbContextCustomization : ICustomization
 {
     /// <summary>
-    /// Configures whether <see cref="DbSet{TEntity}"/> properties on <see cref="DbContext"/> will be omitted by AutoFixture.
-    /// Default value is <see langword="true"/>.
+    /// Configures whether <see cref="DbSet{TEntity}" /> properties on <see cref="DbContext" /> will be omitted by AutoFixture.
+    /// Default value is <see langword="true" />.
     /// </summary>
     public bool OmitDbSets { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets the postprocessing action for <see cref="DbContext"/>.
-    /// Default value is <see cref="OnCreateAction.EnsureCreated"/>.
+    /// Gets or sets the postprocessing action for <see cref="DbContext" />.
+    /// Default value is <see cref="OnCreateAction.EnsureCreated" />.
     /// </summary>
     public OnCreateAction OnCreate { get; set; } = OnCreateAction.EnsureCreated;
 
@@ -28,10 +28,10 @@ public class DbContextCustomization : ICustomization
     /// </summary>
     public Func<DbContextOptionsBuilder, DbContextOptionsBuilder>? Configure { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public virtual void Customize(IFixture fixture)
     {
-        if (fixture is null) throw new ArgumentNullException(nameof(fixture));
+        Check.NotNull(fixture, nameof(fixture));
 
         if (this.OmitDbSets)
         {

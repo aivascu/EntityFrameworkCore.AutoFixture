@@ -1,28 +1,55 @@
 using System;
-using System.Linq;
 using AutoFixture.Kernel;
 using Microsoft.EntityFrameworkCore;
 
 namespace EntityFrameworkCore.AutoFixture.Core;
 
+/// <summary>
+/// Creates <see cref="DbContextOptions{TContext}" /> instances.
+/// </summary>
 public class ContextOptionsBuilder : ISpecimenBuilder
 {
+    /// <summary>
+    /// Creates a <see cref="DbContextOptions{TContext}" /> instance matching requested type
+    /// in <paramref name="request" />.
+    /// </summary>
+    /// <param name="request">The request.</param>
+    /// <param name="context">The specimen context.</param>
+    /// <returns>
+    /// Returns <see cref="DbContextOptions{TContext}" /> instance when activation succeeds.<br />
+    /// Returns <see cref="NoSpecimen" /> when received invalid request or unable to get a
+    /// <see cref="DbContextOptionsBuilder{TContext}" /> instance.<br />
+    /// Returns <see cref="OmitSpecimen" /> when <see cref="DbContextOptionsBuilder{TContext}" /> is omitted.
+    /// </returns>
     public object Create(object request, ISpecimenContext context)
     {
-        if (context is null) throw new ArgumentNullException(nameof(context));
-        if (request is null) throw new ArgumentNullException(nameof(request));
-        if (request is not Type type) throw new ArgumentException("Request should be a type.", nameof(request));
+        Check.NotNull(context, nameof(context));
+        Check.NotNull(request, nameof(request));
 
-        var dbContextType = type.GetGenericArguments().Single();
-        var builderRequest = typeof(DbContextOptionsBuilder<>).MakeGenericType(dbContextType);
-        var result = context.Resolve(builderRequest);
+        var contextType = GetContextType(request);
+        if (contextType is null)
+            return new NoSpecimen();
 
-        return result switch
-        {
-            DbContextOptionsBuilder builder => builder.Options,
-            OmitSpecimen omitSpecimen => omitSpecimen,
-            NoSpecimen noSpecimen => noSpecimen,
-            _ => new NoSpecimen()
-        };
+        var builderType = typeof(DbContextOptionsBuilder<>).MakeGenericType(contextType);
+        var result = context.Resolve(builderType);
+
+        if (result is not DbContextOptionsBuilder builder)
+            return result is NoSpecimen or OmitSpecimen ? result : new NoSpecimen();
+
+        return builder.Options;
+    }
+
+    private static Type? GetContextType(object request)
+    {
+        if (request is not Type type)
+            return null;
+
+        if (!type.IsGenericType || type.IsGenericTypeDefinition)
+            return null;
+
+        if (type.GetGenericTypeDefinition() != typeof(DbContextOptions<>))
+            return null;
+
+        return type.GenericTypeArguments[0];
     }
 }
