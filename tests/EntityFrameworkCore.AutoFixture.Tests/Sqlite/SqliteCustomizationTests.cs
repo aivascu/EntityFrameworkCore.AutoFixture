@@ -6,10 +6,7 @@ using AutoFixture.Xunit2;
 using EntityFrameworkCore.AutoFixture.Core;
 using EntityFrameworkCore.AutoFixture.Sqlite;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
-using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities;
 using FluentAssertions;
-using FluentAssertions.Execution;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
@@ -99,75 +96,5 @@ public class SqliteCustomizationTests
         var options = fixture.Create<DbContextOptions<TestDbContext>>();
 
         options.Extensions.Should().Contain(x => x.GetType() == extensionType);
-    }
-
-    [Fact]
-    public void CanCreateContextWithExpectedProvider()
-    {
-        var fixture = new Fixture().Customize(new SqliteCustomization());
-        var context = fixture.Create<TestDbContext>();
-
-        using (new AssertionScope())
-        {
-            context.Database.ProviderName.Should().Be("Microsoft.EntityFrameworkCore.Sqlite");
-            context.Database.IsSqlite().Should().BeTrue();
-        }
-    }
-
-    [Fact]
-    public void UsesConfiguredConnectionString()
-    {
-        const string ConnectionString = "Data Source=:memory:;Mode=Memory;Cache=Shared;";
-        var fixture = new Fixture().Customize(new SqliteCustomization { ConnectionString = ConnectionString });
-        var context = fixture.Create<TestDbContext>();
-
-        var actual = context.Database.GetDbConnection();
-        actual.ConnectionString.Should().Be(ConnectionString);
-    }
-
-    [Fact]
-    public void DoNotOpenConnection()
-    {
-        var fixture = new Fixture().Customize(new SqliteCustomization
-        {
-            AutoOpenConnection = false
-        });
-
-        var connection = fixture.Create<SqliteConnection>();
-
-        connection.State.Should().Be(ConnectionState.Closed);
-    }
-
-    [Fact]
-    public void CreatesDifferentConnections()
-    {
-        var fixture = new Fixture().Customize(new SqliteCustomization());
-        var context1 = fixture.Create<TestDbContext>();
-        context1.Customers.Add(fixture.Create<Customer>());
-        context1.SaveChanges();
-
-        var context2 = fixture.Create<TestDbContext>();
-
-        context2.Customers.Count().Should().Be(0);
-    }
-
-    [Fact]
-    public void CreatesSameConnections()
-    {
-        var fixture = new Fixture().Customize(new SqliteCustomization());
-        fixture.Freeze<SqliteConnection>();
-        var context1 = fixture.Create<TestDbContext>();
-        var customer = fixture.Create<Customer>();
-        context1.Customers.Add(customer);
-        context1.SaveChanges();
-
-        var context2 = fixture.Create<TestDbContext>();
-
-        using (new AssertionScope())
-        {
-            context2.Customers.Should().HaveCount(1);
-            var actual = context2.Customers.Include(x => x.Orders).Single();
-            actual.Should().BeEquivalentTo(customer);
-        }
     }
 }
