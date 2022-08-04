@@ -41,9 +41,9 @@ public class PropertyTypeSpecificationTests
     {
         fixture.Inject<IRequestSpecification>(new DelegateSpecification());
         assertion.Verify(typeof(PropertyTypeSpecification)
-            .GetConstructor(new []{typeof(IRequestSpecification)}));
+            .GetConstructor(new[] { typeof(IRequestSpecification) }));
     }
-    
+
     [Fact]
     public void ReturnsFalseWhenRequestNotProperty()
     {

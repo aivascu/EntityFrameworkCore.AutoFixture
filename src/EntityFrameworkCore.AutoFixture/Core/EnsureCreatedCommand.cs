@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EntityFrameworkCore.AutoFixture.Core;
 
 /// <summary>
-/// Executes the <see cref="M:DatabaseFacade.EnsureCreated"/> method
+/// Executes the <see cref="M:DatabaseFacade.EnsureCreated"/> method.
 /// </summary>
 public class EnsureCreatedCommand : ISpecimenCommand
 {

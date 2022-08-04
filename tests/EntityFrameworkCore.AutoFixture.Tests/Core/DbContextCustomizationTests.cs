@@ -73,7 +73,7 @@ public class DbContextCustomizationTests
     {
         var customization = new DbContextCustomization { OnCreate = action };
         var fixture = new DelegatingFixture();
-        
+
         customization.Customize(fixture);
 
         fixture.Customizations

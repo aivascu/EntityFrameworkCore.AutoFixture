@@ -35,7 +35,7 @@ public class MigrateCommandTests
 
         act.Should().ThrowExactly<ArgumentNullException>();
     }
-    
+
     [Fact]
     public void ThrowsWhenRequestNotContext()
     {
@@ -56,7 +56,7 @@ public class MigrateCommandTests
             .Options;
         var context = new TestDbContext(options);
         connection.Open();
-        
+
         command.Execute(context, default!);
 
         context.Items.Add(new Item("potato", 1));

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using EntityFrameworkCore.AutoFixture.Core;
 
 namespace EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities;
 
@@ -7,10 +8,7 @@ public class Customer
 {
     public Customer(string name)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException("Value cannot be null or whitespace.", nameof(name));
-        }
+        Check.NotEmpty(name, nameof(name));
 
         this.Name = name;
         this.Orders = new List<Order>();

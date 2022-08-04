@@ -60,7 +60,7 @@ public class SqliteOptionsBuilderTests
     {
         var builder = new SqliteOptionsBuilder(new DelegatingBuilder
         {
-            OnCreate = (_,_) => new NoSpecimen()
+            OnCreate = (_, _) => new NoSpecimen()
         });
 
         var actual = builder.Create(new object(), new DelegatingSpecimenContext());

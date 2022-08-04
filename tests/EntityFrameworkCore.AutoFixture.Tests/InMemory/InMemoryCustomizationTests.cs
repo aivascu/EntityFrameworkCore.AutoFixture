@@ -41,7 +41,6 @@ public class InMemoryCustomizationTests
         _ = new InMemoryCustomization();
     }
 
-
     [Fact]
     public void CanInstantiateCustomizationWithCustomConfiguration()
     {

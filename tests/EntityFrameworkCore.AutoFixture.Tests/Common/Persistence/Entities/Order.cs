@@ -7,9 +7,7 @@ public class Order
     public Order(Item item, int count, Customer customer)
     {
         if (count <= 0)
-        {
             throw new ArgumentOutOfRangeException(nameof(count));
-        }
 
         this.Count = count;
 

@@ -60,7 +60,7 @@ public class CheckTests
         act.Should().ThrowExactly<ArgumentNullException>()
             .And.ParamName.Should().Be("param");
     }
-    
+
     [Fact]
     public void IsOfTypeThrowsWhenArgumentNotMatchingType()
     {

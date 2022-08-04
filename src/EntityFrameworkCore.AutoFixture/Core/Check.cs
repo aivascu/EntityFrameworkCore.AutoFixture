@@ -60,7 +60,7 @@ public static class Check
     /// Thrown when <paramref name="value" /> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="value" /> is is an empty string.
+    /// Thrown when <paramref name="value" /> is an empty string.
     /// </exception>
     public static void NotEmpty(string value, string paramName)
     {

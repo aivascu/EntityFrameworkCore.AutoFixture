@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using AutoFixture.Kernel;
@@ -88,6 +89,8 @@ public class DeclaringTypeSpecificationTests
 
     private class A
     {
+        [SuppressMessage("Performance", "CA1822:Mark members as static",
+            Justification = "This is a test type not intended to do anything.")]
         public void DoStuff() { }
     }
 

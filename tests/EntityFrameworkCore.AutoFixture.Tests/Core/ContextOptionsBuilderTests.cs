@@ -118,6 +118,7 @@ public class ContextOptionsBuilderTests
     [Theory]
     [InlineData(typeof(PropertyHolder<string>))]
     [InlineData(typeof(PropertyHolder<>))]
+    [InlineData(typeof(DbContext))]
     [InlineData("hello")]
     public void ReturnsNoResultForInvalidRequest(object request)
     {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AutoFixture.Kernel;
 
 namespace EntityFrameworkCore.AutoFixture.Core;

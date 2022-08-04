@@ -1,3 +1,4 @@
+using System.Data;
 using System.Linq;
 using AutoFixture;
 using AutoFixture.Idioms;
@@ -49,13 +50,14 @@ public class SqliteCustomizationTests
         _ = new SqliteCustomization();
     }
 
-
     [Fact]
     public void CanInstantiateCustomizationWithCustomConfiguration()
     {
         _ = new SqliteCustomization
         {
-            OnCreate = OnCreateAction.Migrate, OmitDbSets = true, Configure = x => x.EnableSensitiveDataLogging()
+            OnCreate = OnCreateAction.Migrate,
+            OmitDbSets = true,
+            Configure = x => x.EnableSensitiveDataLogging()
         };
     }
 
@@ -100,12 +102,16 @@ public class SqliteCustomizationTests
     }
 
     [Fact]
-    public void CanCreateContext()
+    public void CanCreateContextWithExpectedProvider()
     {
         var fixture = new Fixture().Customize(new SqliteCustomization());
         var context = fixture.Create<TestDbContext>();
 
-        context.Database.ProviderName.Should().Be("Microsoft.EntityFrameworkCore.Sqlite");
+        using (new AssertionScope())
+        {
+            context.Database.ProviderName.Should().Be("Microsoft.EntityFrameworkCore.Sqlite");
+            context.Database.IsSqlite().Should().BeTrue();
+        }
     }
 
     [Fact]
@@ -117,6 +123,19 @@ public class SqliteCustomizationTests
 
         var actual = context.Database.GetDbConnection();
         actual.ConnectionString.Should().Be(ConnectionString);
+    }
+
+    [Fact]
+    public void DoNotOpenConnection()
+    {
+        var fixture = new Fixture().Customize(new SqliteCustomization
+        {
+            AutoOpenConnection = false
+        });
+
+        var connection = fixture.Create<SqliteConnection>();
+
+        connection.State.Should().Be(ConnectionState.Closed);
     }
 
     [Fact]
