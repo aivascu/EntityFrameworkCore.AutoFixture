@@ -1,66 +1,89 @@
 using System;
+using AutoFixture.Idioms;
+using AutoFixture.Kernel;
+using AutoFixture.Xunit2;
 using EntityFrameworkCore.AutoFixture.Core;
 using FluentAssertions;
 using Xunit;
 
-namespace EntityFrameworkCore.AutoFixture.Tests.Core
+namespace EntityFrameworkCore.AutoFixture.Tests.Core;
+
+public class BaseTypeSpecificationTests
 {
-    public class BaseTypeSpecificationTests
+    [Fact]
+    public void IsSpecification()
     {
-        [Fact]
-        public void ReturnsTrueForSameType()
-        {
-            var sut = new BaseTypeSpecification(typeof(BaseType));
+        typeof(BaseTypeSpecification)
+            .Should().BeAssignableTo<IRequestSpecification>();
+    }
 
-            var actual = sut.IsSatisfiedBy(typeof(BaseType));
+    [Theory]
+    [AutoData]
+    public void GuardsConstructors(GuardClauseAssertion assertion)
+    {
+        assertion.Verify(typeof(BaseTypeSpecification).GetConstructors());
+    }
 
-            Assert.True(actual);
-        }
+    [Theory]
+    [AutoData]
+    public void InitializesMembers(ConstructorInitializedMemberAssertion assertion)
+    {
+        assertion.Verify(typeof(BaseTypeSpecification));
+    }
 
-        [Fact]
-        public void ReturnsTrueForChildType()
-        {
-            var sut = new BaseTypeSpecification(typeof(BaseType));
+    [Fact]
+    public void ReturnsTrueForSameType()
+    {
+        var sut = new BaseTypeSpecification(typeof(BaseType));
 
-            var actual = sut.IsSatisfiedBy(typeof(ChildType));
+        var actual = sut.IsSatisfiedBy(typeof(BaseType));
 
-            Assert.True(actual);
-        }
+        Assert.True(actual);
+    }
 
-        [Fact]
-        public void ThrowsForNullType()
-        {
-            Action act = () => _ = new BaseTypeSpecification(null);
+    [Fact]
+    public void ReturnsTrueForChildType()
+    {
+        var sut = new BaseTypeSpecification(typeof(BaseType));
 
-            act.Should().ThrowExactly<ArgumentNullException>();
-        }
+        var actual = sut.IsSatisfiedBy(typeof(ChildType));
 
-        [Fact]
-        public void ReturnsFalseWhenRequestNotType()
-        {
-            var sut = new BaseTypeSpecification(typeof(BaseType));
+        Assert.True(actual);
+    }
 
-            var actual = sut.IsSatisfiedBy("string value");
+    [Fact]
+    public void ThrowsForNullType()
+    {
+        Action act = () => _ = new BaseTypeSpecification(null!);
 
-            Assert.False(actual);
-        }
+        act.Should().ThrowExactly<ArgumentNullException>();
+    }
 
-        [Fact]
-        public void ReturnsFalseWhenRequestNotBaseType()
-        {
-            var sut = new BaseTypeSpecification(typeof(BaseType));
+    [Fact]
+    public void ReturnsFalseWhenRequestNotType()
+    {
+        var sut = new BaseTypeSpecification(typeof(BaseType));
 
-            var actual = sut.IsSatisfiedBy(typeof(string));
+        var actual = sut.IsSatisfiedBy("string value");
 
-            Assert.False(actual);
-        }
+        Assert.False(actual);
+    }
 
-        public class BaseType
-        {
-        }
+    [Fact]
+    public void ReturnsFalseWhenRequestNotBaseType()
+    {
+        var sut = new BaseTypeSpecification(typeof(BaseType));
 
-        public class ChildType : BaseType
-        {
-        }
+        var actual = sut.IsSatisfiedBy(typeof(string));
+
+        Assert.False(actual);
+    }
+
+    public class BaseType
+    {
+    }
+
+    public class ChildType : BaseType
+    {
     }
 }

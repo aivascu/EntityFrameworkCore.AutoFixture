@@ -1,112 +1,149 @@
 using System;
 using System.Linq;
-using System.Threading.Tasks;
+using AutoFixture;
 using AutoFixture.Idioms;
-using AutoFixture.Kernel;
 using AutoFixture.Xunit2;
 using EntityFrameworkCore.AutoFixture.Core;
 using EntityFrameworkCore.AutoFixture.InMemory;
-using EntityFrameworkCore.AutoFixture.Tests.Common;
-using EntityFrameworkCore.AutoFixture.Tests.Common.Attributes;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities;
 using FluentAssertions;
+using FluentAssertions.Execution;
+using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
+namespace EntityFrameworkCore.AutoFixture.Tests.InMemory;
+
+public class InMemoryCustomizationTests
 {
-    public class InMemoryCustomizationTests
+    [Fact]
+    public void IsCustomization()
     {
-        [Theory, InMemoryData]
-        public async Task CanAddItemToContext(TestDbContext context)
-        {
-            context.Customers.Add(new Customer("Jane Smith"));
-            await context.SaveChangesAsync();
+        typeof(InMemoryCustomization).Should().BeAssignableTo<ICustomization>();
+    }
 
-            context.Customers.Should().Contain(x => x.Name == "Jane Smith");
+    [Fact]
+    public void IsContextCustomization()
+    {
+        typeof(InMemoryCustomization).Should().BeAssignableTo<DbContextCustomization>();
+    }
+
+    [Theory]
+    [AutoData]
+    public void PropertiesSetValues(WritablePropertyAssertion assertion)
+    {
+        assertion.Verify(typeof(InMemoryCustomization));
+    }
+
+    [Fact]
+    public void CanInstantiateCustomization()
+    {
+        _ = new InMemoryCustomization();
+    }
+
+    [Fact]
+    public void CanInstantiateCustomizationWithCustomConfiguration()
+    {
+        _ = new InMemoryCustomization
+        {
+            OnCreate = OnCreateAction.Migrate,
+            DatabaseName = "Frank",
+            UseUniqueNames = true,
+            OmitDbSets = true,
+            Configure = x => x.EnableSensitiveDataLogging()
+        };
+    }
+
+    [Fact]
+    public void ThrowsWhenFixtureNull()
+    {
+        var act = () => new InMemoryCustomization().Customize(default!);
+
+        act.Should().ThrowExactly<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void CanCustomizeFixture()
+    {
+        _ = new Fixture().Customize(new InMemoryCustomization());
+    }
+
+    [Fact]
+    public void CanCreateContextOptionsBuilder()
+    {
+        var fixture = new Fixture().Customize(new InMemoryCustomization());
+
+        var builder = fixture.Create<DbContextOptionsBuilder<TestDbContext>>();
+
+        builder.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void OptionsBuilderUsesProvider()
+    {
+        var extensionType = typeof(InMemoryDbContextOptionsExtensions).Assembly
+            .FindTypesByName("InMemoryOptionsExtension")
+            .FirstOrDefault();
+        var fixture = new Fixture().Customize(new InMemoryCustomization());
+        var builder = fixture.Create<DbContextOptionsBuilder<TestDbContext>>();
+
+        builder.Options.Extensions.Should().Contain(x => x.GetType() == extensionType);
+    }
+
+    [Fact]
+    public void CanCreateOptions()
+    {
+        var extensionType = typeof(InMemoryDbContextOptionsExtensions).Assembly
+            .FindTypesByName("InMemoryOptionsExtension")
+            .FirstOrDefault();
+        var fixture = new Fixture().Customize(new InMemoryCustomization());
+        var options = fixture.Create<DbContextOptions<TestDbContext>>();
+
+        options.Extensions.Should().Contain(x => x.GetType() == extensionType);
+    }
+
+    [Fact]
+    public void CanCreateContextUsingProvider()
+    {
+        var fixture = new Fixture().Customize(new InMemoryCustomization());
+        var context = fixture.Create<TestDbContext>();
+
+        using (new AssertionScope())
+        {
+            context.Database.ProviderName.Should().Be("Microsoft.EntityFrameworkCore.InMemory");
+            context.Database.IsInMemory().Should().BeTrue();
         }
+    }
 
-        [Fact]
-        public void AddsExpectedCustomizations()
+    [Fact]
+    public void CreatesDifferentConnections()
+    {
+        var fixture = new Fixture().Customize(new InMemoryCustomization());
+        var context1 = fixture.Create<TestDbContext>();
+        context1.Customers.Add(fixture.Create<Customer>());
+        context1.SaveChanges();
+
+        var context2 = fixture.Create<TestDbContext>();
+
+        context2.Customers.Count().Should().Be(0);
+    }
+
+    [Fact]
+    public void CreatesSameConnections()
+    {
+        var fixture = new Fixture().Customize(new InMemoryCustomization { UseUniqueNames = false });
+        var context1 = fixture.Create<TestDbContext>();
+        var customer = fixture.Create<Customer>();
+        context1.Customers.Add(customer);
+        context1.SaveChanges();
+
+        var context2 = fixture.Create<TestDbContext>();
+
+        using (new AssertionScope())
         {
-            var actual = new Type[]
-            {
-                typeof(Omitter),
-                typeof(DbContextOptionsSpecimenBuilder),
-                typeof(InMemoryOptionsSpecimenBuilder),
-            };
-            var fixture = new DelegatingFixture();
-            var customization = new InMemoryContextCustomization
-            {
-                AutoCreateDatabase = true,
-                OmitDbSets = true,
-            };
-
-            customization.Customize(fixture);
-
-            fixture.Customizations.Select(x => x.GetType())
-                .Should().BeEquivalentTo(actual);
-        }
-
-        [Fact]
-        public void AddsExpectedBehaviors()
-        {
-            var actual = new Type[]
-            {
-                typeof(DatabaseInitializingBehavior)
-            };
-            var fixture = new DelegatingFixture();
-            var customization = new InMemoryContextCustomization
-            {
-                AutoCreateDatabase = true,
-                OmitDbSets = true,
-            };
-
-            customization.Customize(fixture);
-
-            fixture.Behaviors.Select(x => x.GetType())
-                .Should().BeEquivalentTo(actual);
-        }
-
-        [Fact]
-        public void DoesNotAddBehaviorsWhenFlagsAreOff()
-        {
-            var fixture = new DelegatingFixture();
-            var customization = new InMemoryContextCustomization
-            {
-                AutoCreateDatabase = false,
-                OmitDbSets = true,
-            };
-
-            customization.Customize(fixture);
-
-            fixture.Behaviors.Should().BeEmpty();
-        }
-
-        [Fact]
-        public void DoesNotAddDbSetOmitterWhenFlagOff()
-        {
-            var actual = new Type[]
-            {
-                typeof(DbContextOptionsSpecimenBuilder),
-                typeof(InMemoryOptionsSpecimenBuilder),
-            };
-            var fixture = new DelegatingFixture();
-            var customization = new InMemoryContextCustomization
-            {
-                OmitDbSets = false,
-            };
-
-            customization.Customize(fixture);
-
-            fixture.Customizations.Select(x => x.GetType())
-                .Should().BeEquivalentTo(actual);
-        }
-
-        [Theory, AutoData]
-        public void ImplementsGuardClauses(GuardClauseAssertion assertion)
-        {
-            assertion.Verify(typeof(InMemoryContextCustomization));
+            context2.Customers.Should().HaveCount(1);
+            var actual = context2.Customers.Include(x => x.Orders).Single();
+            actual.Should().BeEquivalentTo(customer);
         }
     }
 }

@@ -1,125 +1,100 @@
-using System;
+using System.Data;
 using System.Linq;
+using AutoFixture;
 using AutoFixture.Idioms;
-using AutoFixture.Kernel;
 using AutoFixture.Xunit2;
 using EntityFrameworkCore.AutoFixture.Core;
 using EntityFrameworkCore.AutoFixture.Sqlite;
-using EntityFrameworkCore.AutoFixture.Tests.Common;
-using EntityFrameworkCore.AutoFixture.Tests.Common.Attributes;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
-using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
+namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite;
+
+public class SqliteCustomizationTests
 {
-    public class SqliteCustomizationTests
+    [Fact]
+    public void IsCustomization()
     {
-        [Theory, SqliteData]
-        public void CanUseResolvedContextInstance(
-            TestDbContext context,
-            Item item, Customer customer)
+        typeof(SqliteCustomization).Should().BeAssignableTo<ICustomization>();
+    }
+
+    [Fact]
+    public void IsContextCustomization()
+    {
+        typeof(SqliteCustomization).Should().BeAssignableTo<DbContextCustomization>();
+    }
+
+    [Theory]
+    [AutoData]
+    public void PropertiesSetValues(WritablePropertyAssertion assertion)
+    {
+        assertion.Verify(typeof(SqliteCustomization));
+    }
+
+    [Theory]
+    [AutoData]
+    public void GuardsMethods(GuardClauseAssertion assertion)
+    {
+        assertion.Verify(typeof(SqliteCustomization)
+            .GetMethods().Where(x => !x.IsSpecialName));
+    }
+
+    [Fact]
+    public void CanInstantiateCustomization()
+    {
+        _ = new SqliteCustomization();
+    }
+
+    [Fact]
+    public void CanInstantiateCustomizationWithCustomConfiguration()
+    {
+        _ = new SqliteCustomization
         {
-            context.Items.Add(item);
+            OnCreate = OnCreateAction.Migrate,
+            OmitDbSets = true,
+            Configure = x => x.EnableSensitiveDataLogging()
+        };
+    }
 
-            context.Customers.Add(customer);
-            context.SaveChanges();
+    [Fact]
+    public void CanCustomizeFixture()
+    {
+        _ = new Fixture().Customize(new SqliteCustomization());
+    }
 
-            customer.Order(item, 5);
-            context.SaveChanges();
+    [Fact]
+    public void CanCreateContextOptionsBuilder()
+    {
+        var fixture = new Fixture().Customize(new SqliteCustomization());
 
-            context.Orders.Should()
-                .Contain(x => x.CustomerId == customer.Id && x.ItemId == item.Id);
-        }
+        var builder = fixture.Create<DbContextOptionsBuilder<TestDbContext>>();
 
-        [Fact]
-        public void AddsExpectedCustomizations()
-        {
-            var actual = new Type[]
-            {
-                typeof(Omitter),
-                typeof(DbContextOptionsSpecimenBuilder),
-                typeof(SqliteOptionsSpecimenBuilder),
-                typeof(SqliteConnectionSpecimenBuilder)
-            };
-            var fixture = new DelegatingFixture();
-            var customization = new SqliteContextCustomization
-            {
-                AutoCreateDatabase = true,
-                AutoOpenConnection = true,
-                OmitDbSets = true,
-            };
+        builder.Should().NotBeNull();
+    }
 
-            customization.Customize(fixture);
+    [Fact]
+    public void OptionsBuilderUsesProvider()
+    {
+        var extensionType = typeof(SqliteDbContextOptionsBuilderExtensions).Assembly
+            .FindTypesByName("SqliteOptionsExtension")
+            .FirstOrDefault();
+        var fixture = new Fixture().Customize(new SqliteCustomization());
+        var builder = fixture.Create<DbContextOptionsBuilder<TestDbContext>>();
 
-            fixture.Customizations.Select(x => x.GetType())
-                .Should().BeEquivalentTo(actual);
-        }
+        builder.Options.Extensions.Should().Contain(x => x.GetType() == extensionType);
+    }
 
-        [Fact]
-        public void AddsExpectedBehaviors()
-        {
-            var actual = new Type[]
-            {
-                typeof(ConnectionOpeningBehavior),
-                typeof(DatabaseInitializingBehavior)
-            };
-            var fixture = new DelegatingFixture();
-            var customization = new SqliteContextCustomization
-            {
-                AutoCreateDatabase = true,
-                AutoOpenConnection = true,
-                OmitDbSets = true,
-            };
+    [Fact]
+    public void CanCreateOptions()
+    {
+        var extensionType = typeof(SqliteDbContextOptionsBuilderExtensions).Assembly
+            .FindTypesByName("SqliteOptionsExtension")
+            .FirstOrDefault();
+        var fixture = new Fixture().Customize(new SqliteCustomization());
+        var options = fixture.Create<DbContextOptions<TestDbContext>>();
 
-            customization.Customize(fixture);
-
-            fixture.Behaviors.Select(x => x.GetType())
-                .Should().BeEquivalentTo(actual);
-        }
-
-        [Fact]
-        public void DoesNotAddBehaviorsWhenFlagsAreOff()
-        {
-            var fixture = new DelegatingFixture();
-            var customization = new SqliteContextCustomization
-            {
-                AutoCreateDatabase = false,
-                AutoOpenConnection = false,
-                OmitDbSets = true,
-            };
-
-            customization.Customize(fixture);
-
-            fixture.Behaviors.Should().BeEmpty();
-        }
-
-        [Fact]
-        public void DoesNotAddDbSetOmitterWhenFlagOff()
-        {
-            var actual = new Type[]
-            {
-                typeof(DbContextOptionsSpecimenBuilder),
-                typeof(SqliteOptionsSpecimenBuilder),
-                typeof(SqliteConnectionSpecimenBuilder)
-            };
-            var fixture = new DelegatingFixture();
-            var customization = new SqliteContextCustomization
-            {
-                OmitDbSets = false,
-            };
-
-            customization.Customize(fixture);
-
-            fixture.Customizations.Select(x => x.GetType())
-                .Should().BeEquivalentTo(actual);
-        }
-
-        [Theory, AutoData]
-        public void ImplementsGuardClauses(GuardClauseAssertion assertion)
-        {
-            assertion.Verify(typeof(SqliteContextCustomization));
-        }
+        options.Extensions.Should().Contain(x => x.GetType() == extensionType);
     }
 }

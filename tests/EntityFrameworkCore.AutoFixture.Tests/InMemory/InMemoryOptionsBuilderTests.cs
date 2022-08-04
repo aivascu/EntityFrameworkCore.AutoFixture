@@ -2,125 +2,114 @@ using System;
 using System.Linq;
 using AutoFixture;
 using AutoFixture.Idioms;
+using AutoFixture.Kernel;
 using AutoFixture.Xunit2;
 using EntityFrameworkCore.AutoFixture.InMemory;
+using EntityFrameworkCore.AutoFixture.Tests.Common;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
+using EntityFrameworkCore.AutoFixture.Tests.Core;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-namespace EntityFrameworkCore.AutoFixture.Tests.InMemory
+namespace EntityFrameworkCore.AutoFixture.Tests.InMemory;
+
+public class InMemoryOptionsBuilderTests
 {
-    public class InMemoryOptionsBuilderTests
+    [Fact]
+    public void IsBuilder()
     {
-        [Theory]
-        [AutoData]
-        public void Build_ShouldBuildDbContextOptionsInstance(InMemoryOptionsBuilder builder)
-        {
-            var options = builder.Build(typeof(TestDbContext));
+        typeof(InMemoryOptionsBuilder)
+            .Should().BeAssignableTo<ISpecimenBuilder>();
+    }
 
-            options.Should().BeOfType<DbContextOptions<TestDbContext>>();
-        }
+    [Theory]
+    [AutoData]
+    public void GuardsConstructor(Fixture fixture, GuardClauseAssertion assertion)
+    {
+        fixture.Inject<ISpecimenBuilder>(new DelegatingBuilder());
 
-        [Theory]
-        [AutoData]
-        public void Build_ShouldThrowArgumentNullException_WhenTypeIsNull(InMemoryOptionsBuilder builder)
-        {
-            Action action = () => builder.Build(null);
+        assertion.Verify(typeof(InMemoryOptionsBuilder).GetConstructors());
+    }
 
-            action.Should().Throw<ArgumentNullException>();
-        }
+    [Theory]
+    [AutoData]
+    public void InitializesMembers(Fixture fixture, ConstructorInitializedMemberAssertion assertion)
+    {
+        fixture.Inject<ISpecimenBuilder>(new DelegatingBuilder());
 
-        [Theory]
-        [AutoData]
-        public void Build_ShouldThrowArgumentNullException_WhenTypeIsNotDbContext(InMemoryOptionsBuilder builder)
-        {
-            Action action = () => builder.Build(typeof(string));
+        assertion.Verify(typeof(InMemoryOptionsBuilder));
+    }
 
-            action.Should().Throw<ArgumentException>();
-        }
+    [Fact]
+    public void ThrowsWhenContextNull()
+    {
+        var builder = new InMemoryOptionsBuilder(new DelegatingBuilder(), new InMemoryOptions());
 
-        [Theory]
-        [AutoData]
-        public void Build_ShouldThrowArgumentNullException_WhenTypeIsAbstract(InMemoryOptionsBuilder builder)
-        {
-            Action action = () => builder.Build(typeof(AbstractDbContext));
+        var act = () => _ = builder.Create(new object(), default!);
 
-            action.Should().Throw<ArgumentException>();
-        }
+        act.Should().ThrowExactly<ArgumentNullException>();
+    }
 
-        [Theory]
-        [AutoData]
-        public void Ctors_ShouldReceiveInitializedParameters(Fixture fixture)
-        {
-            var assertion = new GuardClauseAssertion(fixture);
-            var members = typeof(InMemoryOptionsBuilder).GetConstructors();
+    [Theory]
+    [InlineData(typeof(NoSpecimen), typeof(NoSpecimen))]
+    [InlineData(typeof(PropertyHolder<string>), typeof(NoSpecimen))]
+    [InlineData(typeof(OmitSpecimen), typeof(OmitSpecimen))]
+    public void ForwardsResultWhenNotOptionsBuilder(Type type, Type expected)
+    {
+        var next = new DelegatingBuilder { OnCreate = (_, _) => Activator.CreateInstance(type) };
+        var builder = new InMemoryOptionsBuilder(next, new InMemoryOptions());
 
-            assertion.Verify(members);
-        }
+        var actual = builder.Create(new object(), new DelegatingSpecimenContext());
 
-        [Theory]
-        [AutoData]
-        public void GenericBuild_ShouldCreateDbContextOptions_WithInMemoryExtension(InMemoryOptionsBuilder builder)
-        {
-            var actual = builder.Build<TestDbContext>();
+        actual.Should().BeOfType(expected);
+    }
 
-            actual.Extensions.Should().Contain(x => x.GetType() == GetOptionsType());
-        }
+    [Fact]
+    public void AddsInMemoryExtension()
+    {
+        var extensionType = typeof(InMemoryDatabaseFacadeExtensions).Assembly
+            .FindTypesByName("InMemoryOptionsExtension").Single();
+        var next = new DelegatingBuilder { OnCreate = (_, _) => new DbContextOptionsBuilder<TestDbContext>() };
+        var builder = new InMemoryOptionsBuilder(next, new InMemoryOptions());
 
-        [Theory]
-        [AutoData]
-        public void GenericBuild_ShouldCreateDbContextOptions_WithInMemoryExtension_WithName(string expected)
-        {
-            dynamic extension = new InMemoryOptionsBuilder(expected)
-                .Build<TestDbContext>()
-                .Extensions
-                .Single(x => x.GetType() == GetOptionsType());
+        var result = builder.Create(new object(), new DelegatingSpecimenContext());
 
-            string actual = extension.StoreName;
-            actual.Should().Be(expected);
-        }
+        var extension = result.As<DbContextOptionsBuilder<TestDbContext>>().Options.Extensions
+            .FirstOrDefault(x => ReferenceEquals(x.GetType(), extensionType));
+        extension.Should().NotBeNull();
+    }
 
-        [Theory]
-        [AutoData]
-        public void Build_ShouldCreateDbContextOptions_WithInMemoryExtension(InMemoryOptionsBuilder builder)
-        {
-            var actual = builder.Build(typeof(TestDbContext)).As<DbContextOptions<TestDbContext>>();
+    [Fact]
+    public void SetsStoreName()
+    {
+        var extensionType = typeof(InMemoryDatabaseFacadeExtensions).Assembly
+            .FindTypesByName("InMemoryOptionsExtension").Single();
+        var next = new DelegatingBuilder { OnCreate = (_, _) => new DbContextOptionsBuilder<TestDbContext>() };
+        var builder = new InMemoryOptionsBuilder(next, new InMemoryOptions { DatabaseName = "TestDb" });
 
-            actual.Extensions.Should().Contain(x => x.GetType() == GetOptionsType());
-        }
+        var result = builder.Create(new object(), new DelegatingSpecimenContext());
 
-        [Theory]
-        [AutoData]
-        public void Build_ShouldCreateDbContextOptions_WithInMemoryExtension_WithName(string expected)
-        {
-            dynamic extension = new InMemoryOptionsBuilder(expected)
-                .Build(typeof(TestDbContext))
-                .As<DbContextOptions<TestDbContext>>()
-                .Extensions
-                .Single(x => x.GetType() == GetOptionsType());
+        dynamic extension = result.As<DbContextOptionsBuilder<TestDbContext>>().Options.Extensions
+            .FirstOrDefault(x => ReferenceEquals(x.GetType(), extensionType));
+        string storeName = extension?.StoreName;
+        storeName.Should().Be("TestDb");
+    }
 
-            string actual = extension.StoreName;
-            actual.Should().Be(expected);
-        }
+    [Fact]
+    public void SetsStoreNameToUniqueName()
+    {
+        var extensionType = typeof(InMemoryDatabaseFacadeExtensions).Assembly
+            .FindTypesByName("InMemoryOptionsExtension").Single();
+        var next = new DelegatingBuilder { OnCreate = (_, _) => new DbContextOptionsBuilder<TestDbContext>() };
+        var options = new InMemoryOptions { DatabaseName = "TestDb", UseUniqueNames = true };
+        var builder = new InMemoryOptionsBuilder(next, options);
 
-        private abstract class AbstractDbContext : DbContext
-        { }
+        var result = builder.Create(new object(), new DelegatingSpecimenContext { OnResolve = _ => "UniqueDbName" });
 
-        private static Type GetOptionsType()
-        {
-            var assembly = AppDomain.CurrentDomain.GetAssemblies()
-                .Single(x => x.GetName().Name == "Microsoft.EntityFrameworkCore.InMemory");
-
-            var extensionType = assembly.GetType("Microsoft.EntityFrameworkCore.InMemory.Infrastructure.Internal.InMemoryOptionsExtension");
-            if (extensionType is not null)
-                return extensionType;
-
-            var internalExtensionType = assembly.GetType("Microsoft.EntityFrameworkCore.Infrastructure.Internal.InMemoryOptionsExtension");
-            if (internalExtensionType is not null)
-                return internalExtensionType;
-
-            throw new InvalidOperationException("Unable to find type \"InMemoryOptionsExtension\" in the EF Core InMemory provider assembly");
-        }
+        dynamic extension = result.As<DbContextOptionsBuilder<TestDbContext>>().Options.Extensions
+            .FirstOrDefault(x => ReferenceEquals(x.GetType(), extensionType));
+        string storeName = extension?.StoreName;
+        storeName.Should().Be("UniqueDbName");
     }
 }

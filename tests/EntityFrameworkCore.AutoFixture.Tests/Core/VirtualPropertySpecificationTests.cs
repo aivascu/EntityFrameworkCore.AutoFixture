@@ -1,33 +1,40 @@
+using AutoFixture.Kernel;
 using EntityFrameworkCore.AutoFixture.Core;
 using FluentAssertions;
 using Xunit;
 
-namespace EntityFrameworkCore.AutoFixture.Tests.Core
+namespace EntityFrameworkCore.AutoFixture.Tests.Core;
+
+public class VirtualPropertySpecificationTests
 {
-    public class VirtualPropertySpecificationTests
+    [Fact]
+    public void IsSpecification()
     {
-        [Fact]
-        public void ReurnsTrueForVirtualProperty()
-        {
-            var sut = new VirtualPropertySpecification();
-            var virtualMember = typeof(VirtualPropertyHolder<string>)
-                .GetProperty(nameof(VirtualPropertyHolder<string>.Property));
+        typeof(VirtualPropertySpecification)
+            .Should().BeAssignableTo<IRequestSpecification>();
+    }
 
-            var actual = sut.IsSatisfiedBy(virtualMember);
+    [Fact]
+    public void ReturnsTrueForVirtualProperty()
+    {
+        var sut = new VirtualPropertySpecification();
+        var member = typeof(VirtualPropertyHolder<string>)
+            .GetProperty(nameof(VirtualPropertyHolder<string>.Property));
 
-            actual.Should().BeTrue();
-        }
+        var actual = sut.IsSatisfiedBy(member!);
 
-        [Fact]
-        public void ReurnsFalseForNonVirtualProperty()
-        {
-            var sut = new VirtualPropertySpecification();
-            var virtualMember = typeof(PropertyHolder<string>)
-                .GetProperty(nameof(PropertyHolder<string>.Property));
+        actual.Should().BeTrue();
+    }
 
-            var actual = sut.IsSatisfiedBy(virtualMember);
+    [Fact]
+    public void ReturnsFalseForNonVirtualProperty()
+    {
+        var sut = new VirtualPropertySpecification();
+        var member = typeof(PropertyHolder<string>)
+            .GetProperty(nameof(PropertyHolder<string>.Property));
 
-            actual.Should().BeFalse();
-        }
+        var actual = sut.IsSatisfiedBy(member!);
+
+        actual.Should().BeFalse();
     }
 }

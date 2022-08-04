@@ -1,42 +1,58 @@
 using System;
+using AutoFixture.Kernel;
 using EntityFrameworkCore.AutoFixture.Core;
 using Microsoft.EntityFrameworkCore;
 
-namespace EntityFrameworkCore.AutoFixture.InMemory
+namespace EntityFrameworkCore.AutoFixture.InMemory;
+
+/// <summary>
+/// Configures the DbContextOptionsBuilder to use the in-memory database provider.
+/// </summary>
+public class InMemoryOptionsBuilder : ISpecimenBuilder
 {
     /// <summary>
-    /// Creates database context options.
+    /// Creates an instance of type <see cref="InMemoryOptionsBuilder" />.
     /// </summary>
-    public class InMemoryOptionsBuilder : OptionsBuilder
+    /// <param name="builder">The decorated builder.</param>
+    /// <param name="options">The configuration options.</param>
+    /// <exception cref="ArgumentNullException">Thrown when any parameter is null.</exception>
+    public InMemoryOptionsBuilder(ISpecimenBuilder builder, InMemoryOptions options)
     {
-        /// <summary>
-        /// Creates a <see cref="InMemoryOptionsBuilder"/> instance.
-        /// </summary>
-        /// <param name="databaseName">The name of the database.</param>
-        /// <exception cref="ArgumentNullException">When <paramref name="databaseName"/> is null.</exception>
-        public InMemoryOptionsBuilder(string databaseName)
-        {
-            this.DatabaseName = databaseName
-                ?? throw new ArgumentNullException(nameof(databaseName));
-        }
+        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(options, nameof(options));
 
-        /// <summary>
-        /// Creates a <see cref="InMemoryOptionsBuilder"/> instance.
-        /// </summary>
-        public InMemoryOptionsBuilder()
-            : this(Guid.NewGuid().ToString())
-        {
-        }
+        this.Builder = builder;
+        this.Options = options;
+    }
 
-        /// <summary>
-        /// Gets the database name.
-        /// </summary>
-        public string DatabaseName { get; }
+    /// <summary>
+    /// Gets the decorated builder.
+    /// </summary>
+    public ISpecimenBuilder Builder { get; }
 
-        /// <inheritdoc />
-        public override DbContextOptions<TContext> Build<TContext>()
-            => new DbContextOptionsBuilder<TContext>()
-            .UseInMemoryDatabase(this.DatabaseName)
-            .Options;
+    /// <summary>
+    /// Gets the configuration options.
+    /// </summary>
+    public InMemoryOptions Options { get; }
+
+    /// <inheritdoc />
+    public object Create(object request, ISpecimenContext context)
+    {
+        Check.NotNull(context, nameof(context));
+
+        var result = this.Builder.Create(request, context);
+        if (result is not DbContextOptionsBuilder builder)
+            return result is NoSpecimen or OmitSpecimen ? result : new NoSpecimen();
+
+        var databaseName = this.GetDatabaseName(context);
+
+        return builder.UseInMemoryDatabase(databaseName, this.Options.ConfigureProvider);
+    }
+
+    private string GetDatabaseName(ISpecimenContext context)
+    {
+        return this.Options.UseUniqueNames
+            ? context.Create(this.Options.DatabaseName)
+            : this.Options.DatabaseName;
     }
 }

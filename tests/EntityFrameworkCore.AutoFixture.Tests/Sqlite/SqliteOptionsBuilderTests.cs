@@ -1,180 +1,70 @@
 using System;
-using System.Linq;
-using AutoFixture;
-using AutoFixture.Idioms;
-using AutoFixture.Xunit2;
+using AutoFixture.Kernel;
 using EntityFrameworkCore.AutoFixture.Sqlite;
-using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
+using EntityFrameworkCore.AutoFixture.Tests.Common;
 using FluentAssertions;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
+using FluentAssertions.Execution;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Xunit;
 
-namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
+namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite;
+
+public class SqliteOptionsBuilderTests
 {
-    public class SqliteOptionsBuilderTests
+    [Fact]
+    public void CanCreateInstance()
     {
-        [Theory]
-        [AutoData]
-        public void Build_ShouldBuildDbContextOptionsInstance(
-            Fixture fixture,
-            SqliteConnectionSpecimenBuilder specimenBuilder)
+        _ = new SqliteOptionsBuilder(new DelegatingBuilder());
+    }
+
+    [Fact]
+    public void ThrowsWhenBuilderNull()
+    {
+        Action act = () => _ = new SqliteOptionsBuilder(null!);
+
+        act.Should().ThrowExactly<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void CanCreateInstanceWithOptionalParameter()
+    {
+        _ = new SqliteOptionsBuilder(new DelegatingBuilder(), x => x.MaxBatchSize(10));
+    }
+
+    [Fact]
+    public void SetsPropertiesFromConstructor()
+    {
+        var specimenBuilder = new DelegatingBuilder();
+        Action<SqliteDbContextOptionsBuilder> provider = x => x.MaxBatchSize(10);
+        var builder = new SqliteOptionsBuilder(specimenBuilder, provider);
+
+        using (new AssertionScope())
         {
-            fixture.Customizations.Add(specimenBuilder);
-
-            using (var connection = fixture.Freeze<SqliteConnection>())
-            {
-                var builder = fixture.Create<SqliteOptionsBuilder>();
-
-                var options = builder.Build(typeof(TestDbContext));
-
-                options.Should().BeOfType<DbContextOptions<TestDbContext>>();
-            }
+            builder.Builder.Should().BeSameAs(specimenBuilder);
+            builder.ConfigureProvider.Should().BeSameAs(provider);
         }
+    }
 
-        [Theory]
-        [AutoData]
-        public void Build_ShouldThrowArgumentNullException_WhenTypeIsNull(
-            Fixture fixture,
-            SqliteConnectionSpecimenBuilder specimenBuilder)
+    [Fact]
+    public void ThrowsWhenContextNull()
+    {
+        var builder = new SqliteOptionsBuilder(new DelegatingBuilder());
+
+        Action act = () => builder.Create(null!, null!);
+
+        act.Should().ThrowExactly<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void ReturnsNoSpecimenWhenDecoratedBuilderWhenNoResult()
+    {
+        var builder = new SqliteOptionsBuilder(new DelegatingBuilder
         {
-            fixture.Customizations.Add(specimenBuilder);
+            OnCreate = (_, _) => new NoSpecimen()
+        });
 
-            using (var connection = fixture.Freeze<SqliteConnection>())
-            {
-                var builder = fixture.Create<SqliteOptionsBuilder>();
+        var actual = builder.Create(new object(), new DelegatingSpecimenContext());
 
-                Action action = () => builder.Build(null);
-
-                action.Should().Throw<ArgumentNullException>();
-            }
-        }
-
-        [Theory]
-        [AutoData]
-        public void Build_ShouldThrowArgumentNullException_WhenTypeIsNotDbContext(
-            Fixture fixture,
-            SqliteConnectionSpecimenBuilder specimenBuilder)
-        {
-            fixture.Customizations.Add(specimenBuilder);
-
-            using (var connection = fixture.Freeze<SqliteConnection>())
-            {
-                var builder = fixture.Create<SqliteOptionsBuilder>();
-
-                Action action = () => builder.Build(typeof(string));
-
-                action.Should().Throw<ArgumentException>();
-            }
-        }
-
-        [Theory]
-        [AutoData]
-        public void Build_ShouldThrowArgumentNullException_WhenTypeIsAbstract(
-            Fixture fixture,
-            SqliteConnectionSpecimenBuilder specimenBuilder)
-        {
-            fixture.Customizations.Add(specimenBuilder);
-
-            using (var connection = fixture.Freeze<SqliteConnection>())
-            {
-                var builder = fixture.Create<SqliteOptionsBuilder>();
-
-                Action action = () => builder.Build(typeof(AbstractDbContext));
-
-                action.Should().Throw<ArgumentException>();
-            }
-        }
-
-        [Theory]
-        [AutoData]
-        public void Ctors_ShouldInitializeProperties(ConstructorInitializedMemberAssertion assertion)
-        {
-            var members = typeof(SqliteOptionsBuilder).GetConstructors();
-
-            assertion.Verify(members);
-        }
-
-        [Theory]
-        [AutoData]
-        public void Ctors_ShouldReceiveInitializedParameters(Fixture fixture, GuardClauseAssertion assertion)
-        {
-            fixture.Inject(new SqliteConnection("Data Source=:memory:"));
-            var members = typeof(SqliteOptionsBuilder).GetConstructors();
-
-            assertion.Verify(members);
-        }
-
-        [Fact]
-        public void GenericBuild_ShouldCreateDbContextOptions_WithSqliteExtension()
-        {
-            var connectionString = "Data Source=:memory:";
-            var connection = new SqliteConnection(connectionString);
-            var context = new SqliteOptionsBuilder(connection)
-                .Build<TestDbContext>();
-
-            context.Extensions.Should().Contain(x => x.GetType() == GetOptionsType());
-        }
-
-        [Fact]
-        public void GenericBuild_ShouldCreateDbContextOptions_WithSqliteExtension_WithConnectionString()
-        {
-            var connectionString = "Data Source=:memory:";
-            var connection = new SqliteConnection(connectionString);
-            dynamic extension = new SqliteOptionsBuilder(connection)
-                .Build<TestDbContext>()
-                .Extensions
-                .Single(x => x.GetType() == GetOptionsType());
-
-            string actual = extension.Connection.ConnectionString;
-            actual.Should().Be(connectionString);
-        }
-
-        [Fact]
-        public void Build_ShouldCreateDbContextOptions_WithSqliteExtension()
-        {
-            var connectionString = "Data Source=:memory:";
-            var connection = new SqliteConnection(connectionString);
-            var context = new SqliteOptionsBuilder(connection)
-                .Build(typeof(TestDbContext))
-                .As<DbContextOptions<TestDbContext>>();
-
-            context.Extensions.Should().Contain(x => x.GetType() == GetOptionsType());
-        }
-
-        [Fact]
-        public void Build_ShouldCreateDbContextOptions_WithSqliteExtension_WithConnectionString()
-        {
-            var connectionString = "Data Source=:memory:";
-            var connection = new SqliteConnection(connectionString);
-            dynamic extension = new SqliteOptionsBuilder(connection)
-                .Build(typeof(TestDbContext))
-                .As<DbContextOptions<TestDbContext>>()
-                .Extensions
-                .Single(x => x.GetType() == GetOptionsType());
-
-            string actual = extension.Connection.ConnectionString;
-            actual.Should().Be(connectionString);
-        }
-
-        private abstract class AbstractDbContext : DbContext
-        { }
-
-        private static Type GetOptionsType()
-        {
-            var assembly = AppDomain.CurrentDomain.GetAssemblies()
-                .Single(x => x.GetName().Name == "Microsoft.EntityFrameworkCore.Sqlite");
-
-            var internalExtensionType = assembly.GetType("Microsoft.EntityFrameworkCore.Infrastructure.Internal.SqliteOptionsExtension");
-            var extensionType = assembly.GetType("Microsoft.EntityFrameworkCore.Sqlite.Infrastructure.Internal.SqliteOptionsExtension");
-
-            if (extensionType is not null)
-                return extensionType;
-
-            if (internalExtensionType is not null)
-                return internalExtensionType;
-
-            throw new InvalidOperationException("Unable to find type \"SqliteOptionsExtension\" in the EF Core Sqlite provider assembly");
-        }
+        actual.Should().BeOfType<NoSpecimen>();
     }
 }
