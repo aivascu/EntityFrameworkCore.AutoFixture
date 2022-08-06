@@ -6,21 +6,10 @@
 [![Nuget](https://img.shields.io/nuget/v/EntityFrameworkCore.AutoFixture?logo=nuget&style=flat-square)](https://www.nuget.org/packages/EntityFrameworkCore.AutoFixture/)
 [![GitHub](https://img.shields.io/github/license/aivascu/EntityFrameworkCore.AutoFixture?logo=MIT&style=flat-square)](https://licenses.nuget.org/MIT)
 
-**EntityFrameworkCore.AutoFixture** is the logical product
-of [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/) in-memory providers
-and [AutoFixture](https://github.com/AutoFixture/AutoFixture).
-
-Using **EntityFrameworkCore.AutoFixture** you can greatly reduce the boilerplate work necessary to unit test code that
-uses **Entity Framework Core** database contexts (see [examples](#examples)). You'll appreciate this library if you are
-already using **AutoFixture** as your auto-mocking container.
-
-**EntityFrameworkCore.AutoFixture** extens **AutoFixture** with the ability to create fully functional `DbContext`
-instances, with very little setup code.
+**EntityFrameworkCore.AutoFixture** is a library that helps with testing code that uses [Entity Framework](https://docs.microsoft.com/en-us/ef/core/), by reducing the boilerplate code necessary to set up database contexts (see [examples](#examples)), with the help of [AutoFixture](https://github.com/AutoFixture/AutoFixture).
 
 Unlike other libraries for faking EF contexts, **EntityFrameworkCore.AutoFixture** does not use mocking frameworks or
-dynamic proxies in order to create `DbContext` instances, instead it uses the Microsoft's own
-in-memory [providers](https://docs.microsoft.com/en-us/ef/core/miscellaneous/testing/) for EF Core. This allows to make
-less assumptions (read as: mock setups) in your tests about how the `DbContext` will behave in the real environment.
+dynamic proxies in to create database contexts, instead it uses the actual database [providers](https://docs.microsoft.com/en-us/ef/core/miscellaneous/testing/). This ensures the tests will behave a lot more similar to the code in the production environment, with little to no effort.
 
 #### :warning: .NET Standard 2.0 in EF Core v3.0.x :warning:
 
@@ -31,36 +20,54 @@ version of Entity Framework Core.
 
 ## Features
 
-**EntityFrameworkCore.AutoFixture** offers three customizations to aid your unit testing workflow:
+**EntityFrameworkCore.AutoFixture** offers three customizations to help your unit testing workflow:
 
-- `InMemoryContextCustomization` - customizes fixtures to use the In-Memory database provider when creating *DbContext*
-  instances
-- `SqliteContextCustomization` - customizes fixtures to use the SQLite database provider when creating *DbContext*
-  instances.
-  By default the customization will create contexts for an in-memory *connection string* (i.e. `DataSource=:memory:`).
-  This can be changed by providing the fixture a predefined `SqliteConnection` instance.
-- `DbContextCustomization` - serves as the base customization for the other two implementations. The customization can
-  be used, in more advanced scenarios, when you want to extend the fixtures with your own specimen builders.
+- `InMemoryCustomization` - Customizes fixtures to create contexts using the In-Memory database provider
+- `SqliteCustomization` - Customizes fixtures to create contexts using the SQLite database provider
+- `DbContextCustomization` - A base class for database provider customizations. Can be used, in more advanced scenarios, for example, to extend the existing functionality or create customizations for other providers.
 
 ## Examples
 
-The examples below demonstrate, the possible ways of using the library in [xUnit](https://github.com/xunit/xunit) test
-projects, both with `[Fact]` and `[Theory]` tests.
+The examples below demonstrate, the possible ways of using the library in [xUnit](https://xunit.net) test projects, both with `[Fact]` and `[Theory]` tests.
 
-The library is not limited to `xUnit` and can be used with other testing frameworks like `NUnit` and `MSTest`, since it
-only provides a few `Customization` implementations.
+The library is not limited to `xUnit` and can be used with other testing frameworks like [NUnit](https://nunit.org) and [MSTest](https://docs.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-mstest), since it only provides the customizations.
 
 ### Using In-Memory database provider
 
+By default this customization will configure all contexts to use the [in-memory](https://docs.microsoft.com/en-us/ef/core/testing/testing-without-the-database#in-memory-provider) database provider for Enity Framework, and will create the database, giving you a ready to use context.
+
 ```csharp
 [Fact]
-public async Task CanUseGeneratedContext()
+public async Task CanSavesCustomers()
 {
     // Arrange
-    var fixture = new Fixture().Customize(new InMemoryContextCustomization
+    var fixture = new Fixture().Customize(new InMemoryCustomization());
+    var context = fixture.Create<TestDbContext>();
+
+    // Act
+    context.Customers.Add(new Customer("Jane Smith"));
+    await context.SaveChangesAsync();
+
+    // Assert
+    context.Customers.Should().Contain(x => x.Name == "Jane Smith");
+}
+```
+
+With the default configuration, the custmization will set the store name to `TestDatabase` and will suffix it with a random string to ensure the name is unique. After the context is created it will run `Database.EnsureCreated()` to create the database.
+
+This behavior can be changed by setting the corresponding values in the customizaiton initializer.
+
+```csharp
+[Fact]
+public async Task CanSavesCustomers()
+{
+    // Arrange
+    var fixture = new Fixture().Customize(new InMemoryCustomization
     {
-        AutoCreateDatabase = true,
-        OmitDbSets = true
+        DatabaseName = "MyCoolDatabase", // Sets the store name to "MyCoolDatabase"
+        UseUniqueNames = false, // No suffix for store names. All contexts will connect to same store
+        OnCreate = OnCreateAction.Migrate // Will run Database.Migrate()
+                                          // Use OnCreateAction.None to skip creating the database
     });
     var context = fixture.Create<TestDbContext>();
 
@@ -73,11 +80,23 @@ public async Task CanUseGeneratedContext()
 }
 ```
 
-The next example uses a custom `AutoData` attribute `AutoDomainDataWithInMemoryContext` that customizes the fixture with
-the same customization as in the example above. This helps abstract away even more setup code.
+To encapsulate the configuration and remove even more of the boilerplate, use the `AutoData` attributes offered by AutoFixture.
 
 ```csharp
-[Theory, InMemoryData]
+public class PersistenceDataAttribute : AutoDataAttribute
+{
+    public PersistenceDataAttribute()
+        : base(() => new Fixture().Customize(new InMemoryCustomization {
+            UseUniqueNames = false,
+            OnCreate = OnCreateAction.Migrate
+        }))
+    {
+    }
+}
+```
+
+```csharp
+[Theory, PersistenceData] // Notice the data attribute
 public async Task CanUseGeneratedContext(TestDbContext context)
 {
     // Arrange & Act
@@ -89,41 +108,16 @@ public async Task CanUseGeneratedContext(TestDbContext context)
 }
 ```
 
-The attribute used in the test above might look something like the following.
-
-```csharp
-public class InMemoryDataAttribute : AutoDataAttribute
-{
-    public InMemoryDataAttribute()
-        : base(() => new Fixture()
-            .Customize(new InMemoryContextCustomization
-            {
-                OmitDbSets = true,
-                AutoCreateDatabase = true
-            }))
-    {
-    }
-}
-```
-
 ### Using SQLite database provider
 
-When using the SQLite database provider there is another configuration available in the customization,
-called `AutoOpenConnection` which allows to automatically open database connections, after they are resolved from the
-fixture. The option is turned off by default in v1, but might become the default in next major releases.
+By default this customization will configure all contexts to use the [SQLite](https://docs.microsoft.com/en-us/ef/core/testing/testing-without-the-database#sqlite-in-memory) database provider for Enity Framework, and will automatically create the database, giving you a ready to use context.
 
 ```csharp
 [Fact]
 public async Task CanUseGeneratedContext()
 {
     // Arrange
-    var fixture = new Fixture()
-        .Customize(new SqliteContextCustomization
-        {
-            AutoCreateDatabase = true,
-            AutoOpenConnection = true,
-            OmitDbSets = true
-        });
+    var fixture = new Fixture().Customize(new SqliteCustomization());
     var context = fixture.Create<TestDbContext>();
 
     // Act
@@ -135,34 +129,62 @@ public async Task CanUseGeneratedContext()
 }
 ```
 
-The same test can be written like this, by using a custom data attribute.
+With the default configuration, the custmization will set the connection string to `Data Source=:memory:`, will open the connection and after the context is created it will run `Database.EnsureCreated()` to create the database.
+
+This behavior can be changed by setting the corresponding values in the customizaiton initializer.
 
 ```csharp
-[Theory, SqliteData]
-public void CanUseResolvedContextInstance(TestDbContext context)
+[Fact]
+public async Task CanSavesCustomers()
 {
-    // Arrange & Act
+    // Arrange
+    var fixture = new Fixture().Customize(new SqliteCustomization
+    {
+        ConnectionString = "Data Source=MyDatabase.sqlite;Cache=Shared;", // Sets the connection string to connect to a file
+        AutoOpenConnection = false, // Disables opening the connection by default. Affects all SqliteConnection instances.
+        OnCreate = OnCreateAction.None // Will to skip creating the database 
+                                       // Use OnCreateAction.EnsureCreated to run Database.EnsureCreated() automatically
+                                       // Use OnCreateAction.Migrate to run Database.Migrate() automatically
+    });
+    var connection = fixture.Freeze<SqliteConnection>();
+    var context = fixture.Create<TestDbContext>();
+    connection.Open();
+    context.Database.Migrate();
+
+    // Act
     context.Customers.Add(new Customer("Jane Smith"));
-    context.SaveChanges();
+    await context.SaveChangesAsync();
 
     // Assert
     context.Customers.Should().Contain(x => x.Name == "Jane Smith");
 }
 ```
 
+To encapsulate the configuration and remove even more of the boilerplate, use the `AutoData` attributes offered by AutoFixture.
+
 ```csharp
-public class SqliteDataAttribute : AutoDataAttribute
+public class PersistenceDataAttribute : AutoDataAttribute
 {
-    public SqliteDataAttribute()
-        : base(() => new Fixture()
-            .Customize(new SqliteContextCustomization
-            {
-                OmitDbSets = true,
-                AutoOpenConnection = true,
-                AutoCreateDatabase = true
-            }))
+    public PersistenceDataAttribute()
+        : base(() => new Fixture().Customize(new SqliteCustomization {
+            ConnectionString = "Data Source=MyDatabase;Mode=Memory;Cache=Shared;"
+            OnCreate = OnCreateAction.Migrate
+        }))
     {
     }
+}
+```
+
+```csharp
+[Theory, PersistenceData] // Notice the data attribute
+public async Task CanUseGeneratedContext(TestDbContext context)
+{
+    // Arrange & Act
+    context.Customers.Add(new Customer("Jane Smith"));
+    await context.SaveChangesAsync();
+
+    // Assert
+    context.Customers.Should().Contain(x => x.Name == "Jane Smith");
 }
 ```
 
