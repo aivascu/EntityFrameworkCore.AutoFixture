@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using AutoFixture;
+using EntityFrameworkCore.AutoFixture.Core;
 using EntityFrameworkCore.AutoFixture.Sqlite;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Customizations;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
@@ -21,9 +22,7 @@ public class DbContextCreationTests
     {
         var fixture = new Fixture().Customize(new SqliteCustomization());
 
-        Action act = () => _ = fixture.Create<TestDbContext>();
-
-        act.Should().NotThrow();
+        _ = fixture.Create<TestDbContext>();
     }
 
     [Fact]
@@ -31,9 +30,9 @@ public class DbContextCreationTests
     {
         var fixture = new Fixture().Customize(new SqliteCustomization());
 
-        Action act = () => _ = fixture.Create<TestCustomDbContext>();
+        var context = fixture.Create<TestCustomDbContext>();
 
-        act.Should().NotThrow();
+        context.ConfigurationOptions.Should().NotBeNull();
     }
 
     [Fact]
@@ -48,8 +47,7 @@ public class DbContextCreationTests
     [Fact]
     public void DoesNotSetDbSets()
     {
-        var fixture = new Fixture().Customize(
-            new SqliteDataCustomization());
+        var fixture = new Fixture().Customize(new SqliteDataCustomization());
 
         var context = fixture.Create<TestDbContext>();
 
@@ -92,5 +90,31 @@ public class DbContextCreationTests
             var actual = context2.Customers.Include(x => x.Orders).Single();
             actual.Should().BeEquivalentTo(customer);
         }
+    }
+
+    [Fact]
+    public void ThrowsWhenMigratingWithClosedConnection()
+    {
+        var fixture = new Fixture().Customize(new SqliteCustomization
+        {
+            AutoOpenConnection = false,
+            OnCreate = OnCreateAction.Migrate
+        });
+
+        var act = () => _ = fixture.Create<TestDbContext>();
+
+        act.Should().Throw<Exception>();
+    }
+
+    [Fact]
+    public void DoesNotThrowWhenCreatingDatabaseWithClosedConnection()
+    {
+        var fixture = new Fixture().Customize(new SqliteCustomization
+        {
+            AutoOpenConnection = false,
+            OnCreate = OnCreateAction.EnsureCreated
+        });
+
+        _ = fixture.Create<TestDbContext>();
     }
 }
