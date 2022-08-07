@@ -5,45 +5,48 @@ using EntityFrameworkCore.AutoFixture.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace EntityFrameworkCore.AutoFixture.Sqlite
+namespace EntityFrameworkCore.AutoFixture.Sqlite;
+
+/// <summary>
+/// Customizes AutoFixture to create sqlite Entity Framework database contexts.
+/// </summary>
+[Obsolete(@"Use the InMemoryCustomization instead. This customization will be removed in the next version.
+For details on migration visit https://github.com/aivascu/EntityFrameworkCore.AutoFixture .")]
+public class SqliteContextCustomization : ICustomization
 {
     /// <summary>
-    /// Customizes AutoFixture to create sqlite Entity Framework database ontexts.
+    /// Gets or sets the configuration to omit <see cref="DbSet{TEntity}" />
+    /// properties, on <see cref="DbContext" /> derived types.
     /// </summary>
-    public class SqliteContextCustomization : DbContextCustomization
+    public bool OmitDbSets { get; set; }
+
+    /// <summary>
+    /// Automatically open <see cref="DbConnection" /> database connections upon creation.
+    /// Default value is <see langword="false" />.
+    /// </summary>
+    public bool AutoOpenConnection { get; set; }
+
+    /// <summary>
+    /// Automatically run <see cref="DatabaseFacade.EnsureCreated()" />, on
+    /// <see cref="DbContext.Database" />, upon creating a database context instance. Default
+    /// value is <see langword="false" />.
+    /// </summary>
+    public bool AutoCreateDatabase { get; set; }
+
+    /// <inheritdoc />
+    public void Customize(IFixture fixture)
     {
-        /// <summary>
-        /// Automatically open <see cref="DbConnection"/> database connections upon creation.
-        /// Default value is <see langword="false"/>.
-        /// </summary>
-        public bool AutoOpenConnection { get; set; }
+        Check.NotNull(fixture, nameof(fixture));
 
-        /// <summary>
-        /// Automatically run <see cref="DatabaseFacade.EnsureCreated()"/>, on
-        /// <see cref="DbContext.Database"/>, upon creating a database context instance. Default
-        /// value is <see langword="false"/>.
-        /// </summary>
-        public bool AutoCreateDatabase { get; set; }
-
-        /// <inheritdoc/>
-        public override void Customize(IFixture fixture)
+        var customization = new SqliteCustomization
         {
-            if (fixture is null) throw new ArgumentNullException(nameof(fixture));
+            OmitDbSets = this.OmitDbSets,
+            AutoOpenConnection = this.AutoOpenConnection,
+            OnCreate = this.AutoCreateDatabase
+                ? OnCreateAction.EnsureCreated
+                : OnCreateAction.None
+        };
 
-            base.Customize(fixture);
-
-            fixture.Customizations.Add(new SqliteOptionsSpecimenBuilder());
-            fixture.Customizations.Add(new SqliteConnectionSpecimenBuilder());
-
-            if (this.AutoOpenConnection)
-            {
-                fixture.Behaviors.Add(new ConnectionOpeningBehavior(new BaseTypeSpecification(typeof(DbConnection))));
-            }
-
-            if (this.AutoCreateDatabase)
-            {
-                fixture.Behaviors.Add(new DatabaseInitializingBehavior(new BaseTypeSpecification(typeof(DbContext))));
-            }
-        }
+        fixture.Customize(customization);
     }
 }

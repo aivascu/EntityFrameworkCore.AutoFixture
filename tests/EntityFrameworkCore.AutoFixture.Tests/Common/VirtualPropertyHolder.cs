@@ -1,7 +1,6 @@
-namespace EntityFrameworkCore.AutoFixture.Tests.Core
+namespace EntityFrameworkCore.AutoFixture.Tests.Core;
+
+public class VirtualPropertyHolder<T>
 {
-    public class VirtualPropertyHolder<T>
-    {
-        public virtual T Property { get; set; }
-    }
+    public virtual T Property { get; set; }
 }

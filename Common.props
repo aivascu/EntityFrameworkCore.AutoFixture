@@ -11,7 +11,7 @@
     <RepositoryType>git</RepositoryType>
 
     <PackageIcon>icon.png</PackageIcon>
-    <PackageReadmeFile>readme.md</PackageReadmeFile> 
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
 
     <!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -22,11 +22,11 @@
 
   <ItemGroup>
     <!-- <SourceRoot Include="$(MSBuildThisFileDirectory)/"/> -->
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all"/>
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\readme.md" Pack="true" PackagePath="\" /> 
-    <None Include="..\..\icon.png" Pack="true" PackagePath="\" />
+    <None Include="..\..\readme.md" Pack="true" PackagePath="\"/>
+    <None Include="..\..\icon.png" Pack="true" PackagePath="\"/>
   </ItemGroup>
 </Project>

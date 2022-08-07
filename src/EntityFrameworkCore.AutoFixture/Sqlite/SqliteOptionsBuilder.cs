@@ -1,35 +1,54 @@
 using System;
+using AutoFixture;
+using AutoFixture.Kernel;
 using EntityFrameworkCore.AutoFixture.Core;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace EntityFrameworkCore.AutoFixture.Sqlite
+namespace EntityFrameworkCore.AutoFixture.Sqlite;
+
+/// <summary>
+/// Creates a <see cref="DbContextOptionsBuilder{TContext}" /> instance using SQLite.
+/// </summary>
+public class SqliteOptionsBuilder : ISpecimenBuilder
 {
     /// <summary>
-    /// Creates <see cref="DbContextOptions{TContext}"/> using SQLite.
+    /// Creates an instance of type <see cref="SqliteOptionsBuilder" />.
     /// </summary>
-    public class SqliteOptionsBuilder : OptionsBuilder
+    /// <param name="builder">The decorated builder.</param>
+    /// <param name="configureProvider">Optional action allowing additional provider specific configuration.</param>
+    public SqliteOptionsBuilder(
+        ISpecimenBuilder builder, Action<SqliteDbContextOptionsBuilder>? configureProvider = default)
     {
-        public SqliteOptionsBuilder(SqliteConnection connection)
-        {
-            this.Connection = connection
-                ?? throw new ArgumentNullException(nameof(connection));
-        }
+        Check.NotNull(builder, nameof(builder));
 
-        /// <summary>
-        /// Gets the database connection.
-        /// </summary>
-        public SqliteConnection Connection { get; }
+        this.Builder = builder;
+        this.ConfigureProvider = configureProvider;
+    }
 
-        /// <summary>
-        /// Builds default <see cref="DbContextOptions{TContext}"/>,
-        /// using the SQLite connection.
-        /// </summary>
-        /// <typeparam name="TContext"></typeparam>
-        /// <returns>Returns a <see cref="DbContextOptions{TContext}" /> instance.</returns>
-        public override DbContextOptions<TContext> Build<TContext>()
-            => new DbContextOptionsBuilder<TContext>()
-            .UseSqlite(this.Connection)
-            .Options;
+    /// <summary>
+    /// Gets the decorated builder.
+    /// </summary>
+    public ISpecimenBuilder Builder { get; }
+
+    /// <summary>
+    /// Gets or sets an optional action allowing additional provider specific configuration.
+    /// </summary>
+    public Action<SqliteDbContextOptionsBuilder>? ConfigureProvider { get; set; }
+
+    /// <inheritdoc />
+    public object Create(object request, ISpecimenContext context)
+    {
+        Check.NotNull(context, nameof(context));
+
+        var result = this.Builder.Create(request, context);
+
+        var connection = context.Create<SqliteConnection>();
+
+        if (result is not DbContextOptionsBuilder builder)
+            return new NoSpecimen();
+
+        return builder.UseSqlite(connection, this.ConfigureProvider);
     }
 }

@@ -3,21 +3,16 @@ using AutoFixture.AutoMoq;
 using EntityFrameworkCore.AutoFixture.InMemory;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities;
 
-namespace EntityFrameworkCore.AutoFixture.Tests.Common.Customizations
+namespace EntityFrameworkCore.AutoFixture.Tests.Common.Customizations;
+
+public class InMemoryDataCustomization : CompositeCustomization
 {
-    public class InMemoryCustomization : CompositeCustomization
+    public InMemoryDataCustomization()
+        : base(
+            VirtualPropertyOmitterCustomization
+                .ForTypesInNamespaces(typeof(Customer)),
+            new InMemoryCustomization(),
+            new AutoMoqCustomization())
     {
-        public InMemoryCustomization()
-            : base(
-                VirtualPropertyOmitterCustomization
-                  .ForTypesInNamespaces(typeof(Customer)),
-                new InMemoryContextCustomization
-                {
-                    AutoCreateDatabase = true,
-                    OmitDbSets = true
-                },
-                new AutoMoqCustomization())
-        {
-        }
     }
 }

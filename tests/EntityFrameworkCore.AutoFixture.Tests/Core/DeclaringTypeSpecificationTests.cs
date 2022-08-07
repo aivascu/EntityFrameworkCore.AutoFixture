@@ -1,61 +1,100 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
 using AutoFixture.Kernel;
 using EntityFrameworkCore.AutoFixture.Core;
 using FluentAssertions;
 using Xunit;
 
-namespace EntityFrameworkCore.AutoFixture.Tests.Core
+namespace EntityFrameworkCore.AutoFixture.Tests.Core;
+
+public class DeclaringTypeSpecificationTests
 {
-    public class DeclaringTypeSpecificationTests
+    [Fact]
+    public void IsSpecification()
     {
-        [Fact]
-        public void ThrowsWhenTypeSpecificationNull()
-        {
-            Action act = () => _ = new DeclaringTypeSpecification(default);
+        typeof(DeclaringTypeSpecification)
+            .Should().BeAssignableTo<IRequestSpecification>();
+    }
 
-            act.Should().Throw<ArgumentNullException>();
-        }
+    [Fact]
+    public void ThrowsWhenTypeSpecificationNull()
+    {
+        Action act = () => _ = new DeclaringTypeSpecification(default(IRequestSpecification)!);
 
-        [Fact]
-        public void ReturnsTrueForMatchingType()
-        {
-            var sut = new DeclaringTypeSpecification(
-                new TrueRequestSpecification());
-            var property = typeof(PropertyHolder<string>)
-                .GetProperties().Single();
+        act.Should().Throw<ArgumentNullException>();
+    }
 
-            var actual = sut.IsSatisfiedBy(property);
+    [Fact]
+    public void ReturnsTrueForMatchingType()
+    {
+        var sut = new DeclaringTypeSpecification(
+            new TrueRequestSpecification());
+        var property = typeof(PropertyHolder<string>)
+            .GetProperties().Single();
 
-            actual.Should().BeTrue();
-        }
+        var actual = sut.IsSatisfiedBy(property);
 
-        [Fact]
-        public void ReturnsFalseForNonMatchingType()
-        {
-            var sut = new DeclaringTypeSpecification(
-                new FalseRequestSpecification());
-            var property = typeof(PropertyHolder<string>)
-                .GetProperties().Single();
+        actual.Should().BeTrue();
+    }
 
-            var actual = sut.IsSatisfiedBy(property);
+    [Fact]
+    public void ReturnsFalseForNonMatchingType()
+    {
+        var sut = new DeclaringTypeSpecification(
+            new FalseRequestSpecification());
+        var property = typeof(PropertyHolder<string>)
+            .GetProperties().Single();
 
-            actual.Should().BeFalse();
-        }
+        var actual = sut.IsSatisfiedBy(property);
 
-        [Theory]
-        [InlineData("some value")]
-        [InlineData(50)]
-        [InlineData(2333.23d)]
-        [InlineData(true)]
-        public void ReturnsFalseForNonMemberRequests(object request)
-        {
-            var sut = new DeclaringTypeSpecification(
-                new TrueRequestSpecification());
+        actual.Should().BeFalse();
+    }
 
-            var actual = sut.IsSatisfiedBy(request);
+    [Theory]
+    [InlineData("some value")]
+    [InlineData(50)]
+    [InlineData(2333.23d)]
+    [InlineData(true)]
+    public void ReturnsFalseForNonMemberRequests(object request)
+    {
+        var sut = new DeclaringTypeSpecification(
+            new TrueRequestSpecification());
 
-            actual.Should().BeFalse();
-        }
+        var actual = sut.IsSatisfiedBy(request);
+
+        actual.Should().BeFalse();
+    }
+
+    [Fact]
+    public void DelegatesDeclaringType()
+    {
+        object request = null;
+        var sut = new DeclaringTypeSpecification(
+            new DelegatingSpecification
+            {
+                OnIsSatisfiedBy = x =>
+                {
+                    request = x;
+                    return true;
+                }
+            });
+        var member = typeof(B).GetMethod(nameof(A.DoStuff), BindingFlags.Instance | BindingFlags.Public);
+
+        _ = sut.IsSatisfiedBy(member!);
+
+        request.Should().BeSameAs(typeof(A));
+    }
+
+    private class A
+    {
+        [SuppressMessage("Performance", "CA1822:Mark members as static",
+            Justification = "This is a test type not intended to do anything.")]
+        public void DoStuff() { }
+    }
+
+    private class B : A
+    {
     }
 }
