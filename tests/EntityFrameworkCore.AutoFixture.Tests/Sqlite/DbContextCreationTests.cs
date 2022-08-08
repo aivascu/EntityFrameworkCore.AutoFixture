@@ -1,6 +1,8 @@
 using System;
+using System.Data;
 using System.Linq;
 using AutoFixture;
+using AutoFixture.Xunit2;
 using EntityFrameworkCore.AutoFixture.Core;
 using EntityFrameworkCore.AutoFixture.Sqlite;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Customizations;
@@ -116,5 +118,31 @@ public class DbContextCreationTests
         });
 
         _ = fixture.Create<TestDbContext>();
+    }
+
+    [Theory]
+    [PersistenceData]
+    public void Foo([Frozen][Modest] SqliteConnection connection)
+    {
+        connection.State.Should().Be(ConnectionState.Open);
+    }
+
+    public class PersistenceDataAttribute : AutoDataAttribute
+    {
+        public PersistenceDataAttribute()
+            : base(() => new Fixture().Customize(
+                new CompositeCustomization(
+                    new SqliteCustomization(),
+                    new ConnectionOpeningCustomization())))
+        {
+        }
+        
+        public class ConnectionOpeningCustomization : ICustomization
+        {
+            public void Customize(IFixture fixture)
+            {
+                fixture.Behaviors.Add(new SqliteConnectionOpeningBehavior());
+            }
+        }
     }
 }
