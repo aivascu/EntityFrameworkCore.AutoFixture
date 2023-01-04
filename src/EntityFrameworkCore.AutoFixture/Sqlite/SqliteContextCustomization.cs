@@ -10,7 +10,7 @@ namespace EntityFrameworkCore.AutoFixture.Sqlite;
 /// <summary>
 /// Customizes AutoFixture to create sqlite Entity Framework database contexts.
 /// </summary>
-[Obsolete(@"Use the InMemoryCustomization instead. This customization will be removed in the next version.
+[Obsolete(@"Use the SqliteCustomization instead. This customization will be removed in the next version.
 For details on migration visit https://github.com/aivascu/EntityFrameworkCore.AutoFixture .")]
 public class SqliteContextCustomization : ICustomization
 {
