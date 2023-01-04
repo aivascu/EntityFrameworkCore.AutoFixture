@@ -142,7 +142,7 @@ public async Task CanSavesCustomers()
     {
         ConnectionString = "Data Source=MyDatabase.sqlite;Cache=Shared;", // Sets the connection string to connect to a file
         AutoOpenConnection = false, // Disables opening the connection by default. Affects all SqliteConnection instances.
-        OnCreate = OnCreateAction.None // Will to skip creating the database 
+        OnCreate = OnCreateAction.None // Use OnCreateAction.None to skip creating the database.
                                        // Use OnCreateAction.EnsureCreated to run Database.EnsureCreated() automatically
                                        // Use OnCreateAction.Migrate to run Database.Migrate() automatically
     });
