@@ -1,8 +1,7 @@
 # EntityFrameworkCore.AutoFixture
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/aivascu/EntityFrameworkCore.AutoFixture/Release%20CD?logo=github&style=flat-square)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/aivascu/EntityFrameworkCore.AutoFixture/release.yml?logo=github&style=flat-square)
 [![Coveralls github](https://img.shields.io/coveralls/github/aivascu/EntityFrameworkCore.AutoFixture?logo=coveralls&style=flat-square)](https://coveralls.io/github/aivascu/EntityFrameworkCore.AutoFixture?branch=master)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/aivascu/EntityFrameworkCore.AutoFixture.svg?logo=lgtm&logoWidth=18&style=flat-square)](https://lgtm.com/projects/g/aivascu/EntityFrameworkCore.AutoFixture/alerts/)
 [![NuGet](https://img.shields.io/nuget/v/EntityFrameworkCore.AutoFixture?logo=nuget&style=flat-square)](https://www.nuget.org/packages/EntityFrameworkCore.AutoFixture/)
 [![NuGet downloads](https://img.shields.io/nuget/dt/EntityFrameworkCore.AutoFixture?logo=nuget&style=flat-square)](https://www.nuget.org/packages/EntityFrameworkCore.AutoFixture/)
 [![GitHub](https://img.shields.io/github/license/aivascu/EntityFrameworkCore.AutoFixture?logo=MIT&style=flat-square)](https://licenses.nuget.org/MIT)
@@ -143,7 +142,7 @@ public async Task CanSavesCustomers()
     {
         ConnectionString = "Data Source=MyDatabase.sqlite;Cache=Shared;", // Sets the connection string to connect to a file
         AutoOpenConnection = false, // Disables opening the connection by default. Affects all SqliteConnection instances.
-        OnCreate = OnCreateAction.None // Will to skip creating the database 
+        OnCreate = OnCreateAction.None // Use OnCreateAction.None to skip creating the database.
                                        // Use OnCreateAction.EnsureCreated to run Database.EnsureCreated() automatically
                                        // Use OnCreateAction.Migrate to run Database.Migrate() automatically
     });
