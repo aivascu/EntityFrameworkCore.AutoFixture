@@ -18,6 +18,11 @@ target frameworks that support at most `netstandard2.0` (`>= net47` and `netcore
 Versions after `v3.1` are targeting `netstandard2.0`. If you've encountered this issue consider upgrading to a later
 version of Entity Framework Core.
 
+#### :warning: EF Core v7.0.x :warning:
+
+If you're using EF Core v7 you must install the corresponding database provider package alongside this library.<br/>
+So for example if you're using SQLite, you must install `Microsoft.EntityFrameworkCore.Sqlite v7.0.0` or later, otherwise your tests will not pass.
+
 ## Features
 
 **EntityFrameworkCore.AutoFixture** offers three customizations to help your unit testing workflow:
