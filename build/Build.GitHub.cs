@@ -1,4 +1,3 @@
-using Nuke.Common;
 using Nuke.Common.CI;
 using Nuke.Common.CI.GitHubActions;
 
@@ -10,7 +9,7 @@ using Nuke.Common.CI.GitHubActions;
     OnPushBranches = new[] { MasterBranch, ReleaseBranch },
     PublishArtifacts = false,
     InvokedTargets = new[] { nameof(Cover), nameof(Pack) },
-    ImportGitHubTokenAs = nameof(GitHubToken))]
+    EnableGitHubToken = true)]
 [GitHubActions(
     "release",
     GitHubActionsImage.WindowsLatest,
@@ -18,12 +17,9 @@ using Nuke.Common.CI.GitHubActions;
     OnPushTags = new[] { "v*" },
     PublishArtifacts = true,
     InvokedTargets = new[] { nameof(Cover), nameof(Publish) },
-    ImportGitHubTokenAs = nameof(GitHubToken),
+    EnableGitHubToken = true,
     ImportSecrets = new[] { nameof(NuGetApiKey) })]
-partial class Build
+internal partial class Build
 {
-    [CI] readonly GitHubActions GitHubActions;
-
-    [Parameter("GitHub auth token", Name = "github-token"), Secret]
-    readonly string GitHubToken;
+    [CI] private readonly GitHubActions GitHubActions;
 }
