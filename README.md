@@ -11,6 +11,17 @@
 Unlike other libraries for faking EF contexts, **EntityFrameworkCore.AutoFixture** does not use mocking frameworks or
 dynamic proxies in to create database contexts, instead it uses the actual database [providers](https://docs.microsoft.com/en-us/ef/core/miscellaneous/testing/). This ensures the tests will behave a lot more similar to the code in the production environment, with little to no effort.
 
+### Supported versions
+
+The current implementation supports all `Microsoft.EntityFrameworkCore` packages starting from `v2.0.0` and `AutoFixture` starting from `v4.4.0`, however because the constraints are so low you will have to install the latest versiosn of `Microsoft.EntityFrameworkCore` and `AutoFixture` packages yourself, alongside this package.
+
+Make sure to keep in sync the versions of packages used in production and test code. Meaning that if you use `Microsoft.EntityFrameworkCore.SqlServer` of version `v7.0.14`, you need to use the equivalent version of `Microsoft.EntityFrameworkCore.Sqlite`.
+
+| Integration | Package                                |
+|-------------|----------------------------------------|
+| SQLite      | Microsoft.EntityFrameworkCore.Sqlite   |
+| In-Memory   | Microsoft.EntityFrameworkCore.InMemory |
+
 #### :warning: .NET Standard 2.0 in EF Core v3.0.x :warning:
 
 Entity Framework Core `v3.0.0` - `v3.0.3` are targeting `netstandard2.1`, which means they are not compatible with
