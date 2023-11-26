@@ -14,13 +14,15 @@ public class SqliteOptionsBuilderTests
     [Fact]
     public void CanCreateInstance()
     {
-        _ = new SqliteOptionsBuilder(new DelegatingBuilder());
+        var act = () => _ = new SqliteOptionsBuilder(new DelegatingBuilder());
+
+        act.Should().NotThrow();
     }
 
     [Fact]
     public void ThrowsWhenBuilderNull()
     {
-        Action act = () => _ = new SqliteOptionsBuilder(null!);
+        var act = () => _ = new SqliteOptionsBuilder(null!);
 
         act.Should().ThrowExactly<ArgumentNullException>();
     }
@@ -28,7 +30,9 @@ public class SqliteOptionsBuilderTests
     [Fact]
     public void CanCreateInstanceWithOptionalParameter()
     {
-        _ = new SqliteOptionsBuilder(new DelegatingBuilder(), x => x.MaxBatchSize(10));
+        var act = () => _ = new SqliteOptionsBuilder(new DelegatingBuilder(), x => x.MaxBatchSize(10));
+
+        act.Should().NotThrow();
     }
 
     [Fact]

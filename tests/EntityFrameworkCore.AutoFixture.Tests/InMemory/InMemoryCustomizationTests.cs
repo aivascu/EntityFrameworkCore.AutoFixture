@@ -38,13 +38,15 @@ public class InMemoryCustomizationTests
     [Fact]
     public void CanInstantiateCustomization()
     {
-        _ = new InMemoryCustomization();
+        var act = () => _ = new InMemoryCustomization();
+
+        act.Should().NotThrow();
     }
 
     [Fact]
     public void CanInstantiateCustomizationWithCustomConfiguration()
     {
-        _ = new InMemoryCustomization
+        var act = () => _ = new InMemoryCustomization
         {
             OnCreate = OnCreateAction.Migrate,
             DatabaseName = "Frank",
@@ -52,6 +54,8 @@ public class InMemoryCustomizationTests
             OmitDbSets = true,
             Configure = x => x.EnableSensitiveDataLogging()
         };
+
+        act.Should().NotThrow();
     }
 
     [Fact]
@@ -65,7 +69,9 @@ public class InMemoryCustomizationTests
     [Fact]
     public void CanCustomizeFixture()
     {
-        _ = new Fixture().Customize(new InMemoryCustomization());
+        var act = () => _ = new Fixture().Customize(new InMemoryCustomization());
+
+        act.Should().NotThrow();
     }
 
     [Fact]
@@ -122,6 +128,7 @@ public class InMemoryCustomizationTests
         var context1 = fixture.Create<TestDbContext>();
         context1.Customers.Add(fixture.Create<Customer>());
         context1.SaveChanges();
+        context1.ChangeTracker.Clear();
 
         var context2 = fixture.Create<TestDbContext>();
 
@@ -136,6 +143,7 @@ public class InMemoryCustomizationTests
         var customer = fixture.Create<Customer>();
         context1.Customers.Add(customer);
         context1.SaveChanges();
+        context1.ChangeTracker.Clear();
 
         var context2 = fixture.Create<TestDbContext>();
 

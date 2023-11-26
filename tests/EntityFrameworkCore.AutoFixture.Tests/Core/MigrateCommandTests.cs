@@ -23,7 +23,9 @@ public class MigrateCommandTests
     [Fact]
     public void CanCreateInstance()
     {
-        _ = new MigrateCommand();
+        var act = () => _ = new MigrateCommand();
+
+        act.Should().NotThrow();
     }
 
     [Fact]
@@ -61,5 +63,7 @@ public class MigrateCommandTests
 
         context.Items.Add(new Item("potato", 1));
         context.SaveChanges();
+
+        context.Items.Should().HaveCount(1);
     }
 }

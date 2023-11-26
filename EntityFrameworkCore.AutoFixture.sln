@@ -1,31 +1,33 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29409.12
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34316.72
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".sln", ".sln", "{41F502FD-F586-4510-9E54-96A81EE0EBBE}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
-		README.md = README.md
 		Common.props = Common.props
 		Common.Tests.props = Common.Tests.props
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore.AutoFixture", "src\EntityFrameworkCore.AutoFixture\EntityFrameworkCore.AutoFixture.csproj", "{34A29C69-9C15-4C1E-833D-6F9792EAED7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "_build", "build\_build.csproj", "{240F3B9C-540A-4500-84E2-8F406D71BB8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{240F3B9C-540A-4500-84E2-8F406D71BB8A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityFrameworkCore.AutoFixture.Tests", "tests\EntityFrameworkCore.AutoFixture.Tests\EntityFrameworkCore.AutoFixture.Tests.csproj", "{476C1F2E-CE1B-43D0-9076-9DF78DC69DF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore.AutoFixture.EF2.Tests", "tests\EntityFrameworkCore.AutoFixture.EF2.Tests\EntityFrameworkCore.AutoFixture.EF2.Tests.csproj", "{9F91E002-8D3D-4050-AC8F-1867362FC721}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityFrameworkCore.AutoFixture.EF2.Tests", "tests\EntityFrameworkCore.AutoFixture.EF2.Tests\EntityFrameworkCore.AutoFixture.EF2.Tests.csproj", "{9F91E002-8D3D-4050-AC8F-1867362FC721}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore.AutoFixture.EF3.Tests", "tests\EntityFrameworkCore.AutoFixture.EF3.Tests\EntityFrameworkCore.AutoFixture.EF3.Tests.csproj", "{1FB77B86-0731-4561-A85C-F8128AB3CEF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityFrameworkCore.AutoFixture.EF3.Tests", "tests\EntityFrameworkCore.AutoFixture.EF3.Tests\EntityFrameworkCore.AutoFixture.EF3.Tests.csproj", "{1FB77B86-0731-4561-A85C-F8128AB3CEF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore.AutoFixture.EF5.Tests", "tests\EntityFrameworkCore.AutoFixture.EF5.Tests\EntityFrameworkCore.AutoFixture.EF5.Tests.csproj", "{A03F7586-05F7-45AD-847D-02C1DB6E0FE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityFrameworkCore.AutoFixture.EF5.Tests", "tests\EntityFrameworkCore.AutoFixture.EF5.Tests\EntityFrameworkCore.AutoFixture.EF5.Tests.csproj", "{A03F7586-05F7-45AD-847D-02C1DB6E0FE7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore.AutoFixture.EF6.Tests", "tests\EntityFrameworkCore.AutoFixture.EF6.Tests\EntityFrameworkCore.AutoFixture.EF6.Tests.csproj", "{41937419-0EB6-4AEB-AFF7-F613C5315751}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityFrameworkCore.AutoFixture.EF6.Tests", "tests\EntityFrameworkCore.AutoFixture.EF6.Tests\EntityFrameworkCore.AutoFixture.EF6.Tests.csproj", "{41937419-0EB6-4AEB-AFF7-F613C5315751}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore.AutoFixture.EF7.Tests", "tests\EntityFrameworkCore.AutoFixture.EF7.Tests\EntityFrameworkCore.AutoFixture.EF7.Tests.csproj", "{476C1F2E-CE1B-43D0-9076-9DF78DC69DF9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore.AutoFixture.Tests", "tests\EntityFrameworkCore.AutoFixture.Tests\EntityFrameworkCore.AutoFixture.Tests.csproj", "{5F2EB641-3B94-42D4-A09B-C02B5C1B0D66}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,10 +41,6 @@ Global
 		{34A29C69-9C15-4C1E-833D-6F9792EAED7C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{240F3B9C-540A-4500-84E2-8F406D71BB8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{240F3B9C-540A-4500-84E2-8F406D71BB8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{476C1F2E-CE1B-43D0-9076-9DF78DC69DF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{476C1F2E-CE1B-43D0-9076-9DF78DC69DF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{476C1F2E-CE1B-43D0-9076-9DF78DC69DF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{476C1F2E-CE1B-43D0-9076-9DF78DC69DF9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9F91E002-8D3D-4050-AC8F-1867362FC721}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9F91E002-8D3D-4050-AC8F-1867362FC721}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F91E002-8D3D-4050-AC8F-1867362FC721}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -59,11 +57,17 @@ Global
 		{41937419-0EB6-4AEB-AFF7-F613C5315751}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41937419-0EB6-4AEB-AFF7-F613C5315751}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41937419-0EB6-4AEB-AFF7-F613C5315751}.Release|Any CPU.Build.0 = Release|Any CPU
+		{476C1F2E-CE1B-43D0-9076-9DF78DC69DF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{476C1F2E-CE1B-43D0-9076-9DF78DC69DF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{476C1F2E-CE1B-43D0-9076-9DF78DC69DF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{476C1F2E-CE1B-43D0-9076-9DF78DC69DF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F2EB641-3B94-42D4-A09B-C02B5C1B0D66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F2EB641-3B94-42D4-A09B-C02B5C1B0D66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F2EB641-3B94-42D4-A09B-C02B5C1B0D66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F2EB641-3B94-42D4-A09B-C02B5C1B0D66}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CBF14D09-229F-49A4-A7CA-7975072528FB}

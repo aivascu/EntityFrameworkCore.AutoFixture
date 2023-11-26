@@ -23,7 +23,9 @@ public class EnsureCreatedCommandTests
     [Fact]
     public void CanCreateInstance()
     {
-        _ = new EnsureCreatedCommand();
+        var act = () => _ = new EnsureCreatedCommand();
+
+        act.Should().NotThrow();
     }
 
     [Fact]
@@ -61,5 +63,7 @@ public class EnsureCreatedCommandTests
 
         context.Items.Add(new Item("potato", 1));
         context.SaveChanges();
+
+        context.Items.Should().HaveCount(1);
     }
 }

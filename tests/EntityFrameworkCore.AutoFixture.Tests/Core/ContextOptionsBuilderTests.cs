@@ -24,7 +24,9 @@ public class ContextOptionsBuilderTests
     [Fact]
     public void CanCreateInstance()
     {
-        _ = new ContextOptionsBuilder();
+        var act = () => _ = new ContextOptionsBuilder();
+
+        act.Should().NotThrow();
     }
 
     [Fact]

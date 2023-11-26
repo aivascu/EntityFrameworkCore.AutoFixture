@@ -22,7 +22,9 @@ public class PropertyTypeSpecificationTests
     [Fact]
     public void CanCreateInstance()
     {
-        _ = new PropertyTypeSpecification(new DelegatingSpecification());
+        var act = () => _ = new PropertyTypeSpecification(new DelegatingSpecification());
+
+        act.Should().NotThrow();
     }
 
     [Theory]

@@ -11,7 +11,7 @@ using Xunit;
 
 namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite;
 
-[Obsolete]
+[Obsolete("The code this is testing is obsolete and should be removed when related functionality is removed.")]
 public class SqliteContextCustomizationTests
 {
     [Fact]
@@ -24,13 +24,17 @@ public class SqliteContextCustomizationTests
     [Fact]
     public void CanCreateInstance()
     {
-        _ = new SqliteContextCustomization();
+        var act = () => _ = new SqliteContextCustomization();
+
+        act.Should().NotThrow();
     }
 
     [Fact]
     public void CanCreateInstanceWithOptions()
     {
-        _ = new SqliteContextCustomization { AutoCreateDatabase = true, OmitDbSets = true };
+        var act = () => _ = new SqliteContextCustomization { AutoCreateDatabase = true, OmitDbSets = true };
+
+        act.Should().NotThrow();
     }
 
     [Theory]

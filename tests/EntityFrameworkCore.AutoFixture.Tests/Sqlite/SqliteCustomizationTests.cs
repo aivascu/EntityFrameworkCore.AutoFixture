@@ -6,7 +6,9 @@ using AutoFixture.Xunit2;
 using EntityFrameworkCore.AutoFixture.Core;
 using EntityFrameworkCore.AutoFixture.Sqlite;
 using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence;
+using EntityFrameworkCore.AutoFixture.Tests.Common.Persistence.Entities;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
@@ -44,24 +46,30 @@ public class SqliteCustomizationTests
     [Fact]
     public void CanInstantiateCustomization()
     {
-        _ = new SqliteCustomization();
+        var act = () => _ = new SqliteCustomization();
+
+        act.Should().NotThrow();
     }
 
     [Fact]
     public void CanInstantiateCustomizationWithCustomConfiguration()
     {
-        _ = new SqliteCustomization
+        var act = () => _ = new SqliteCustomization
         {
             OnCreate = OnCreateAction.Migrate,
             OmitDbSets = true,
             Configure = x => x.EnableSensitiveDataLogging()
         };
+
+        act.Should().NotThrow();
     }
 
     [Fact]
     public void CanCustomizeFixture()
     {
-        _ = new Fixture().Customize(new SqliteCustomization());
+        var act = () => _ = new Fixture().Customize(new SqliteCustomization());
+
+        act.Should().NotThrow();
     }
 
     [Fact]
@@ -96,5 +104,39 @@ public class SqliteCustomizationTests
         var options = fixture.Create<DbContextOptions<TestDbContext>>();
 
         options.Extensions.Should().Contain(x => x.GetType() == extensionType);
+    }
+
+    [Fact]
+    public void CreatesDifferentConnections()
+    {
+        var fixture = new Fixture().Customize(new SqliteCustomization());
+        var context1 = fixture.Create<TestDbContext>();
+        context1.Customers.Add(fixture.Create<Customer>());
+        context1.SaveChanges();
+        context1.ChangeTracker.Clear();
+
+        var context2 = fixture.Create<TestDbContext>();
+
+        context2.Customers.Count().Should().Be(0);
+    }
+
+    [Fact]
+    public void CreatesSameConnections()
+    {
+        var fixture = new Fixture().Customize(new SqliteCustomization());
+        var context1 = fixture.Freeze<TestDbContext>();
+        var customer = fixture.Create<Customer>();
+        context1.Customers.Add(customer);
+        context1.SaveChanges();
+        context1.ChangeTracker.Clear();
+
+        var context2 = fixture.Create<TestDbContext>();
+
+        using (new AssertionScope())
+        {
+            context2.Customers.Should().HaveCount(1);
+            var actual = context2.Customers.Include(x => x.Orders).Single();
+            actual.Should().BeEquivalentTo(customer);
+        }
     }
 }

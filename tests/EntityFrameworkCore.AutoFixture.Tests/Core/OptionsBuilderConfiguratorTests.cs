@@ -23,7 +23,9 @@ public class OptionsBuilderConfiguratorTests
     [Fact]
     public void CanCreateInstance()
     {
-        _ = new OptionsBuilderConfigurator(new DelegatingBuilder(), x => x);
+        var act = () => _ = new OptionsBuilderConfigurator(new DelegatingBuilder(), x => x);
+
+        act.Should().NotThrow();
     }
 
     [Fact]

@@ -7,33 +7,32 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite
+namespace EntityFrameworkCore.AutoFixture.Tests.Sqlite;
+
+public class SqliteConnectionCreationTests
 {
-    public class SqliteConnectionCreationTests
+    [Theory]
+    [InlineData(true, ConnectionState.Open)]
+    [InlineData(false, ConnectionState.Closed)]
+    public void ConfigurationControlsConnectionState(bool autoOpen, ConnectionState expected)
     {
-        [Theory]
-        [InlineData(true, ConnectionState.Open)]
-        [InlineData(false, ConnectionState.Closed)]
-        public void ConfigurationControlsConnectionState(bool autoOpen, ConnectionState expected)
-        {
-            var customization = new SqliteCustomization { AutoOpenConnection = autoOpen };
-            var fixture = new Fixture().Customize(customization);
+        var customization = new SqliteCustomization { AutoOpenConnection = autoOpen };
+        var fixture = new Fixture().Customize(customization);
 
-            var connection = fixture.Create<SqliteConnection>();
+        var connection = fixture.Create<SqliteConnection>();
 
-            connection.State.Should().Be(expected);
-        }
+        connection.State.Should().Be(expected);
+    }
 
-        [Fact]
-        public void UsesConfiguredConnectionString()
-        {
-            const string ConnectionString = "Data Source=:memory:;Mode=Memory;Cache=Shared;";
-            var customization = new SqliteCustomization { ConnectionString = ConnectionString };
-            var fixture = new Fixture().Customize(customization);
-            var context = fixture.Create<TestDbContext>();
+    [Fact]
+    public void UsesConfiguredConnectionString()
+    {
+        const string ConnectionString = "Data Source=:memory:;Mode=Memory;Cache=Shared;";
+        var customization = new SqliteCustomization { ConnectionString = ConnectionString };
+        var fixture = new Fixture().Customize(customization);
+        var context = fixture.Create<TestDbContext>();
 
-            var actual = context.Database.GetDbConnection();
-            actual.ConnectionString.Should().Be(ConnectionString);
-        }
+        var actual = context.Database.GetDbConnection();
+        actual.ConnectionString.Should().Be(ConnectionString);
     }
 }
