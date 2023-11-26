@@ -22,7 +22,9 @@ public class DbContextCreationTests
     {
         var fixture = new Fixture().Customize(new SqliteCustomization());
 
-        _ = fixture.Create<TestDbContext>();
+        var act = () => _ = fixture.Create<TestDbContext>();
+
+        act.Should().NotThrow();
     }
 
     [Fact]
@@ -115,6 +117,8 @@ public class DbContextCreationTests
             OnCreate = OnCreateAction.EnsureCreated
         });
 
-        _ = fixture.Create<TestDbContext>();
+        var act = () => _ = fixture.Create<TestDbContext>();
+
+        act.Should().NotThrow();
     }
 }

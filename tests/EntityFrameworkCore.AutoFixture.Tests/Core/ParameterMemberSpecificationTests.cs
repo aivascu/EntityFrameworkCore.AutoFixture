@@ -22,7 +22,9 @@ public class ParameterMemberSpecificationTests
     [Fact]
     public void CanCreateInstance()
     {
-        _ = new ParameterMemberSpecification(new DelegatingSpecification());
+        var act = () => _ = new ParameterMemberSpecification(new DelegatingSpecification());
+
+        act.Should().NotThrow();
     }
 
     [Theory]

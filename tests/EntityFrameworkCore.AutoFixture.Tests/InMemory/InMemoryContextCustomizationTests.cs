@@ -11,7 +11,7 @@ using Xunit;
 
 namespace EntityFrameworkCore.AutoFixture.Tests.InMemory;
 
-[Obsolete]
+[Obsolete("The code this is testing is obsolete and should be removed when related functionality is removed.")]
 public class InMemoryContextCustomizationTests
 {
     [Fact]
@@ -24,13 +24,17 @@ public class InMemoryContextCustomizationTests
     [Fact]
     public void CanCreateInstance()
     {
-        _ = new InMemoryContextCustomization();
+        var act = () => _ = new InMemoryContextCustomization();
+
+        act.Should().NotThrow();
     }
 
     [Fact]
     public void CanCreateInstanceWithOptions()
     {
-        _ = new InMemoryContextCustomization { AutoCreateDatabase = true, OmitDbSets = true };
+        var act = () => _ = new InMemoryContextCustomization { AutoCreateDatabase = true, OmitDbSets = true };
+
+        act.Should().NotThrow();
     }
 
     [Theory]

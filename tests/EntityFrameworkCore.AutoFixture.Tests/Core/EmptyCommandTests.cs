@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Reflection;
 using AutoFixture.Kernel;
@@ -27,7 +26,7 @@ public class EmptyCommandTests
     [Fact]
     public void ConstructorIsParameterless()
     {
-        typeof(EmptyCommand).GetConstructor(Array.Empty<Type>()).Should().NotBeNull();
+        typeof(EmptyCommand).GetConstructor([]).Should().NotBeNull();
     }
 
     [Fact]
@@ -42,6 +41,8 @@ public class EmptyCommandTests
     {
         var command = new EmptyCommand();
 
-        command.Execute(new object(), new DelegatingSpecimenContext());
+        var act = () => command.Execute(new object(), new DelegatingSpecimenContext());
+
+        act.Should().NotThrow();
     }
 }

@@ -20,7 +20,9 @@ public class OpenDatabaseConnectionTests
     [Fact]
     public void CanCreateInstance()
     {
-        _ = new OpenDatabaseConnection();
+        var act = () => _ = new OpenDatabaseConnection();
+
+        act.Should().NotThrow();
     }
 
     [Fact]
