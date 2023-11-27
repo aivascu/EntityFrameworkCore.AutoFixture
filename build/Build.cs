@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using Nuke.Common;
 using Nuke.Common.CI;
-using Nuke.Common.Execution;
 using Nuke.Common.Git;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
@@ -16,11 +15,9 @@ using Nuke.Common.Tools.GitVersion;
 using Nuke.Common.Tools.ReportGenerator;
 using Nuke.Common.Utilities;
 using Nuke.Common.Utilities.Collections;
-using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 using static Nuke.Common.Tools.ReportGenerator.ReportGeneratorTasks;
 
-[CheckBuildProjectConfigurations]
 [ShutdownDotNetAfterServerBuild]
 partial class Build : NukeBuild
 {
@@ -48,16 +45,16 @@ partial class Build : NukeBuild
     AbsolutePath ReportsDirectory => ArtifactsDirectory / "reports";
     AbsolutePath PackagesDirectory => ArtifactsDirectory / "packages";
 
-    IEnumerable<Project> TestProjects => Solution.GetProjects("*Tests");
+    IEnumerable<Project> TestProjects => Solution.GetAllProjects("*Tests");
     IReadOnlyCollection<AbsolutePath> Packages => PackagesDirectory.GlobFiles("*.nupkg");
 
     Target Clean => _ => _
         .Before(Restore)
         .Executes(() =>
         {
-            SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
-            TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
-            EnsureCleanDirectory(ArtifactsDirectory);
+            SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(x => x.DeleteDirectory());
+            TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach(x => x.DeleteDirectory());
+            ArtifactsDirectory.DeleteDirectory();
         });
 
     Target Restore => _ => _
@@ -94,7 +91,7 @@ partial class Build : NukeBuild
                 .SetNoBuild(FinishedTargets.Contains(Compile))
                 .ResetVerbosity()
                 .SetResultsDirectory(TestResultsDirectory)
-                .SetLogger("trx")
+                .SetLoggers("trx")
                 .SetUseSourceLink(IsServerBuild)
                 .SetProcessArgumentConfigurator(a => a
                     .Add("-- RunConfiguration.DisableAppDomain=true")
@@ -137,7 +134,7 @@ partial class Build : NukeBuild
         .Executes(() =>
         {
             ReportGenerator(_ => _
-                .SetFramework("net5.0")
+                .SetFramework("net6.0")
                 .SetReports(CoverageDirectory / "*.xml")
                 .SetTargetDirectory(ReportsDirectory)
                 .SetReportTypes("lcov", ReportTypes.HtmlInline));

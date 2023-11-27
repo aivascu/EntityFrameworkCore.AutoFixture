@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Build Schema",
   "$ref": "#/definitions/build",
+  "title": "Build Schema",
   "definitions": {
     "build": {
       "type": "object",
@@ -21,11 +21,6 @@
         "Deterministic": {
           "type": "boolean"
         },
-        "github-token": {
-          "type": "string",
-          "description": "GitHub auth token",
-          "default": "Secrets must be entered via 'nuke :secret [profile]'"
-        },
         "Help": {
           "type": "boolean",
           "description": "Shows the help text for this build assembly"
@@ -37,6 +32,7 @@
             "AppVeyor",
             "AzurePipelines",
             "Bamboo",
+            "Bitbucket",
             "Bitrise",
             "GitHubActions",
             "GitLab",
@@ -56,7 +52,7 @@
         },
         "NuGetApiKey": {
           "type": "string",
-          "default": "Secrets must be entered via 'nuke :secret [profile]'"
+          "default": "Secrets must be entered via 'nuke :secrets [profile]'"
         },
         "NuGetSource": {
           "type": "string"
